@@ -58,6 +58,10 @@ async function startServer() {
     res.sendFile(path.join(__dirname, "../public/ai-chat.html"));
   });
 
+  app.get("/app", isAuthenticated, (req: Request, res: Response) => {
+    res.sendFile(path.join(__dirname, "../public/app.html"));
+  });
+
   app.listen(PORT, "0.0.0.0", () => {
     console.log(`MT Hub running on http://0.0.0.0:${PORT}`);
   });

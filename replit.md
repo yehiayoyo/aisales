@@ -1,7 +1,7 @@
-# MT Hub - AI-Powered Business Automation Platform
+# MT Hub - All-in-One AI Business Platform
 
 ## Overview
-MT Hub is a production-grade SaaS platform designed to help businesses manage AI automation, social media, and customer communication from one centralized dashboard. The platform serves as a central AI brain controlling business communication across Facebook, Instagram, and WhatsApp.
+MT Hub is a premium, production-grade SaaS platform designed for complete AI-powered business automation. It serves as a central AI brain that manages multi-provider AI chat (ChatGPT, Luma AI, Tavily), social media automation across Facebook, Instagram, and WhatsApp, UGC creator management, AI sales tools, and comprehensive analytics - all from one unified dashboard with Stripe/Notion-level design quality.
 
 ## Project Structure
 ```
@@ -13,10 +13,18 @@ MT Hub is a production-grade SaaS platform designed to help businesses manage AI
 │   │   ├── social.ts            # Social media OAuth & account management
 │   │   ├── messaging.ts         # Unified inbox & conversations
 │   │   ├── ai.ts                # AI reply generation & content creation
+│   │   ├── aiChat.ts            # Multi-AI chat (GPT, Luma, Tavily)
 │   │   ├── dashboard.ts         # Dashboard stats & settings
-│   │   └── webhooks.ts          # Meta platform webhooks (Facebook/Instagram/WhatsApp)
+│   │   ├── ugc.ts               # UGC campaigns, orders, creators
+│   │   └── webhooks.ts          # Meta platform webhooks
 │   ├── services/
 │   │   ├── aiService.ts         # Central AI service with memory & tone profiles
+│   │   ├── aiChatService.ts     # Multi-provider AI chat service
+│   │   ├── aiProviders/         # Modular AI provider implementations
+│   │   │   ├── index.ts         # Provider registry
+│   │   │   ├── openaiProvider.ts
+│   │   │   ├── lumaProvider.ts
+│   │   │   └── tavilyProvider.ts
 │   │   └── encryptionService.ts # Token encryption service
 │   └── replit_integrations/
 │       └── auth/                # Replit Auth integration
@@ -25,13 +33,26 @@ MT Hub is a production-grade SaaS platform designed to help businesses manage AI
 │   └── models/
 │       ├── auth.ts              # User & session models
 │       ├── social.ts            # Social accounts & auto-reply rules
-│       └── messaging.ts         # Conversations & messages
+│       ├── messaging.ts         # Conversations & messages
+│       └── aiChat.ts            # AI chat sessions & messages
 ├── public/                      # Frontend static files
+│   ├── css/
+│   │   └── design-system.css    # Premium design system (CSS variables)
 │   ├── index.html               # Landing page
-│   └── dashboard.html           # Main dashboard
+│   ├── app.html                 # Main premium SaaS interface
+│   ├── dashboard.html           # Legacy dashboard (deprecated)
+│   ├── ugc.html                 # Legacy UGC page (deprecated)
+│   └── ai-chat.html             # Legacy AI chat (deprecated)
 ├── drizzle.config.ts            # Drizzle ORM configuration
 └── package.json                 # Dependencies & scripts
 ```
+
+## Main Application
+Access the premium interface at `/app` after logging in. This is the primary entry point with:
+- Collapsible dark sidebar with all navigation sections
+- Clean top bar with search and notifications
+- Analytics dashboard with charts
+- All features in one unified interface
 
 ## Tech Stack
 - **Backend:** Node.js + Express + TypeScript

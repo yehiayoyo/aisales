@@ -34,7 +34,7 @@ export function registerSocialRoutes(app: Express): void {
     const userId = req.user.claims.sub;
     
     if (!code) {
-      return res.redirect("/dashboard?error=oauth_failed");
+      return res.redirect("/app?error=oauth_failed");
     }
     
     try {
@@ -49,7 +49,7 @@ export function registerSocialRoutes(app: Express): void {
       
       if (!tokenData.access_token) {
         console.error("Facebook token error:", tokenData);
-        return res.redirect("/dashboard?error=token_failed");
+        return res.redirect("/app?error=token_failed");
       }
       
       const userResponse = await fetch(`https://graph.facebook.com/me?access_token=${tokenData.access_token}&fields=id,name`);
@@ -91,10 +91,10 @@ export function registerSocialRoutes(app: Express): void {
         }
       }
       
-      res.redirect("/dashboard?success=connected");
+      res.redirect("/app?success=connected");
     } catch (error) {
       console.error("Facebook OAuth error:", error);
-      res.redirect("/dashboard?error=oauth_error");
+      res.redirect("/app?error=oauth_error");
     }
   });
 
