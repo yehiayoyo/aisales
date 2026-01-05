@@ -829,19 +829,23 @@
     async function init() {
       try {
         const res = await fetch('/api/auth/user');
-        if (!res.ok) {
-          window.location.href = '/';
-          return;
+        if (res.ok) {
+          currentUser = await res.json();
+          document.getElementById('userName').textContent = currentUser.firstName || currentUser.username || 'User';
+          document.getElementById('userAvatar').textContent = (currentUser.firstName || currentUser.username || 'U').charAt(0).toUpperCase();
+        } else {
+          document.getElementById('userName').textContent = 'Guest';
+          document.getElementById('userAvatar').textContent = 'G';
         }
-        currentUser = await res.json();
-        document.getElementById('userName').textContent = currentUser.firstName || currentUser.username || 'User';
-        document.getElementById('userAvatar').textContent = (currentUser.firstName || currentUser.username || 'U').charAt(0).toUpperCase();
         
         loadDashboardData();
         initCharts();
       } catch (error) {
         console.error('Auth error:', error);
-        window.location.href = '/';
+        document.getElementById('userName').textContent = 'Guest';
+        document.getElementById('userAvatar').textContent = 'G';
+        loadDashboardData();
+        initCharts();
       }
     }
 
