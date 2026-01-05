@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - MT Hub</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="min-h-screen bg-gray-100">
+  <nav class="bg-white shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between h-16">
+        <div class="flex items-center">
+          <span class="text-2xl font-bold text-purple-600">MT Hub</span>
+        </div>
+        <div class="flex items-center space-x-4">
+          <span id="userName" class="text-gray-600"></span>
+          <a href="/api/logout" class="text-gray-600 hover:text-gray-800">Logout</a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <div class="flex">
+    <aside class="w-64 bg-white shadow-sm min-h-screen p-4">
+      <nav class="space-y-2">
+        <a href="#" onclick="showSection('overview')" class="block px-4 py-2 rounded-lg bg-purple-100 text-purple-700 font-medium">Overview</a>
+        <a href="#" onclick="showSection('inbox')" class="block px-4 py-2 rounded-lg text-gray-600 hover:bg-gray-100">Inbox</a>
+        <a href="#" onclick="showSection('accounts')" class="block px-4 py-2 rounded-lg text-gray-600 hover:bg-gray-100">Connected Accounts</a>
+        <a href="#" onclick="showSection('content')" class="block px-4 py-2 rounded-lg text-gray-600 hover:bg-gray-100">Content Generator</a>
+        <a href="#" onclick="showSection('autoreplies')" class="block px-4 py-2 rounded-lg text-gray-600 hover:bg-gray-100">Auto-Reply Rules</a>
+        <a href="#" onclick="showSection('scheduled')" class="block px-4 py-2 rounded-lg text-gray-600 hover:bg-gray-100">Scheduled Posts</a>
+      </nav>
+    </aside>
+
+    <main class="flex-1 p-8">
+      <div id="overview" class="section">
+        <h1 class="text-2xl font-bold mb-6">Dashboard Overview</h1>
+        <div class="grid md:grid-cols-4 gap-6 mb-8">
+          <div class="bg-white rounded-xl p-6 shadow-sm">
+            <div class="text-3xl font-bold text-purple-600" id="statAccounts">0</div>
+            <div class="text-gray-600">Connected Accounts</div>
+          </div>
+          <div class="bg-white rounded-xl p-6 shadow-sm">
+            <div class="text-3xl font-bold text-blue-600" id="statConversations">0</div>
+            <div class="text-gray-600">Total Conversations</div>
+          </div>
+          <div class="bg-white rounded-xl p-6 shadow-sm">
+            <div class="text-3xl font-bold text-green-600" id="statMessages">0</div>
+            <div class="text-gray-600">Messages This Week</div>
+          </div>
+          <div class="bg-white rounded-xl p-6 shadow-sm">
+            <div class="text-3xl font-bold text-orange-600" id="statPending">0</div>
+            <div class="text-gray-600">Pending Posts</div>
+          </div>
+        </div>
+        <div class="bg-white rounded-xl p-6 shadow-sm">
+          <h2 class="text-lg font-semibold mb-4">Recent Conversations</h2>
+          <div id="recentConversations" class="space-y-3">
+            <p class="text-gray-500">No conversations yet. Connect a social account to get started.</p>
+          </div>
+        </div>
+      </div>
+
+      <div id="accounts" class="section hidden">
+        <h1 class="text-2xl font-bold mb-6">Connected Accounts</h1>
+        <div class="bg-white rounded-xl p-6 shadow-sm mb-6">
+          <h2 class="text-lg font-semibold mb-4">Connect a Platform</h2>
+          <div class="flex gap-4">
+            <a href="/api/social/connect/facebook" class="flex items-center gap-2 bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition">
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+              Connect Facebook
+            </a>
+          </div>
+        </div>
+        <div class="bg-white rounded-xl p-6 shadow-sm">
+          <h2 class="text-lg font-semibold mb-4">Your Accounts</h2>
+          <div id="accountsList" class="space-y-3">
+            <p class="text-gray-500">No accounts connected yet.</p>
+          </div>
+        </div>
+      </div>
+
+      <div id="inbox" class="section hidden">
+        <h1 class="text-2xl font-bold mb-6">Unified Inbox</h1>
+        <div class="bg-white rounded-xl p-6 shadow-sm">
+          <div id="inboxList" class="space-y-3">
+            <p class="text-gray-500">No messages yet. Messages from your connected accounts will appear here.</p>
+          </div>
+        </div>
+      </div>
+
+      <div id="content" class="section hidden">
+        <h1 class="text-2xl font-bold mb-6">AI Content Generator</h1>
+        <div class="bg-white rounded-xl p-6 shadow-sm">
+          <div class="grid md:grid-cols-2 gap-6">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Content Type</label>
+              <select id="contentType" class="w-full border rounded-lg px-4 py-2">
+                <option value="post">Social Media Post</option>
+                <option value="caption">Caption</option>
+                <option value="ad">Ad Copy</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Platform</label>
+              <select id="contentPlatform" class="w-full border rounded-lg px-4 py-2">
+                <option value="facebook">Facebook</option>
+                <option value="instagram">Instagram</option>
+                <option value="general">General</option>
+              </select>
+            </div>
+          </div>
+          <div class="mt-4">
+            <label class="block text-sm font-medium text-gray-700 mb-2">Topic / Description</label>
+            <textarea id="contentTopic" rows="3" class="w-full border rounded-lg px-4 py-2" placeholder="Describe what you want to post about..."></textarea>
+          </div>
+          <button onclick="generateContent()" class="mt-4 bg-purple-600 text-white px-6 py-2 rounded-lg hover:bg-purple-700 transition">
+            Generate Content
+          </button>
+          <div id="generatedContent" class="mt-6 hidden">
+            <label class="block text-sm font-medium text-gray-700 mb-2">Generated Content</label>
+            <div class="bg-gray-50 rounded-lg p-4 whitespace-pre-wrap" id="contentResult"></div>
+            <button onclick="copyContent()" class="mt-2 text-purple-600 hover:text-purple-700">Copy to Clipboard</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="autoreplies" class="section hidden">
+        <h1 class="text-2xl font-bold mb-6">Auto-Reply Rules</h1>
+        <div class="bg-white rounded-xl p-6 shadow-sm">
+          <p class="text-gray-600 mb-4">Configure how AI responds to incoming messages automatically.</p>
+          <div id="rulesList" class="space-y-3">
+            <p class="text-gray-500">No auto-reply rules configured yet.</p>
+          </div>
+          <button onclick="showAddRuleModal()" class="mt-4 bg-purple-600 text-white px-6 py-2 rounded-lg hover:bg-purple-700 transition">
+            Add New Rule
+          </button>
+        </div>
+      </div>
+
+      <div id="scheduled" class="section hidden">
+        <h1 class="text-2xl font-bold mb-6">Scheduled Posts</h1>
+        <div class="bg-white rounded-xl p-6 shadow-sm">
+          <div id="scheduledList" class="space-y-3">
+            <p class="text-gray-500">No scheduled posts.</p>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    let currentUser = null;
+
+    async function init() {
+      try {
+        const res = await fetch('/api/auth/user', { credentials: 'include' });
+        if (!res.ok) {
+          window.location.href = '/';
+          return;
+        }
+        currentUser = await res.json();
+        document.getElementById('userName').textContent = currentUser.firstName || currentUser.email || 'User';
+        
+        loadStats();
+        loadAccounts();
+        loadConversations();
+        
+        const params = new URLSearchParams(window.location.search);
+        if (params.get('success') === 'connected') {
+          alert('Account connected successfully!');
+        }
+        if (params.get('error')) {
+          alert('Connection failed: ' + params.get('error'));
+        }
+      } catch (e) {
+        window.location.href = '/';
+      }
+    }
+
+    async function loadStats() {
+      try {
+        const res = await fetch('/api/dashboard/stats', { credentials: 'include' });
+        const stats = await res.json();
+        document.getElementById('statAccounts').textContent = stats.connectedAccounts;
+        document.getElementById('statConversations').textContent = stats.totalConversations;
+        document.getElementById('statMessages').textContent = stats.messagesThisWeek;
+        document.getElementById('statPending').textContent = stats.pendingPosts;
+      } catch (e) {
+        console.error('Failed to load stats:', e);
+      }
+    }
+
+    async function loadAccounts() {
+      try {
+        const res = await fetch('/api/social/accounts', { credentials: 'include' });
+        const accounts = await res.json();
+        const container = document.getElementById('accountsList');
+        
+        if (accounts.length === 0) {
+          container.innerHTML = '<p class="text-gray-500">No accounts connected yet.</p>';
+          return;
+        }
+        
+        container.innerHTML = accounts.map(acc => `
+          <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+            <div>
+              <span class="font-medium">${acc.accountName || 'Unknown'}</span>
+              <span class="text-sm text-gray-500 ml-2">${acc.platform}</span>
+            </div>
+            <button onclick="disconnectAccount(${acc.id})" class="text-red-600 hover:text-red-700">Disconnect</button>
+          </div>
+        `).join('');
+      } catch (e) {
+        console.error('Failed to load accounts:', e);
+      }
+    }
+
+    async function loadConversations() {
+      try {
+        const res = await fetch('/api/dashboard/recent-conversations', { credentials: 'include' });
+        const conversations = await res.json();
+        const container = document.getElementById('recentConversations');
+        
+        if (conversations.length === 0) {
+          container.innerHTML = '<p class="text-gray-500">No conversations yet. Connect a social account to get started.</p>';
+          return;
+        }
+        
+        container.innerHTML = conversations.map(conv => `
+          <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+            <div>
+              <span class="font-medium">${conv.contactName || 'Unknown Contact'}</span>
+              <span class="text-sm text-gray-500 ml-2">${conv.platform}</span>
+            </div>
+            <span class="text-xs px-2 py-1 rounded-full ${conv.aiStatus === 'auto' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}">${conv.aiStatus}</span>
+          </div>
+        `).join('');
+      } catch (e) {
+        console.error('Failed to load conversations:', e);
+      }
+    }
+
+    async function disconnectAccount(id) {
+      if (!confirm('Are you sure you want to disconnect this account?')) return;
+      try {
+        await fetch(`/api/social/accounts/${id}`, { method: 'DELETE', credentials: 'include' });
+        loadAccounts();
+        loadStats();
+      } catch (e) {
+        alert('Failed to disconnect account');
+      }
+    }
+
+    async function generateContent() {
+      const type = document.getElementById('contentType').value;
+      const platform = document.getElementById('contentPlatform').value;
+      const topic = document.getElementById('contentTopic').value;
+      
+      if (!topic) {
+        alert('Please enter a topic');
+        return;
+      }
+      
+      try {
+        const res = await fetch('/api/ai/generate-content', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({ type, platform, topic })
+        });
+        const data = await res.json();
+        document.getElementById('contentResult').textContent = data.content;
+        document.getElementById('generatedContent').classList.remove('hidden');
+      } catch (e) {
+        alert('Failed to generate content');
+      }
+    }
+
+    function copyContent() {
+      const content = document.getElementById('contentResult').textContent;
+      navigator.clipboard.writeText(content);
+      alert('Copied to clipboard!');
+    }
+
+    function showSection(sectionId) {
+      document.querySelectorAll('.section').forEach(s => s.classList.add('hidden'));
+      document.getElementById(sectionId).classList.remove('hidden');
+      
+      document.querySelectorAll('aside a').forEach(a => {
+        a.classList.remove('bg-purple-100', 'text-purple-700');
+        a.classList.add('text-gray-600');
+      });
+      event.target.classList.add('bg-purple-100', 'text-purple-700');
+      event.target.classList.remove('text-gray-600');
+    }
+
+    init();
+  </script>
+</body>
+</html>
