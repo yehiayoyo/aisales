@@ -1,7 +1,7 @@
 # MT Hub - AI-Powered Business Automation Platform
 
 ## Overview
-MT Hub is a full-featured SaaS platform designed to help businesses manage AI automation, social media, and customer communication from one centralized dashboard. The platform integrates AI intelligence directly with social media pages and messaging platforms.
+MT Hub is a production-grade SaaS platform designed to help businesses manage AI automation, social media, and customer communication from one centralized dashboard. The platform serves as a central AI brain controlling business communication across Facebook, Instagram, and WhatsApp.
 
 ## Project Structure
 ```
@@ -13,7 +13,11 @@ MT Hub is a full-featured SaaS platform designed to help businesses manage AI au
 │   │   ├── social.ts            # Social media OAuth & account management
 │   │   ├── messaging.ts         # Unified inbox & conversations
 │   │   ├── ai.ts                # AI reply generation & content creation
-│   │   └── dashboard.ts         # Dashboard stats & settings
+│   │   ├── dashboard.ts         # Dashboard stats & settings
+│   │   └── webhooks.ts          # Meta platform webhooks (Facebook/Instagram/WhatsApp)
+│   ├── services/
+│   │   ├── aiService.ts         # Central AI service with memory & tone profiles
+│   │   └── encryptionService.ts # Token encryption service
 │   └── replit_integrations/
 │       └── auth/                # Replit Auth integration
 ├── shared/                      # Shared schemas and types
@@ -33,23 +37,45 @@ MT Hub is a full-featured SaaS platform designed to help businesses manage AI au
 - **Backend:** Node.js + Express + TypeScript
 - **Database:** PostgreSQL with Drizzle ORM
 - **Authentication:** Replit Auth (OpenID Connect)
-- **AI:** OpenAI via Replit AI Integrations
+- **AI:** OpenAI via Replit AI Integrations (supports any OpenAI-compatible provider)
 - **Frontend:** HTML + Tailwind CSS
+- **Security:** AES-256-GCM token encryption
 
-## Features Implemented (MVP)
+## Features Implemented
+
+### Core Features
 1. **User Authentication** - Sign in with Google, GitHub, Apple, or email via Replit Auth
-2. **Social Media Connection** - OAuth integration for Facebook Pages
-3. **Unified Inbox** - View all conversations in one place
-4. **AI Auto-Replies** - Generate context-aware responses with OpenAI
-5. **Content Generation** - AI-powered post, caption, and ad copy creation
-6. **Dashboard Analytics** - Stats on connected accounts, messages, and posts
+2. **Social Media Connection** - OAuth integration for Facebook Pages and Instagram Business
+3. **WhatsApp Business** - Cloud API integration (sandbox support)
+4. **Unified Inbox** - View all conversations from all platforms in one place
+5. **AI Auto-Replies** - Context-aware responses with conversation memory
+6. **Content Generation** - AI-powered post, caption, and ad copy creation
+7. **Dashboard Analytics** - Stats on connected accounts, messages, and posts
+8. **Manual Override** - Toggle AI on/off per conversation from dashboard
+
+### AI Layer Features
+- **Conversation Memory** - Maintains context across multiple messages
+- **Tone Profiles** - Professional, Friendly, Sales-Focused, Support modes
+- **Sentiment Analysis** - Analyzes customer message sentiment
+- **Multi-Provider Support** - Works with any OpenAI-compatible LLM
+
+### Security Features
+- No secrets in code - All credentials via environment variables
+- Token encryption at rest (AES-256-GCM)
+- Session-validated OAuth callbacks
+- Webhook signature verification
 
 ## Environment Variables
-Required secrets for Facebook integration:
+
+### Required for Facebook/Instagram
 - `FACEBOOK_APP_ID` - Your Meta App ID
 - `FACEBOOK_APP_SECRET` - Your Meta App Secret
+- `META_WEBHOOK_VERIFY_TOKEN` - Webhook verification token (default: mt_hub_verify_token)
 
-Auto-configured by Replit:
+### Optional (for enhanced security)
+- `TOKEN_ENCRYPTION_KEY` - 64-character hex string for token encryption
+
+### Auto-configured by Replit
 - `DATABASE_URL` - PostgreSQL connection
 - `SESSION_SECRET` - Session encryption
 - `AI_INTEGRATIONS_OPENAI_API_KEY` - OpenAI access
@@ -63,6 +89,7 @@ npm run db:studio  # Open Drizzle Studio for DB inspection
 ```
 
 ## API Endpoints
+
 ### Auth
 - `GET /api/login` - Initiate login flow
 - `GET /api/logout` - Logout user
@@ -83,6 +110,8 @@ npm run db:studio  # Open Drizzle Studio for DB inspection
 - `POST /api/ai/generate-reply` - Generate AI reply for message
 - `POST /api/ai/generate-content` - Generate social media content
 - `POST /api/ai/analyze-sentiment` - Analyze message sentiment
+- `GET /api/ai/tone-profiles` - Get available tone profiles
+- `POST /api/ai/clear-memory` - Clear conversation memory
 
 ### Dashboard
 - `GET /api/dashboard/stats` - Get overview statistics
@@ -92,17 +121,31 @@ npm run db:studio  # Open Drizzle Studio for DB inspection
 - `GET /api/scheduled-posts` - Get scheduled posts
 - `POST /api/scheduled-posts` - Schedule new post
 
-## Next Steps (Future Features)
-1. Instagram Business Account integration
-2. WhatsApp Business Cloud API integration
-3. Webhook handlers for real-time message sync
-4. Post scheduling with cron jobs
-5. Advanced analytics and reporting
-6. Multi-user team management
+### Webhooks
+- `GET /webhooks/meta` - Meta webhook verification
+- `POST /webhooks/meta` - Meta message webhook handler
+- `GET /webhooks/whatsapp` - WhatsApp webhook verification
+- `POST /webhooks/whatsapp` - WhatsApp message webhook handler
+
+## Webhook Configuration
+
+### For Facebook/Instagram
+1. Go to Meta Developer Console
+2. Add Webhooks product to your app
+3. Configure webhook URL: `https://your-app.replit.app/webhooks/meta`
+4. Set verify token to match `META_WEBHOOK_VERIFY_TOKEN`
+5. Subscribe to: messages, messaging_postbacks
+
+### For WhatsApp Business
+1. Set up WhatsApp Business Cloud API
+2. Configure webhook URL: `https://your-app.replit.app/webhooks/whatsapp`
+3. Subscribe to: messages
 
 ## Recent Changes
-- January 2026: Initial MT Hub platform build
-- Implemented Replit Auth for user management
-- Built Facebook OAuth integration
-- Created unified dashboard with AI features
-- Set up PostgreSQL database with proper schema
+- January 2026: Full production-grade rebuild
+- Added Meta webhooks for real-time message sync
+- Implemented AI service with conversation memory and tone profiles
+- Added token encryption service for secure credential storage
+- Built WhatsApp Business Cloud API integration
+- Created auto-reply automation with manual override
+- Enhanced security with webhook signature verification

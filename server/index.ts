@@ -11,6 +11,7 @@ import { registerSocialRoutes } from "./routes/social.js";
 import { registerMessagingRoutes } from "./routes/messaging.js";
 import { registerAIRoutes } from "./routes/ai.js";
 import { registerDashboardRoutes } from "./routes/dashboard.js";
+import { webhookRouter } from "./routes/webhooks.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -19,6 +20,7 @@ const app: Express = express();
 const PORT = 5000;
 
 app.use(cors());
+app.use("/webhooks", webhookRouter);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, "../public")));
