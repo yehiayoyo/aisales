@@ -7,6 +7,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     .chat-container { height: calc(100vh - 64px); }
+    @media (max-width: 767px) { .chat-container { height: calc(100vh - 112px); margin-top: 48px !important; } }
     .message-content { white-space: pre-wrap; word-wrap: break-word; }
     .message-content a { color: #8b5cf6; text-decoration: underline; }
     .message-content strong { font-weight: 600; }
@@ -19,20 +20,28 @@
 </head>
 <body class="bg-gray-50">
   <nav class="bg-white shadow-sm border-b fixed top-0 left-0 right-0 z-50">
-    <div class="px-4 h-16 flex items-center justify-between">
-      <div class="flex items-center space-x-4">
-        <a href="/dashboard" class="text-gray-600 hover:text-gray-900">
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
-          </svg>
-        </a>
-        <h1 class="text-xl font-bold text-purple-600">AI Chat</h1>
+    <div class="max-w-full mx-auto px-4 h-16 flex items-center justify-between">
+      <div class="flex items-center space-x-8">
+        <a href="/dashboard" class="text-2xl font-bold text-purple-600">MT Hub</a>
+        <div class="hidden md:flex space-x-1">
+          <a href="/dashboard" class="px-4 py-2 text-gray-600 hover:text-gray-900">Social AI</a>
+          <a href="/ugc" class="px-4 py-2 text-gray-600 hover:text-gray-900">UGC Hub</a>
+          <a href="/ai-chat" class="px-4 py-2 text-purple-600 font-medium border-b-2 border-purple-600">AI Tools</a>
+        </div>
       </div>
-      <div id="user-info" class="flex items-center space-x-3">
+      <div id="user-info" class="flex items-center space-x-4">
         <span id="user-name" class="text-gray-600"></span>
+        <a href="/api/logout" class="text-gray-600 hover:text-gray-800">Logout</a>
       </div>
     </div>
   </nav>
+
+  <!-- Mobile Nav -->
+  <div class="md:hidden fixed top-16 left-0 right-0 z-40 bg-white border-b px-4 py-2 flex space-x-2 overflow-x-auto">
+    <a href="/dashboard" class="px-3 py-1.5 text-gray-600 hover:bg-gray-100 rounded-full text-sm whitespace-nowrap">Social AI</a>
+    <a href="/ugc" class="px-3 py-1.5 text-gray-600 hover:bg-gray-100 rounded-full text-sm whitespace-nowrap">UGC Hub</a>
+    <a href="/ai-chat" class="px-3 py-1.5 bg-purple-100 text-purple-700 rounded-full text-sm font-medium whitespace-nowrap">AI Tools</a>
+  </div>
 
   <div class="chat-container mt-16 flex">
     <aside id="sidebar" class="w-72 bg-white border-r flex flex-col">

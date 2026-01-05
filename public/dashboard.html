@@ -7,11 +7,16 @@
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="min-h-screen bg-gray-100">
-  <nav class="bg-white shadow-sm">
+  <nav class="bg-white shadow-sm border-b">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex justify-between h-16">
-        <div class="flex items-center">
+        <div class="flex items-center space-x-8">
           <span class="text-2xl font-bold text-purple-600">MT Hub</span>
+          <div class="hidden md:flex space-x-1">
+            <a href="/dashboard" class="px-4 py-2 text-purple-600 font-medium border-b-2 border-purple-600">Social AI</a>
+            <a href="/ugc" class="px-4 py-2 text-gray-600 hover:text-gray-900">UGC Hub</a>
+            <a href="/ai-chat" class="px-4 py-2 text-gray-600 hover:text-gray-900">AI Tools</a>
+          </div>
         </div>
         <div class="flex items-center space-x-4">
           <span id="userName" class="text-gray-600"></span>
@@ -21,14 +26,24 @@
     </div>
   </nav>
 
+  <!-- Mobile Nav -->
+  <div class="md:hidden bg-white border-b px-4 py-2 flex space-x-2 overflow-x-auto">
+    <a href="/dashboard" class="px-3 py-1.5 bg-purple-100 text-purple-700 rounded-full text-sm font-medium whitespace-nowrap">Social AI</a>
+    <a href="/ugc" class="px-3 py-1.5 text-gray-600 hover:bg-gray-100 rounded-full text-sm whitespace-nowrap">UGC Hub</a>
+    <a href="/ai-chat" class="px-3 py-1.5 text-gray-600 hover:bg-gray-100 rounded-full text-sm whitespace-nowrap">AI Tools</a>
+  </div>
+
   <div class="flex">
-    <aside class="w-64 bg-white shadow-sm min-h-screen p-4">
+    <aside class="w-64 bg-white shadow-sm min-h-screen p-4 hidden md:block">
+      <div class="mb-4 pb-4 border-b">
+        <span class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Social Smart AI</span>
+      </div>
       <nav class="space-y-2">
         <a href="#" onclick="showSection('overview')" class="block px-4 py-2 rounded-lg bg-purple-100 text-purple-700 font-medium">Overview</a>
         <a href="#" onclick="showSection('inbox')" class="block px-4 py-2 rounded-lg text-gray-600 hover:bg-gray-100">Inbox</a>
         <a href="#" onclick="showSection('accounts')" class="block px-4 py-2 rounded-lg text-gray-600 hover:bg-gray-100">Connected Accounts</a>
         <a href="#" onclick="showSection('content')" class="block px-4 py-2 rounded-lg text-gray-600 hover:bg-gray-100">Content Generator</a>
-        <a href="#" onclick="showSection('autoreplies')" class="block px-4 py-2 rounded-lg text-gray-600 hover:bg-gray-100">Auto-Reply Rules</a>
+        <a href="#" onclick="showSection('autoreplies')" class="block px-4 py-2 rounded-lg text-gray-600 hover:bg-gray-100">Auto Smart Replies</a>
         <a href="#" onclick="showSection('scheduled')" class="block px-4 py-2 rounded-lg text-gray-600 hover:bg-gray-100">Scheduled Posts</a>
       </nav>
     </aside>
