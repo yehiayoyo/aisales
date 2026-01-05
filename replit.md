@@ -203,3 +203,44 @@ npm run db:studio  # Open Drizzle Studio for DB inspection
 - Conversation memory is scoped per conversationId to maintain separate context per thread
 - TOKEN_ENCRYPTION_KEY environment variable is required (64-character hex string)
 - AI auto-reply triggers when conversation aiStatus is "auto", can be toggled to "manual" for human override
+
+## Multi-AI Chat System (Poe-like Interface)
+
+### Overview
+A modular multi-AI chat interface supporting multiple AI providers in one unified chat experience.
+
+### Providers
+- **ChatGPT (OpenAI)**: Text generation and conversation (gpt-4o, gpt-4o-mini, o1-preview)
+- **Luma AI**: Image generation (photon-1) and video generation (ray-2)
+- **Tavily Search**: Real-time web search with source citations
+
+### Architecture
+```
+server/services/aiProviders/
+├── index.ts           # Provider registry and interface definitions
+├── openaiProvider.ts  # OpenAI/ChatGPT implementation
+├── lumaProvider.ts    # Luma image/video generation
+└── tavilyProvider.ts  # Web search integration
+
+server/services/aiChatService.ts  # Chat persistence and messaging
+server/routes/aiChat.ts           # REST API endpoints
+shared/models/aiChat.ts           # Database schema (ai_chats, ai_chat_messages)
+public/ai-chat.html               # Frontend UI
+```
+
+### Adding New Providers
+1. Create a new file in `server/services/aiProviders/`
+2. Implement the `AIProvider` interface
+3. Register in `server/services/aiProviders/index.ts`
+
+### API Endpoints
+- `GET /api/ai-chat/providers` - List available AI providers
+- `GET /api/ai-chat/chats` - List user's chats
+- `POST /api/ai-chat/chats` - Create new chat
+- `GET /api/ai-chat/chats/:id` - Get chat with messages
+- `DELETE /api/ai-chat/chats/:id` - Delete chat
+- `POST /api/ai-chat/chats/:id/messages` - Send message
+- `POST /api/ai-chat/quick` - Quick one-off chat
+
+### Access
+Navigate to `/ai-chat` from the dashboard to use the multi-AI chat interface.

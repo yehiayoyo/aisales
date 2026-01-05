@@ -111,7 +111,7 @@ export async function addMessage(
       type,
       providerId,
       model,
-      metadata: metadata ? JSON.stringify(metadata) : null,
+      metadata: metadata || null,
     })
     .returning();
 
