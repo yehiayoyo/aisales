@@ -53,15 +53,35 @@ export const ugcCampaigns = pgTable("ugc_campaigns", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
+export const ugcOrders = pgTable("ugc_orders", {
+  id: serial("id").primaryKey(),
+  campaignId: integer("campaign_id").notNull().references(() => ugcCampaigns.id, { onDelete: "cascade" }),
+  buyerUserId: varchar("buyer_user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  creatorId: integer("creator_id").notNull().references(() => creatorProfiles.id, { onDelete: "cascade" }),
+  status: varchar("status", { length: 30 }).default("unpaid"),
+  amount: decimal("amount", { precision: 10, scale: 2 }),
+  platformFee: decimal("platform_fee", { precision: 10, scale: 2 }),
+  requirements: jsonb("requirements").$type<string[]>().default([]),
+  paymentId: varchar("payment_id"),
+  paidAt: timestamp("paid_at"),
+  deliveredAt: timestamp("delivered_at"),
+  completedAt: timestamp("completed_at"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
 export const campaignAssignments = pgTable("campaign_assignments", {
   id: serial("id").primaryKey(),
   campaignId: integer("campaign_id").notNull().references(() => ugcCampaigns.id, { onDelete: "cascade" }),
   creatorId: integer("creator_id").notNull().references(() => creatorProfiles.id, { onDelete: "cascade" }),
+  orderId: integer("order_id").references(() => ugcOrders.id, { onDelete: "set null" }),
   status: varchar("status", { length: 30 }).default("pending"),
   agreedRate: decimal("agreed_rate", { precision: 10, scale: 2 }),
   notes: text("notes"),
   ndaAccepted: boolean("nda_accepted").default(false),
   ndaAcceptedAt: timestamp("nda_accepted_at"),
+  revisionsAllowed: integer("revisions_allowed").default(3),
+  revisionsUsed: integer("revisions_used").default(0),
   assignedAt: timestamp("assigned_at").defaultNow(),
   acceptedAt: timestamp("accepted_at"),
   completedAt: timestamp("completed_at"),
@@ -102,11 +122,27 @@ export const contentReviews = pgTable("content_reviews", {
 export const ugcMessages = pgTable("ugc_messages", {
   id: serial("id").primaryKey(),
   campaignId: integer("campaign_id").notNull().references(() => ugcCampaigns.id, { onDelete: "cascade" }),
+  orderId: integer("order_id").references(() => ugcOrders.id, { onDelete: "cascade" }),
   senderId: varchar("sender_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  senderRole: varchar("sender_role", { length: 20 }).default("buyer"),
   content: text("content").notNull(),
+  messageType: varchar("message_type", { length: 30 }).default("text"),
   attachmentPath: varchar("attachment_path"),
   isRead: boolean("is_read").default(false),
   createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const ugcDeliveries = pgTable("ugc_deliveries", {
+  id: serial("id").primaryKey(),
+  orderId: integer("order_id").notNull().references(() => ugcOrders.id, { onDelete: "cascade" }),
+  submissionId: integer("submission_id").references(() => contentSubmissions.id, { onDelete: "set null" }),
+  videoUrl: varchar("video_url"),
+  note: text("note"),
+  status: varchar("status", { length: 30 }).default("pending"),
+  deliveredAt: timestamp("delivered_at").defaultNow(),
+  approvedAt: timestamp("approved_at"),
+  rejectedAt: timestamp("rejected_at"),
+  rejectionReason: text("rejection_reason"),
 });
 
 export const creatorProfilesRelations = relations(creatorProfiles, ({ one, many }) => ({
@@ -162,9 +198,41 @@ export const ugcMessagesRelations = relations(ugcMessages, ({ one }) => ({
     fields: [ugcMessages.campaignId],
     references: [ugcCampaigns.id],
   }),
+  order: one(ugcOrders, {
+    fields: [ugcMessages.orderId],
+    references: [ugcOrders.id],
+  }),
   sender: one(users, {
     fields: [ugcMessages.senderId],
     references: [users.id],
+  }),
+}));
+
+export const ugcOrdersRelations = relations(ugcOrders, ({ one, many }) => ({
+  campaign: one(ugcCampaigns, {
+    fields: [ugcOrders.campaignId],
+    references: [ugcCampaigns.id],
+  }),
+  buyer: one(users, {
+    fields: [ugcOrders.buyerUserId],
+    references: [users.id],
+  }),
+  creator: one(creatorProfiles, {
+    fields: [ugcOrders.creatorId],
+    references: [creatorProfiles.id],
+  }),
+  deliveries: many(ugcDeliveries),
+  messages: many(ugcMessages),
+}));
+
+export const ugcDeliveriesRelations = relations(ugcDeliveries, ({ one }) => ({
+  order: one(ugcOrders, {
+    fields: [ugcDeliveries.orderId],
+    references: [ugcOrders.id],
+  }),
+  submission: one(contentSubmissions, {
+    fields: [ugcDeliveries.submissionId],
+    references: [contentSubmissions.id],
   }),
 }));
 
@@ -180,3 +248,7 @@ export type ContentReview = typeof contentReviews.$inferSelect;
 export type InsertContentReview = typeof contentReviews.$inferInsert;
 export type UgcMessage = typeof ugcMessages.$inferSelect;
 export type InsertUgcMessage = typeof ugcMessages.$inferInsert;
+export type UgcOrder = typeof ugcOrders.$inferSelect;
+export type InsertUgcOrder = typeof ugcOrders.$inferInsert;
+export type UgcDelivery = typeof ugcDeliveries.$inferSelect;
+export type InsertUgcDelivery = typeof ugcDeliveries.$inferInsert;

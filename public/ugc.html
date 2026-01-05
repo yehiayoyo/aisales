@@ -80,6 +80,7 @@
 
       <div class="flex space-x-4 mb-6">
         <button onclick="showBrandSection('campaigns')" id="btn-campaigns" class="px-4 py-2 bg-purple-600 text-white rounded-lg">Campaigns</button>
+        <button onclick="showBrandSection('orders')" id="btn-orders" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300">Orders</button>
         <button onclick="showBrandSection('creators')" id="btn-creators" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300">Creator Status</button>
         <button onclick="showBrandSection('reviews')" id="btn-reviews" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300">Review History</button>
         <button onclick="showBrandSection('library')" id="btn-library" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300">Approved Library</button>
@@ -91,6 +92,16 @@
         </div>
         <div id="campaigns-list" class="divide-y divide-gray-200">
           <div class="p-6 text-center text-gray-500">Loading campaigns...</div>
+        </div>
+      </div>
+
+      <div id="section-orders" class="bg-white rounded-xl shadow-sm hidden">
+        <div class="px-6 py-4 border-b border-gray-200">
+          <h2 class="text-lg font-semibold">Your Orders</h2>
+          <p class="text-sm text-gray-500 mt-1">Track order status, deliveries, and communication</p>
+        </div>
+        <div id="orders-list" class="divide-y divide-gray-200">
+          <div class="p-6 text-center text-gray-500">Loading orders...</div>
         </div>
       </div>
 
@@ -703,7 +714,7 @@
     });
 
     function showBrandSection(section) {
-      const sections = ['campaigns', 'creators', 'reviews', 'library'];
+      const sections = ['campaigns', 'orders', 'creators', 'reviews', 'library'];
       sections.forEach(s => {
         document.getElementById(`section-${s}`).classList.toggle('hidden', s !== section);
         document.getElementById(`btn-${s}`).classList.toggle('bg-purple-600', s === section);
@@ -712,6 +723,7 @@
         document.getElementById(`btn-${s}`).classList.toggle('text-gray-700', s !== section);
       });
       
+      if (section === 'orders') loadOrders();
       if (section === 'creators') loadCreatorStatus();
       if (section === 'reviews') loadReviewHistory();
       if (section === 'library') loadApprovedLibrary();
@@ -857,6 +869,168 @@
         `).join('');
       } catch (e) {
         console.error('Error loading approved library:', e);
+      }
+    }
+
+    async function loadOrders() {
+      try {
+        const res = await fetch('/api/ugc/orders', { credentials: 'include' });
+        const orders = await res.json();
+        
+        const list = document.getElementById('orders-list');
+        if (!orders.length) {
+          list.innerHTML = '<div class="p-6 text-center text-gray-500">No orders yet</div>';
+          return;
+        }
+
+        const statusColors = {
+          unpaid: 'bg-gray-100 text-gray-600',
+          paid: 'bg-blue-100 text-blue-700',
+          in_progress: 'bg-yellow-100 text-yellow-700',
+          delivered: 'bg-purple-100 text-purple-700',
+          completed: 'bg-green-100 text-green-700'
+        };
+
+        function safeText(text) {
+          const div = document.createElement('div');
+          div.textContent = text || '';
+          return div.innerHTML;
+        }
+
+        list.innerHTML = orders.map(item => `
+          <div class="p-4 hover:bg-gray-50">
+            <div class="flex justify-between items-start">
+              <div>
+                <div class="flex items-center space-x-3">
+                  <span class="font-semibold">Order #${safeText(String(item.order.id))}</span>
+                  <span class="${statusColors[item.order.status] || 'bg-gray-100'} px-2 py-1 rounded text-sm">
+                    ${safeText(item.order.status?.replace('_', ' ').toUpperCase())}
+                  </span>
+                </div>
+                <div class="mt-1 text-gray-600">
+                  Campaign: <span class="font-medium">${safeText(item.campaign.title)}</span>
+                  ${item.creator ? `| Creator: <span class="font-medium">${safeText(item.creator.displayName)}</span>` : ''}
+                </div>
+                <div class="mt-1 text-sm text-gray-500">
+                  Amount: $${safeText(String(item.order.amount || 0))} | Created: ${new Date(item.order.createdAt).toLocaleDateString()}
+                </div>
+              </div>
+              <div class="flex space-x-2">
+                <button onclick="openOrderChat(${item.order.id})" class="bg-purple-600 text-white px-3 py-1 rounded-lg text-sm hover:bg-purple-700">
+                  Chat
+                </button>
+                ${item.order.status === 'delivered' ? `
+                  <button onclick="approveOrder(${item.order.id})" class="bg-green-600 text-white px-3 py-1 rounded-lg text-sm hover:bg-green-700">
+                    Approve
+                  </button>
+                  <button onclick="requestRevision(${item.order.id})" class="bg-orange-600 text-white px-3 py-1 rounded-lg text-sm hover:bg-orange-700">
+                    Revision
+                  </button>
+                ` : ''}
+              </div>
+            </div>
+          </div>
+        `).join('');
+      } catch (e) {
+        console.error('Error loading orders:', e);
+      }
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    async function openOrderChat(orderId) {
+      try {
+        const res = await fetch(`/api/ugc/orders/${orderId}/chat`, { credentials: 'include' });
+        const data = await res.json();
+        
+        const modal = document.createElement('div');
+        modal.id = 'chat-modal';
+        modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
+        modal.innerHTML = `
+          <div class="bg-white rounded-xl w-full max-w-2xl max-h-[80vh] flex flex-col">
+            <div class="px-6 py-4 border-b flex justify-between items-center">
+              <h2 class="text-lg font-semibold">Order #${escapeHtml(String(orderId))} Chat</h2>
+              <button onclick="document.getElementById('chat-modal').remove()" class="text-gray-500 hover:text-gray-700">X</button>
+            </div>
+            <div id="chat-messages" class="flex-1 overflow-y-auto p-4 space-y-3" style="max-height: 400px;">
+              ${data.messages.map(m => `
+                <div class="${m.senderRole === data.userRole ? 'text-right' : 'text-left'}">
+                  <div class="inline-block p-3 rounded-lg ${m.senderRole === data.userRole ? 'bg-purple-600 text-white' : 'bg-gray-100'}">
+                    <div class="text-xs opacity-70 mb-1">${escapeHtml(m.senderRole || 'unknown')}</div>
+                    <div>${escapeHtml(m.content || '')}</div>
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+            ${data.canSend ? `
+              <div class="px-4 py-3 border-t flex space-x-2">
+                <input type="text" id="chat-input" class="flex-1 border rounded-lg px-3 py-2" placeholder="Type a message...">
+                <button onclick="sendChatMessage(${orderId})" class="bg-purple-600 text-white px-4 py-2 rounded-lg">Send</button>
+              </div>
+            ` : '<div class="px-4 py-3 border-t text-center text-gray-500">Chat closed - order completed</div>'}
+          </div>
+        `;
+        document.body.appendChild(modal);
+      } catch (e) {
+        console.error('Error opening chat:', e);
+        alert('Failed to open chat');
+      }
+    }
+
+    async function sendChatMessage(orderId) {
+      const input = document.getElementById('chat-input');
+      const message = input.value.trim();
+      if (!message) return;
+
+      try {
+        await fetch(`/api/ugc/orders/${orderId}/chat`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({ message })
+        });
+        document.getElementById('chat-modal').remove();
+        openOrderChat(orderId);
+      } catch (e) {
+        console.error('Error sending message:', e);
+      }
+    }
+
+    async function approveOrder(orderId) {
+      if (!confirm('Approve this delivery and complete the order?')) return;
+      try {
+        await fetch(`/api/ugc/orders/${orderId}/approve`, {
+          method: 'POST',
+          credentials: 'include'
+        });
+        loadOrders();
+      } catch (e) {
+        console.error('Error approving order:', e);
+      }
+    }
+
+    async function requestRevision(orderId) {
+      const note = prompt('Enter revision notes:');
+      if (!note) return;
+      try {
+        const res = await fetch(`/api/ugc/orders/${orderId}/revision`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({ note })
+        });
+        if (!res.ok) {
+          const err = await res.json();
+          alert(err.error);
+          return;
+        }
+        loadOrders();
+      } catch (e) {
+        console.error('Error requesting revision:', e);
       }
     }
 

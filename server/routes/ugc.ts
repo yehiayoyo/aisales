@@ -12,6 +12,7 @@ import {
   analyzeContentQuality,
   generateRevisionFeedback,
 } from "../services/ugcAiService.js";
+import { generateUgcVideo, isLumaConfigured } from "../services/lumaAiService.js";
 
 const {
   creatorProfiles,
@@ -20,6 +21,8 @@ const {
   contentSubmissions,
   contentReviews,
   ugcMessages,
+  ugcOrders,
+  ugcDeliveries,
 } = schema;
 
 const router = Router();
@@ -876,6 +879,489 @@ router.get("/dashboard/creator-status", isAuthenticated, async (req: Request, re
     console.error("Error fetching creator status:", error);
     res.status(500).json({ error: "Failed to fetch creator status" });
   }
+});
+
+router.post("/orders", isAuthenticated, async (req: Request, res: Response) => {
+  try {
+    const buyerUserId = (req as any).user?.id;
+    const { campaignId, creatorId, amount, requirements } = req.body;
+
+    if (!campaignId || !creatorId) {
+      return res.status(400).json({ error: "Campaign and creator are required" });
+    }
+
+    const platformFee = amount ? (parseFloat(amount) * 0.1).toFixed(2) : "0";
+
+    const [order] = await db.insert(ugcOrders).values({
+      campaignId,
+      buyerUserId,
+      creatorId,
+      amount,
+      platformFee,
+      requirements: requirements || [],
+      status: "unpaid",
+    }).returning();
+
+    res.json(order);
+  } catch (error) {
+    console.error("Error creating order:", error);
+    res.status(500).json({ error: "Failed to create order" });
+  }
+});
+
+router.get("/orders", isAuthenticated, async (req: Request, res: Response) => {
+  try {
+    const userId = (req as any).user?.id;
+    const { role } = req.query;
+
+    if (role === "creator") {
+      const profile = await db.select().from(creatorProfiles)
+        .where(eq(creatorProfiles.userId, userId))
+        .limit(1);
+
+      if (profile.length === 0) {
+        return res.json([]);
+      }
+
+      const orders = await db.select({
+        order: ugcOrders,
+        campaign: ugcCampaigns,
+      })
+        .from(ugcOrders)
+        .innerJoin(ugcCampaigns, eq(ugcOrders.campaignId, ugcCampaigns.id))
+        .where(eq(ugcOrders.creatorId, profile[0].id))
+        .orderBy(desc(ugcOrders.createdAt));
+
+      return res.json(orders);
+    }
+
+    const orders = await db.select({
+      order: ugcOrders,
+      campaign: ugcCampaigns,
+      creator: creatorProfiles,
+    })
+      .from(ugcOrders)
+      .innerJoin(ugcCampaigns, eq(ugcOrders.campaignId, ugcCampaigns.id))
+      .innerJoin(creatorProfiles, eq(ugcOrders.creatorId, creatorProfiles.id))
+      .where(eq(ugcOrders.buyerUserId, userId))
+      .orderBy(desc(ugcOrders.createdAt));
+
+    res.json(orders);
+  } catch (error) {
+    console.error("Error fetching orders:", error);
+    res.status(500).json({ error: "Failed to fetch orders" });
+  }
+});
+
+router.get("/orders/:id", isAuthenticated, async (req: Request, res: Response) => {
+  try {
+    const orderId = parseInt(req.params.id);
+    const userId = (req as any).user?.id;
+
+    const [order] = await db.select({
+      order: ugcOrders,
+      campaign: ugcCampaigns,
+      creator: creatorProfiles,
+    })
+      .from(ugcOrders)
+      .innerJoin(ugcCampaigns, eq(ugcOrders.campaignId, ugcCampaigns.id))
+      .innerJoin(creatorProfiles, eq(ugcOrders.creatorId, creatorProfiles.id))
+      .where(eq(ugcOrders.id, orderId))
+      .limit(1);
+
+    if (!order) {
+      return res.status(404).json({ error: "Order not found" });
+    }
+
+    const creatorProfile = await db.select().from(creatorProfiles)
+      .where(eq(creatorProfiles.userId, userId))
+      .limit(1);
+
+    const isCreator = creatorProfile.length > 0 && creatorProfile[0].id === order.creator.id;
+    const isBuyer = order.order.buyerUserId === userId;
+
+    if (!isCreator && !isBuyer) {
+      return res.status(403).json({ error: "Access denied" });
+    }
+
+    const deliveries = await db.select().from(ugcDeliveries)
+      .where(eq(ugcDeliveries.orderId, orderId))
+      .orderBy(desc(ugcDeliveries.deliveredAt));
+
+    res.json({ ...order, deliveries, userRole: isCreator ? "creator" : "buyer" });
+  } catch (error) {
+    console.error("Error fetching order:", error);
+    res.status(500).json({ error: "Failed to fetch order" });
+  }
+});
+
+router.post("/orders/:id/pay", isAuthenticated, async (req: Request, res: Response) => {
+  try {
+    const orderId = parseInt(req.params.id);
+    const userId = (req as any).user?.id;
+    const { paymentId } = req.body;
+
+    const [order] = await db.select().from(ugcOrders)
+      .where(and(eq(ugcOrders.id, orderId), eq(ugcOrders.buyerUserId, userId)));
+
+    if (!order) {
+      return res.status(404).json({ error: "Order not found" });
+    }
+
+    if (order.status !== "unpaid") {
+      return res.status(400).json({ error: "Order already paid" });
+    }
+
+    const [updated] = await db.update(ugcOrders)
+      .set({
+        status: "paid",
+        paymentId: paymentId || `pay_${Date.now()}`,
+        paidAt: new Date(),
+        updatedAt: new Date(),
+      })
+      .where(eq(ugcOrders.id, orderId))
+      .returning();
+
+    res.json(updated);
+  } catch (error) {
+    console.error("Error processing payment:", error);
+    res.status(500).json({ error: "Failed to process payment" });
+  }
+});
+
+router.post("/orders/:id/start", isAuthenticated, async (req: Request, res: Response) => {
+  try {
+    const orderId = parseInt(req.params.id);
+    const userId = (req as any).user?.id;
+
+    const profile = await db.select().from(creatorProfiles)
+      .where(eq(creatorProfiles.userId, userId))
+      .limit(1);
+
+    if (profile.length === 0) {
+      return res.status(403).json({ error: "Creator profile required" });
+    }
+
+    const [order] = await db.select().from(ugcOrders)
+      .where(and(eq(ugcOrders.id, orderId), eq(ugcOrders.creatorId, profile[0].id)));
+
+    if (!order) {
+      return res.status(404).json({ error: "Order not found" });
+    }
+
+    if (order.status !== "paid") {
+      return res.status(400).json({ error: "Order must be paid first" });
+    }
+
+    const [updated] = await db.update(ugcOrders)
+      .set({ status: "in_progress", updatedAt: new Date() })
+      .where(eq(ugcOrders.id, orderId))
+      .returning();
+
+    res.json(updated);
+  } catch (error) {
+    console.error("Error starting order:", error);
+    res.status(500).json({ error: "Failed to start order" });
+  }
+});
+
+router.post("/orders/:id/deliver", isAuthenticated, async (req: Request, res: Response) => {
+  try {
+    const orderId = parseInt(req.params.id);
+    const userId = (req as any).user?.id;
+    const { videoUrl, note, submissionId } = req.body;
+
+    const profile = await db.select().from(creatorProfiles)
+      .where(eq(creatorProfiles.userId, userId))
+      .limit(1);
+
+    if (profile.length === 0) {
+      return res.status(403).json({ error: "Creator profile required" });
+    }
+
+    const [order] = await db.select().from(ugcOrders)
+      .where(and(eq(ugcOrders.id, orderId), eq(ugcOrders.creatorId, profile[0].id)));
+
+    if (!order) {
+      return res.status(404).json({ error: "Order not found" });
+    }
+
+    if (!["paid", "in_progress"].includes(order.status || "")) {
+      return res.status(400).json({ error: "Cannot deliver in current status" });
+    }
+
+    if (!videoUrl) {
+      return res.status(400).json({ error: "Video URL required" });
+    }
+
+    const [delivery] = await db.insert(ugcDeliveries).values({
+      orderId,
+      submissionId: submissionId || null,
+      videoUrl,
+      note: note || "",
+      status: "pending",
+    }).returning();
+
+    await db.update(ugcOrders)
+      .set({ status: "delivered", deliveredAt: new Date(), updatedAt: new Date() })
+      .where(eq(ugcOrders.id, orderId));
+
+    await db.insert(ugcMessages).values({
+      campaignId: order.campaignId,
+      orderId,
+      senderId: userId,
+      senderRole: "creator",
+      content: `📦 Delivery submitted\n🔗 ${videoUrl}\n📝 ${note || "No notes"}`,
+      messageType: "delivery",
+    });
+
+    res.json(delivery);
+  } catch (error) {
+    console.error("Error delivering order:", error);
+    res.status(500).json({ error: "Failed to deliver order" });
+  }
+});
+
+router.post("/orders/:id/approve", isAuthenticated, async (req: Request, res: Response) => {
+  try {
+    const orderId = parseInt(req.params.id);
+    const userId = (req as any).user?.id;
+
+    const [order] = await db.select().from(ugcOrders)
+      .where(and(eq(ugcOrders.id, orderId), eq(ugcOrders.buyerUserId, userId)));
+
+    if (!order) {
+      return res.status(404).json({ error: "Order not found" });
+    }
+
+    if (order.status !== "delivered") {
+      return res.status(400).json({ error: "Order not delivered yet" });
+    }
+
+    const latestDelivery = await db.select().from(ugcDeliveries)
+      .where(eq(ugcDeliveries.orderId, orderId))
+      .orderBy(desc(ugcDeliveries.deliveredAt))
+      .limit(1);
+
+    if (latestDelivery.length > 0) {
+      await db.update(ugcDeliveries)
+        .set({ status: "approved", approvedAt: new Date() })
+        .where(eq(ugcDeliveries.id, latestDelivery[0].id));
+    }
+
+    const [updated] = await db.update(ugcOrders)
+      .set({ status: "completed", completedAt: new Date(), updatedAt: new Date() })
+      .where(eq(ugcOrders.id, orderId))
+      .returning();
+
+    await db.insert(ugcMessages).values({
+      campaignId: order.campaignId,
+      orderId,
+      senderId: userId,
+      senderRole: "buyer",
+      content: "✅ Video approved and order completed",
+      messageType: "system",
+    });
+
+    res.json(updated);
+  } catch (error) {
+    console.error("Error approving order:", error);
+    res.status(500).json({ error: "Failed to approve order" });
+  }
+});
+
+router.post("/orders/:id/revision", isAuthenticated, async (req: Request, res: Response) => {
+  try {
+    const orderId = parseInt(req.params.id);
+    const userId = (req as any).user?.id;
+    const { note, failedRequirement } = req.body;
+
+    const [order] = await db.select().from(ugcOrders)
+      .where(and(eq(ugcOrders.id, orderId), eq(ugcOrders.buyerUserId, userId)));
+
+    if (!order) {
+      return res.status(404).json({ error: "Order not found" });
+    }
+
+    if (order.status !== "delivered") {
+      return res.status(400).json({ error: "Order not delivered" });
+    }
+
+    if (!note) {
+      return res.status(400).json({ error: "Revision note required" });
+    }
+
+    const assignments = await db.select().from(campaignAssignments)
+      .where(eq(campaignAssignments.orderId, orderId))
+      .limit(1);
+
+    if (assignments.length > 0) {
+      const assignment = assignments[0];
+
+      if (!failedRequirement) {
+        const revisionsAllowed = assignment.revisionsAllowed || 3;
+        const revisionsUsed = assignment.revisionsUsed || 0;
+
+        if (revisionsUsed >= revisionsAllowed) {
+          return res.status(403).json({ error: "No revisions left" });
+        }
+
+        await db.update(campaignAssignments)
+          .set({ revisionsUsed: revisionsUsed + 1 })
+          .where(eq(campaignAssignments.id, assignment.id));
+      }
+    }
+
+    const latestDelivery = await db.select().from(ugcDeliveries)
+      .where(eq(ugcDeliveries.orderId, orderId))
+      .orderBy(desc(ugcDeliveries.deliveredAt))
+      .limit(1);
+
+    if (latestDelivery.length > 0) {
+      await db.update(ugcDeliveries)
+        .set({ status: "rejected", rejectedAt: new Date(), rejectionReason: note })
+        .where(eq(ugcDeliveries.id, latestDelivery[0].id));
+    }
+
+    await db.update(ugcOrders)
+      .set({ status: "in_progress", updatedAt: new Date() })
+      .where(eq(ugcOrders.id, orderId));
+
+    await db.insert(ugcMessages).values({
+      campaignId: order.campaignId,
+      orderId,
+      senderId: userId,
+      senderRole: "buyer",
+      content: `🔁 Revision requested: ${note}`,
+      messageType: "revision",
+    });
+
+    res.json({ success: true });
+  } catch (error) {
+    console.error("Error requesting revision:", error);
+    res.status(500).json({ error: "Failed to request revision" });
+  }
+});
+
+router.get("/orders/:id/chat", isAuthenticated, async (req: Request, res: Response) => {
+  try {
+    const orderId = parseInt(req.params.id);
+    const userId = (req as any).user?.id;
+
+    const [order] = await db.select().from(ugcOrders)
+      .where(eq(ugcOrders.id, orderId))
+      .limit(1);
+
+    if (!order) {
+      return res.status(404).json({ error: "Order not found" });
+    }
+
+    const profile = await db.select().from(creatorProfiles)
+      .where(eq(creatorProfiles.userId, userId))
+      .limit(1);
+
+    const isCreator = profile.length > 0 && profile[0].id === order.creatorId;
+    const isBuyer = order.buyerUserId === userId;
+
+    if (!isCreator && !isBuyer) {
+      return res.status(403).json({ error: "Access denied" });
+    }
+
+    const messages = await db.select().from(ugcMessages)
+      .where(eq(ugcMessages.orderId, orderId))
+      .orderBy(ugcMessages.createdAt);
+
+    res.json({
+      messages,
+      order,
+      userRole: isCreator ? "creator" : "buyer",
+      canSend: order.status !== "completed",
+    });
+  } catch (error) {
+    console.error("Error fetching chat:", error);
+    res.status(500).json({ error: "Failed to fetch chat" });
+  }
+});
+
+router.post("/orders/:id/chat", isAuthenticated, async (req: Request, res: Response) => {
+  try {
+    const orderId = parseInt(req.params.id);
+    const userId = (req as any).user?.id;
+    const { message } = req.body;
+
+    if (!message || !message.trim()) {
+      return res.status(400).json({ error: "Message required" });
+    }
+
+    const phoneRegex = /(\d[\s\-]*){6,}/;
+    const socialRegex = /(whatsapp|wa\.me|facebook|instagram|telegram|t\.me|snap|tik)/i;
+
+    if (phoneRegex.test(message) || socialRegex.test(message)) {
+      return res.status(403).json({ error: "External contact sharing not allowed" });
+    }
+
+    const [order] = await db.select().from(ugcOrders)
+      .where(eq(ugcOrders.id, orderId))
+      .limit(1);
+
+    if (!order) {
+      return res.status(404).json({ error: "Order not found" });
+    }
+
+    if (order.status === "completed") {
+      return res.status(403).json({ error: "Chat closed - order completed" });
+    }
+
+    const profile = await db.select().from(creatorProfiles)
+      .where(eq(creatorProfiles.userId, userId))
+      .limit(1);
+
+    const isCreator = profile.length > 0 && profile[0].id === order.creatorId;
+    const isBuyer = order.buyerUserId === userId;
+
+    if (!isCreator && !isBuyer) {
+      return res.status(403).json({ error: "Access denied" });
+    }
+
+    const [msg] = await db.insert(ugcMessages).values({
+      campaignId: order.campaignId,
+      orderId,
+      senderId: userId,
+      senderRole: isCreator ? "creator" : "buyer",
+      content: message,
+      messageType: "text",
+    }).returning();
+
+    res.json(msg);
+  } catch (error) {
+    console.error("Error sending message:", error);
+    res.status(500).json({ error: "Failed to send message" });
+  }
+});
+
+router.post("/ai/generate-video", isAuthenticated, async (req: Request, res: Response) => {
+  try {
+    if (!isLumaConfigured()) {
+      return res.status(503).json({ error: "LumaAI not configured" });
+    }
+
+    const { prompt, productInfo, style } = req.body;
+
+    if (!prompt) {
+      return res.status(400).json({ error: "Prompt required" });
+    }
+
+    const result = await generateUgcVideo(prompt, productInfo, style);
+
+    res.json(result);
+  } catch (error: any) {
+    console.error("Error generating video:", error);
+    res.status(500).json({ error: error.message || "Failed to generate video" });
+  }
+});
+
+router.get("/ai/luma-status", isAuthenticated, async (req: Request, res: Response) => {
+  res.json({ configured: isLumaConfigured() });
 });
 
 export function registerUGCRoutes(app: any): void {

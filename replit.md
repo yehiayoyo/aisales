@@ -146,6 +146,22 @@ npm run db:studio  # Open Drizzle Studio for DB inspection
 - `GET /api/ugc/dashboard/review-history` - Review history
 - `GET /api/ugc/dashboard/approved-library` - Approved content library
 
+### UGC Orders & Delivery
+- `POST /api/ugc/orders` - Create new order
+- `GET /api/ugc/orders` - List orders (buyer or creator view)
+- `GET /api/ugc/orders/:id` - Get order details with deliveries
+- `POST /api/ugc/orders/:id/pay` - Process payment for order
+- `POST /api/ugc/orders/:id/start` - Creator starts working on order
+- `POST /api/ugc/orders/:id/deliver` - Creator delivers content
+- `POST /api/ugc/orders/:id/approve` - Buyer approves delivery (completes order)
+- `POST /api/ugc/orders/:id/revision` - Buyer requests revision
+- `GET /api/ugc/orders/:id/chat` - Get order chat messages
+- `POST /api/ugc/orders/:id/chat` - Send chat message
+
+### UGC AI Services
+- `POST /api/ugc/ai/generate-video` - Generate UGC video via LumaAI
+- `GET /api/ugc/ai/luma-status` - Check LumaAI configuration status
+
 ## Webhook Configuration
 
 ### For Facebook/Instagram
@@ -174,6 +190,13 @@ npm run db:studio  # Open Drizzle Studio for DB inspection
 - UGC Content Protection: Downloads locked until final approval, watermark support, NDA acknowledgment
 - Enhanced UGC Dashboard: 4 sections (Campaigns, Creator Status, Review History, Approved Content Library)
 - Usage Rights Tracking: Platform, duration, exclusivity, territory metadata per submission
+- **January 5, 2026**: Added UGC Order Management System with full payment workflow
+- Order state machine: unpaid → paid → in_progress → delivered → completed
+- Delivery workflow with video submission, approval, and revision cycles
+- Revision limits tracking per assignment (default 3 revisions)
+- Order-scoped chat system with sender roles (buyer/creator)
+- LumaAI video generation service integration for AI-powered UGC creation
+- Dashboard Orders section with chat modal and action buttons
 
 ## Architecture Notes
 - Webhook router uses express.raw() and is mounted BEFORE express.json() for proper signature verification
