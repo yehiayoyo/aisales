@@ -143,9 +143,18 @@ npm run db:studio  # Open Drizzle Studio for DB inspection
 
 ## Recent Changes
 - January 2026: Full production-grade rebuild
-- Added Meta webhooks for real-time message sync
-- Implemented AI service with conversation memory and tone profiles
-- Added token encryption service for secure credential storage
-- Built WhatsApp Business Cloud API integration
-- Created auto-reply automation with manual override
-- Enhanced security with webhook signature verification
+- Added Meta webhooks for real-time message sync (Facebook/Instagram/WhatsApp)
+- Implemented central AI service with conversation memory and 4 tone profiles
+- Added AES-256-GCM token encryption service for secure credential storage
+- Built WhatsApp Business Cloud API integration (sandbox support)
+- Created auto-reply automation with manual override toggle per conversation
+- Enhanced security: webhook signature verification with raw body capture, OAuth requires authentication
+- Isolated webhook router mounted before JSON parser for proper HMAC verification
+- Added UGC Creator & Brand Collaboration System with full workflow lifecycle
+- UGC AI capabilities: brief generation, script writing, hook suggestions, quality analysis
+
+## Architecture Notes
+- Webhook router uses express.raw() and is mounted BEFORE express.json() for proper signature verification
+- Conversation memory is scoped per conversationId to maintain separate context per thread
+- TOKEN_ENCRYPTION_KEY environment variable is required (64-character hex string)
+- AI auto-reply triggers when conversation aiStatus is "auto", can be toggled to "manual" for human override

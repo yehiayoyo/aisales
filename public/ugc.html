@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UGC Hub - MT Hub</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .tab-active { border-bottom: 2px solid #7c3aed; color: #7c3aed; }
+  </style>
+</head>
+<body class="min-h-screen bg-gray-50">
+  <nav class="bg-white shadow-sm border-b">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between h-16">
+        <div class="flex items-center space-x-8">
+          <a href="/dashboard" class="text-2xl font-bold text-purple-600">MT Hub</a>
+          <div class="flex space-x-4">
+            <a href="/dashboard" class="text-gray-600 hover:text-gray-900 px-3 py-2">Dashboard</a>
+            <a href="/ugc" class="text-purple-600 font-medium px-3 py-2 border-b-2 border-purple-600">UGC Hub</a>
+          </div>
+        </div>
+        <div class="flex items-center space-x-4">
+          <span id="userName" class="text-gray-700"></span>
+          <a href="/api/logout" class="text-gray-600 hover:text-gray-900">Logout</a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="flex justify-between items-center mb-8">
+      <div>
+        <h1 class="text-3xl font-bold text-gray-900">UGC Creator Hub</h1>
+        <p class="text-gray-600 mt-1">Connect with creators or manage your content collaborations</p>
+      </div>
+      <div class="flex space-x-3">
+        <button onclick="showCreatorModal()" class="bg-white border border-purple-600 text-purple-600 px-4 py-2 rounded-lg hover:bg-purple-50">
+          Creator Profile
+        </button>
+        <button onclick="showCampaignModal()" class="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700">
+          + New Campaign
+        </button>
+      </div>
+    </div>
+
+    <div class="border-b border-gray-200 mb-6">
+      <nav class="flex space-x-8">
+        <button onclick="switchTab('brand')" id="tab-brand" class="tab-active pb-4 px-1 font-medium">
+          Brand Dashboard
+        </button>
+        <button onclick="switchTab('creator')" id="tab-creator" class="pb-4 px-1 text-gray-500 hover:text-gray-700">
+          Creator Dashboard
+        </button>
+        <button onclick="switchTab('discover')" id="tab-discover" class="pb-4 px-1 text-gray-500 hover:text-gray-700">
+          Find Creators
+        </button>
+      </nav>
+    </div>
+
+    <div id="content-brand">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div class="bg-white rounded-xl shadow-sm p-6">
+          <div class="text-sm text-gray-500 mb-1">Active Campaigns</div>
+          <div id="stat-campaigns" class="text-3xl font-bold text-gray-900">0</div>
+        </div>
+        <div class="bg-white rounded-xl shadow-sm p-6">
+          <div class="text-sm text-gray-500 mb-1">Pending Reviews</div>
+          <div id="stat-reviews" class="text-3xl font-bold text-orange-600">0</div>
+        </div>
+        <div class="bg-white rounded-xl shadow-sm p-6">
+          <div class="text-sm text-gray-500 mb-1">Completed</div>
+          <div id="stat-completed" class="text-3xl font-bold text-green-600">0</div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-xl shadow-sm">
+        <div class="px-6 py-4 border-b border-gray-200">
+          <h2 class="text-lg font-semibold">Your Campaigns</h2>
+        </div>
+        <div id="campaigns-list" class="divide-y divide-gray-200">
+          <div class="p-6 text-center text-gray-500">Loading campaigns...</div>
+        </div>
+      </div>
+    </div>
+
+    <div id="content-creator" class="hidden">
+      <div id="creator-no-profile" class="bg-white rounded-xl shadow-sm p-8 text-center">
+        <div class="text-6xl mb-4">🎬</div>
+        <h3 class="text-xl font-semibold mb-2">Become a Creator</h3>
+        <p class="text-gray-600 mb-4">Set up your creator profile to start receiving UGC opportunities</p>
+        <button onclick="showCreatorModal()" class="bg-purple-600 text-white px-6 py-2 rounded-lg hover:bg-purple-700">
+          Create Profile
+        </button>
+      </div>
+      <div id="creator-dashboard" class="hidden">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+          <div class="bg-white rounded-xl shadow-sm p-6">
+            <h3 class="font-semibold mb-4">Your Assignments</h3>
+            <div id="creator-assignments" class="space-y-3">
+              <p class="text-gray-500">No active assignments</p>
+            </div>
+          </div>
+          <div class="bg-white rounded-xl shadow-sm p-6">
+            <h3 class="font-semibold mb-4">Open Opportunities</h3>
+            <div id="open-requests" class="space-y-3">
+              <p class="text-gray-500">No open requests available</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="content-discover" class="hidden">
+      <div class="bg-white rounded-xl shadow-sm p-6 mb-6">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <select id="filter-platform" class="border border-gray-300 rounded-lg px-3 py-2">
+            <option value="">All Platforms</option>
+            <option value="tiktok">TikTok</option>
+            <option value="instagram">Instagram</option>
+            <option value="facebook">Facebook</option>
+          </select>
+          <select id="filter-content" class="border border-gray-300 rounded-lg px-3 py-2">
+            <option value="">All Content Types</option>
+            <option value="video">Video</option>
+            <option value="image">Image</option>
+            <option value="reel">Reel</option>
+          </select>
+          <select id="filter-niche" class="border border-gray-300 rounded-lg px-3 py-2">
+            <option value="">All Niches</option>
+            <option value="beauty">Beauty</option>
+            <option value="fashion">Fashion</option>
+            <option value="tech">Tech</option>
+            <option value="food">Food</option>
+            <option value="fitness">Fitness</option>
+          </select>
+          <button onclick="searchCreators()" class="bg-purple-600 text-white rounded-lg px-4 py-2 hover:bg-purple-700">
+            Search
+          </button>
+        </div>
+      </div>
+      <div id="creators-grid" class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="text-center text-gray-500 col-span-3 py-8">Search for creators above</div>
+      </div>
+    </div>
+  </main>
+
+  <div id="campaignModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+    <div class="bg-white rounded-xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+      <div class="p-6 border-b border-gray-200">
+        <div class="flex justify-between items-center">
+          <h2 class="text-xl font-semibold">Create UGC Campaign</h2>
+          <button onclick="closeCampaignModal()" class="text-gray-400 hover:text-gray-600">&times;</button>
+        </div>
+      </div>
+      <form id="campaignForm" class="p-6 space-y-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Campaign Title</label>
+          <input type="text" name="title" required class="w-full border border-gray-300 rounded-lg px-3 py-2" placeholder="e.g., Summer Product Launch">
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Content Type</label>
+            <select name="contentType" required class="w-full border border-gray-300 rounded-lg px-3 py-2">
+              <option value="video">Video</option>
+              <option value="image">Image</option>
+              <option value="reel">Reel</option>
+              <option value="story">Story</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Platform</label>
+            <select name="platform" required class="w-full border border-gray-300 rounded-lg px-3 py-2">
+              <option value="tiktok">TikTok</option>
+              <option value="instagram">Instagram</option>
+              <option value="facebook">Facebook</option>
+              <option value="ads">Paid Ads</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Campaign Description</label>
+          <textarea name="description" rows="3" class="w-full border border-gray-300 rounded-lg px-3 py-2" placeholder="Describe what you're looking for..."></textarea>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Product/Service Info</label>
+          <textarea name="productInfo" rows="2" class="w-full border border-gray-300 rounded-lg px-3 py-2" placeholder="Describe your product or service..."></textarea>
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Tone</label>
+            <select name="tone" class="w-full border border-gray-300 rounded-lg px-3 py-2">
+              <option value="authentic">Authentic & Natural</option>
+              <option value="professional">Professional</option>
+              <option value="fun">Fun & Energetic</option>
+              <option value="educational">Educational</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Budget ($)</label>
+            <input type="number" name="budget" class="w-full border border-gray-300 rounded-lg px-3 py-2" placeholder="500">
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Deadline</label>
+            <input type="date" name="deadline" class="w-full border border-gray-300 rounded-lg px-3 py-2">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Usage Rights</label>
+            <select name="usageRights" class="w-full border border-gray-300 rounded-lg px-3 py-2">
+              <option value="organic">Organic Only</option>
+              <option value="paid">Paid Ads Allowed</option>
+              <option value="full">Full Rights</option>
+            </select>
+          </div>
+        </div>
+        <div class="flex items-center">
+          <input type="checkbox" name="isOpenRequest" id="isOpenRequest" class="mr-2">
+          <label for="isOpenRequest" class="text-sm text-gray-700">Open to all creators (public request)</label>
+        </div>
+        <div class="flex justify-end space-x-3 pt-4">
+          <button type="button" onclick="closeCampaignModal()" class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50">Cancel</button>
+          <button type="submit" class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700">Create Campaign</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="creatorModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+    <div class="bg-white rounded-xl max-w-lg w-full mx-4 max-h-[90vh] overflow-y-auto">
+      <div class="p-6 border-b border-gray-200">
+        <div class="flex justify-between items-center">
+          <h2 class="text-xl font-semibold">Creator Profile</h2>
+          <button onclick="closeCreatorModal()" class="text-gray-400 hover:text-gray-600">&times;</button>
+        </div>
+      </div>
+      <form id="creatorForm" class="p-6 space-y-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Display Name</label>
+          <input type="text" name="displayName" required class="w-full border border-gray-300 rounded-lg px-3 py-2">
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Bio</label>
+          <textarea name="bio" rows="3" class="w-full border border-gray-300 rounded-lg px-3 py-2" placeholder="Tell brands about yourself..."></textarea>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Portfolio URL</label>
+          <input type="url" name="portfolioUrl" class="w-full border border-gray-300 rounded-lg px-3 py-2" placeholder="https://...">
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Platforms</label>
+          <div class="flex flex-wrap gap-2">
+            <label class="flex items-center"><input type="checkbox" name="platforms" value="tiktok" class="mr-1"> TikTok</label>
+            <label class="flex items-center"><input type="checkbox" name="platforms" value="instagram" class="mr-1"> Instagram</label>
+            <label class="flex items-center"><input type="checkbox" name="platforms" value="facebook" class="mr-1"> Facebook</label>
+            <label class="flex items-center"><input type="checkbox" name="platforms" value="youtube" class="mr-1"> YouTube</label>
+          </div>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Content Types</label>
+          <div class="flex flex-wrap gap-2">
+            <label class="flex items-center"><input type="checkbox" name="contentTypes" value="video" class="mr-1"> Video</label>
+            <label class="flex items-center"><input type="checkbox" name="contentTypes" value="image" class="mr-1"> Image</label>
+            <label class="flex items-center"><input type="checkbox" name="contentTypes" value="reel" class="mr-1"> Reel</label>
+            <label class="flex items-center"><input type="checkbox" name="contentTypes" value="story" class="mr-1"> Story</label>
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Rate per Video ($)</label>
+            <input type="number" name="ratePerVideo" class="w-full border border-gray-300 rounded-lg px-3 py-2">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Rate per Image ($)</label>
+            <input type="number" name="ratePerImage" class="w-full border border-gray-300 rounded-lg px-3 py-2">
+          </div>
+        </div>
+        <div class="flex justify-end space-x-3 pt-4">
+          <button type="button" onclick="closeCreatorModal()" class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50">Cancel</button>
+          <button type="submit" class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700">Save Profile</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="campaignDetailModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+    <div class="bg-white rounded-xl max-w-4xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+      <div class="p-6 border-b border-gray-200">
+        <div class="flex justify-between items-center">
+          <h2 id="detail-title" class="text-xl font-semibold">Campaign Details</h2>
+          <button onclick="closeDetailModal()" class="text-gray-400 hover:text-gray-600">&times;</button>
+        </div>
+      </div>
+      <div id="detail-content" class="p-6">
+        Loading...
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let currentUser = null;
+    let creatorProfile = null;
+
+    async function init() {
+      try {
+        const res = await fetch('/api/auth/user', { credentials: 'include' });
+        if (!res.ok) {
+          window.location.href = '/';
+          return;
+        }
+        currentUser = await res.json();
+        document.getElementById('userName').textContent = currentUser.firstName || currentUser.username;
+        
+        await loadCreatorProfile();
+        await loadCampaigns();
+      } catch (e) {
+        console.error('Init error:', e);
+      }
+    }
+
+    async function loadCreatorProfile() {
+      try {
+        const res = await fetch('/api/ugc/creator/profile', { credentials: 'include' });
+        const data = await res.json();
+        if (data.exists) {
+          creatorProfile = data.profile;
+          document.getElementById('creator-no-profile').classList.add('hidden');
+          document.getElementById('creator-dashboard').classList.remove('hidden');
+          loadCreatorCampaigns();
+        }
+      } catch (e) {
+        console.error('Error loading creator profile:', e);
+      }
+    }
+
+    async function loadCampaigns() {
+      try {
+        const res = await fetch('/api/ugc/campaigns', { credentials: 'include' });
+        const campaigns = await res.json();
+        
+        const list = document.getElementById('campaigns-list');
+        if (!campaigns.length) {
+          list.innerHTML = '<div class="p-6 text-center text-gray-500">No campaigns yet. Create your first campaign!</div>';
+          return;
+        }
+
+        let activeCount = 0, reviewCount = 0, completedCount = 0;
+        
+        list.innerHTML = campaigns.map(c => {
+          if (c.status === 'review') reviewCount++;
+          else if (c.status === 'completed') completedCount++;
+          else if (['open', 'assigned', 'in_progress'].includes(c.status)) activeCount++;
+          
+          const statusColors = {
+            draft: 'bg-gray-100 text-gray-700',
+            open: 'bg-blue-100 text-blue-700',
+            assigned: 'bg-yellow-100 text-yellow-700',
+            in_progress: 'bg-purple-100 text-purple-700',
+            review: 'bg-orange-100 text-orange-700',
+            completed: 'bg-green-100 text-green-700',
+          };
+          
+          return `
+            <div class="p-4 hover:bg-gray-50 cursor-pointer" onclick="openCampaignDetail(${c.id})">
+              <div class="flex justify-between items-start">
+                <div>
+                  <h3 class="font-semibold text-gray-900">${c.title}</h3>
+                  <p class="text-sm text-gray-500 mt-1">${c.contentType} for ${c.platform}</p>
+                </div>
+                <span class="px-3 py-1 rounded-full text-sm ${statusColors[c.status] || 'bg-gray-100'}">${c.status}</span>
+              </div>
+              <div class="mt-2 flex space-x-4 text-sm text-gray-500">
+                ${c.budget ? `<span>$${c.budget}</span>` : ''}
+                ${c.deadline ? `<span>Due: ${new Date(c.deadline).toLocaleDateString()}</span>` : ''}
+              </div>
+            </div>
+          `;
+        }).join('');
+
+        document.getElementById('stat-campaigns').textContent = activeCount;
+        document.getElementById('stat-reviews').textContent = reviewCount;
+        document.getElementById('stat-completed').textContent = completedCount;
+      } catch (e) {
+        console.error('Error loading campaigns:', e);
+      }
+    }
+
+    async function loadCreatorCampaigns() {
+      try {
+        const res = await fetch('/api/ugc/campaigns?role=creator', { credentials: 'include' });
+        const data = await res.json();
+        
+        const assignmentsDiv = document.getElementById('creator-assignments');
+        if (data.assigned && data.assigned.length) {
+          assignmentsDiv.innerHTML = data.assigned.map(a => `
+            <div class="p-3 bg-gray-50 rounded-lg">
+              <div class="font-medium">${a.campaign.title}</div>
+              <div class="text-sm text-gray-500">${a.assignment.status}</div>
+            </div>
+          `).join('');
+        }
+
+        const openDiv = document.getElementById('open-requests');
+        if (data.openRequests && data.openRequests.length) {
+          openDiv.innerHTML = data.openRequests.map(c => `
+            <div class="p-3 bg-gray-50 rounded-lg">
+              <div class="font-medium">${c.title}</div>
+              <div class="text-sm text-gray-500">${c.contentType} - ${c.platform}</div>
+              ${c.budget ? `<div class="text-sm text-green-600">$${c.budget}</div>` : ''}
+            </div>
+          `).join('');
+        }
+      } catch (e) {
+        console.error('Error loading creator campaigns:', e);
+      }
+    }
+
+    async function searchCreators() {
+      const platform = document.getElementById('filter-platform').value;
+      const contentType = document.getElementById('filter-content').value;
+      const niche = document.getElementById('filter-niche').value;
+      
+      const params = new URLSearchParams();
+      if (platform) params.append('platform', platform);
+      if (contentType) params.append('contentType', contentType);
+      if (niche) params.append('niche', niche);
+      
+      try {
+        const res = await fetch(`/api/ugc/creators?${params}`, { credentials: 'include' });
+        const creators = await res.json();
+        
+        const grid = document.getElementById('creators-grid');
+        if (!creators.length) {
+          grid.innerHTML = '<div class="text-center text-gray-500 col-span-3 py-8">No creators found matching your criteria</div>';
+          return;
+        }
+
+        grid.innerHTML = creators.map(c => `
+          <div class="bg-white rounded-xl shadow-sm p-6">
+            <div class="flex items-center space-x-4 mb-4">
+              <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center text-purple-600 font-bold">
+                ${c.displayName.charAt(0).toUpperCase()}
+              </div>
+              <div>
+                <h3 class="font-semibold">${c.displayName}</h3>
+                <div class="text-sm text-gray-500">${(c.platforms || []).join(', ')}</div>
+              </div>
+            </div>
+            <p class="text-sm text-gray-600 mb-4">${c.bio || 'No bio provided'}</p>
+            <div class="flex justify-between items-center">
+              <div class="text-sm">
+                ${c.ratePerVideo ? `<span class="text-gray-600">$${c.ratePerVideo}/video</span>` : ''}
+              </div>
+              <span class="text-sm text-green-600">${c.completedProjects || 0} projects</span>
+            </div>
+          </div>
+        `).join('');
+      } catch (e) {
+        console.error('Error searching creators:', e);
+      }
+    }
+
+    async function openCampaignDetail(id) {
+      document.getElementById('campaignDetailModal').classList.remove('hidden');
+      document.getElementById('campaignDetailModal').classList.add('flex');
+      
+      try {
+        const res = await fetch(`/api/ugc/campaigns/${id}`, { credentials: 'include' });
+        const campaign = await res.json();
+        
+        document.getElementById('detail-title').textContent = campaign.title;
+        document.getElementById('detail-content').innerHTML = `
+          <div class="grid grid-cols-2 gap-6">
+            <div>
+              <h3 class="font-semibold mb-2">Campaign Details</h3>
+              <div class="space-y-2 text-sm">
+                <p><strong>Type:</strong> ${campaign.contentType}</p>
+                <p><strong>Platform:</strong> ${campaign.platform}</p>
+                <p><strong>Tone:</strong> ${campaign.tone || 'Not specified'}</p>
+                <p><strong>Status:</strong> ${campaign.status}</p>
+                ${campaign.budget ? `<p><strong>Budget:</strong> $${campaign.budget}</p>` : ''}
+                ${campaign.deadline ? `<p><strong>Deadline:</strong> ${new Date(campaign.deadline).toLocaleDateString()}</p>` : ''}
+              </div>
+              
+              <h3 class="font-semibold mt-4 mb-2">Description</h3>
+              <p class="text-sm text-gray-600">${campaign.description || 'No description'}</p>
+              
+              ${campaign.productInfo ? `
+                <h3 class="font-semibold mt-4 mb-2">Product Info</h3>
+                <p class="text-sm text-gray-600">${campaign.productInfo}</p>
+              ` : ''}
+            </div>
+            <div>
+              ${campaign.aiBrief ? `
+                <div class="bg-purple-50 rounded-lg p-4 mb-4">
+                  <h3 class="font-semibold text-purple-800 mb-2">AI-Generated Brief</h3>
+                  <p class="text-sm text-purple-900">${campaign.aiBrief}</p>
+                </div>
+              ` : `
+                <button onclick="generateBrief(${id})" class="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 mb-4">
+                  Generate AI Brief
+                </button>
+              `}
+              
+              ${campaign.talkingPoints && campaign.talkingPoints.length ? `
+                <h3 class="font-semibold mb-2">Talking Points</h3>
+                <ul class="list-disc list-inside text-sm text-gray-600 mb-4">
+                  ${campaign.talkingPoints.map(p => `<li>${p}</li>`).join('')}
+                </ul>
+              ` : ''}
+              
+              ${campaign.hookIdeas && campaign.hookIdeas.length ? `
+                <h3 class="font-semibold mb-2">Hook Ideas</h3>
+                <ul class="list-disc list-inside text-sm text-gray-600">
+                  ${campaign.hookIdeas.map(h => `<li>${h}</li>`).join('')}
+                </ul>
+              ` : ''}
+              
+              ${campaign.status === 'draft' ? `
+                <button onclick="publishCampaign(${id})" class="mt-4 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700">
+                  Publish Campaign
+                </button>
+              ` : ''}
+            </div>
+          </div>
+        `;
+      } catch (e) {
+        console.error('Error loading campaign detail:', e);
+      }
+    }
+
+    async function generateBrief(id) {
+      try {
+        const res = await fetch(`/api/ugc/campaigns/${id}/generate-brief`, {
+          method: 'POST',
+          credentials: 'include',
+        });
+        const result = await res.json();
+        openCampaignDetail(id);
+      } catch (e) {
+        console.error('Error generating brief:', e);
+      }
+    }
+
+    async function publishCampaign(id) {
+      try {
+        await fetch(`/api/ugc/campaigns/${id}/publish`, {
+          method: 'POST',
+          credentials: 'include',
+        });
+        closeDetailModal();
+        loadCampaigns();
+      } catch (e) {
+        console.error('Error publishing campaign:', e);
+      }
+    }
+
+    function switchTab(tab) {
+      ['brand', 'creator', 'discover'].forEach(t => {
+        document.getElementById(`content-${t}`).classList.toggle('hidden', t !== tab);
+        document.getElementById(`tab-${t}`).classList.toggle('tab-active', t === tab);
+        document.getElementById(`tab-${t}`).classList.toggle('text-gray-500', t !== tab);
+      });
+    }
+
+    function showCampaignModal() {
+      document.getElementById('campaignModal').classList.remove('hidden');
+      document.getElementById('campaignModal').classList.add('flex');
+    }
+
+    function closeCampaignModal() {
+      document.getElementById('campaignModal').classList.add('hidden');
+      document.getElementById('campaignModal').classList.remove('flex');
+    }
+
+    function showCreatorModal() {
+      document.getElementById('creatorModal').classList.remove('hidden');
+      document.getElementById('creatorModal').classList.add('flex');
+      if (creatorProfile) {
+        const form = document.getElementById('creatorForm');
+        form.displayName.value = creatorProfile.displayName || '';
+        form.bio.value = creatorProfile.bio || '';
+        form.portfolioUrl.value = creatorProfile.portfolioUrl || '';
+        form.ratePerVideo.value = creatorProfile.ratePerVideo || '';
+        form.ratePerImage.value = creatorProfile.ratePerImage || '';
+      }
+    }
+
+    function closeCreatorModal() {
+      document.getElementById('creatorModal').classList.add('hidden');
+      document.getElementById('creatorModal').classList.remove('flex');
+    }
+
+    function closeDetailModal() {
+      document.getElementById('campaignDetailModal').classList.add('hidden');
+      document.getElementById('campaignDetailModal').classList.remove('flex');
+    }
+
+    document.getElementById('campaignForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const form = e.target;
+      const data = {
+        title: form.title.value,
+        contentType: form.contentType.value,
+        platform: form.platform.value,
+        description: form.description.value,
+        productInfo: form.productInfo.value,
+        tone: form.tone.value,
+        budget: form.budget.value || null,
+        deadline: form.deadline.value || null,
+        usageRights: form.usageRights.value,
+        isOpenRequest: form.isOpenRequest.checked,
+      };
+
+      try {
+        const res = await fetch('/api/ugc/campaigns', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify(data),
+        });
+        if (res.ok) {
+          closeCampaignModal();
+          form.reset();
+          loadCampaigns();
+        }
+      } catch (e) {
+        console.error('Error creating campaign:', e);
+      }
+    });
+
+    document.getElementById('creatorForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const form = e.target;
+      
+      const platforms = Array.from(form.querySelectorAll('input[name="platforms"]:checked')).map(cb => cb.value);
+      const contentTypes = Array.from(form.querySelectorAll('input[name="contentTypes"]:checked')).map(cb => cb.value);
+      
+      const data = {
+        displayName: form.displayName.value,
+        bio: form.bio.value,
+        portfolioUrl: form.portfolioUrl.value,
+        platforms,
+        contentTypes,
+        ratePerVideo: form.ratePerVideo.value || null,
+        ratePerImage: form.ratePerImage.value || null,
+      };
+
+      try {
+        const res = await fetch('/api/ugc/creator/profile', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify(data),
+        });
+        if (res.ok) {
+          closeCreatorModal();
+          await loadCreatorProfile();
+        }
+      } catch (e) {
+        console.error('Error saving creator profile:', e);
+      }
+    });
+
+    init();
+  </script>
+</body>
+</html>
