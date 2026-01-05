@@ -52,7 +52,8 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
    OpenAI
 ================================ */
 const openai = new OpenAI({
-  apiKey: process.env.OPENAI_KEY
+  apiKey: process.env.AI_INTEGRATIONS_OPENAI_API_KEY,
+  baseURL: process.env.AI_INTEGRATIONS_OPENAI_BASE_URL
 });
 
 /* ================================
@@ -257,6 +258,6 @@ ${session.objections.join("\n") || "لا يوجد"}
 /* ================================
    Run
 ================================ */
-app.listen(2000, () => {
-  console.log("🚀 Server running on http://localhost:2000");
+app.listen(5000, "0.0.0.0", () => {
+  console.log("🚀 Server running on http://0.0.0.0:5000");
 });
