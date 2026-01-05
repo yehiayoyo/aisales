@@ -29,10 +29,11 @@ export function registerSocialRoutes(app: Express): void {
     res.redirect(authUrl);
   });
 
-  app.get("/api/social/callback/facebook", async (req: Request, res: Response) => {
-    const { code, state: userId } = req.query;
+  app.get("/api/social/callback/facebook", isAuthenticated, async (req: any, res: Response) => {
+    const { code } = req.query;
+    const userId = req.user.claims.sub;
     
-    if (!code || !userId) {
+    if (!code) {
       return res.redirect("/dashboard?error=oauth_failed");
     }
     
@@ -61,14 +62,14 @@ export function registerSocialRoutes(app: Express): void {
         for (const page of pagesData.data) {
           const existing = await db.select().from(socialAccounts).where(
             and(
-              eq(socialAccounts.userId, userId as string),
+              eq(socialAccounts.userId, userId),
               eq(socialAccounts.platformAccountId, page.id)
             )
           );
           
           if (existing.length === 0) {
             await db.insert(socialAccounts).values({
-              userId: userId as string,
+              userId: userId,
               platform: "facebook",
               platformAccountId: page.id,
               accountName: page.name,
