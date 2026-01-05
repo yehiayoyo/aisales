@@ -13,6 +13,7 @@ import { registerAIRoutes } from "./routes/ai.js";
 import { registerDashboardRoutes } from "./routes/dashboard.js";
 import { webhookRouter } from "./routes/webhooks.js";
 import { registerUGCRoutes } from "./routes/ugc.js";
+import { registerAIChatRoutes } from "./routes/aiChat.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -35,6 +36,7 @@ async function startServer() {
   registerAIRoutes(app);
   registerDashboardRoutes(app);
   registerUGCRoutes(app);
+  registerAIChatRoutes(app);
 
   app.get("/api/health", (req: Request, res: Response) => {
     res.json({ status: "ok", service: "MT Hub" });
@@ -50,6 +52,10 @@ async function startServer() {
 
   app.get("/ugc", isAuthenticated, (req: Request, res: Response) => {
     res.sendFile(path.join(__dirname, "../public/ugc.html"));
+  });
+
+  app.get("/ai-chat", isAuthenticated, (req: Request, res: Response) => {
+    res.sendFile(path.join(__dirname, "../public/ai-chat.html"));
   });
 
   app.listen(PORT, "0.0.0.0", () => {
