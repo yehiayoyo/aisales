@@ -58,7 +58,7 @@ async function startServer() {
     res.sendFile(path.join(__dirname, "../public/ai-chat.html"));
   });
 
-  app.get("/app", isAuthenticated, (req: Request, res: Response) => {
+  app.get("/app", (req: Request, res: Response) => {
     res.sendFile(path.join(__dirname, "../public/app.html"));
   });
 
