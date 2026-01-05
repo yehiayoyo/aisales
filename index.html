@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<title>AI Sales</title>
+<style>
+body{background:#f4f4f4;font-family:Arial}
+.chat{max-width:500px;margin:40px auto;background:white;padding:20px;border-radius:10px}
+input,button{width:100%;padding:10px;margin-top:10px}
+.reply{margin-top:15px;background:#eee;padding:10px}
+img{width:100%;margin-top:10px;border-radius:8px}
+</style>
+</head>
+<body>
+
+<div class="chat">
+<h3>AI Sales Agent 🤖</h3>
+
+<input id="message" placeholder="اسأل عن منتج...">
+<button onclick="sendMessage()">إرسال</button>
+
+<div class="reply" id="reply"></div>
+<div id="images"></div>
+</div>
+
+<script>
+async function sendMessage(){
+  const message = document.getElementById("message").value.trim();
+  const reply = document.getElementById("reply");
+  const imagesBox = document.getElementById("images");
+
+  if(!message){
+    alert("اكتب رسالة");
+    return;
+  }
+
+  reply.innerText = "⏳ جاري الرد...";
+  imagesBox.innerHTML = "";
+
+  const res = await fetch("/chat",{
+    method:"POST",
+    headers:{ "Content-Type":"application/json" },
+    body: JSON.stringify({ message })
+  });
+
+  const data = await res.json();
+
+  reply.innerText = data.reply;
+
+  if (data.images && data.images.length > 0) {
+    data.images.forEach(src => {
+      const img = document.createElement("img");
+      img.src = src;
+      imagesBox.appendChild(img);
+    });
+  }
+}
+</script>
+
+</body>
+</html>

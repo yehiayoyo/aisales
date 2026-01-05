@@ -1,0 +1,15 @@
+{
+  "name": "ai-sales-project",
+  "type": "module",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "multer": "^2.0.2",
+    "openai": "^4.56.0"
+  }
+}
