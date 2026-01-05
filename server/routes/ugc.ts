@@ -3,7 +3,7 @@ import multer from "multer";
 import path from "path";
 import { db } from "../db.js";
 import * as schema from "../../shared/schema.js";
-import { eq, and, desc, or, isNull } from "drizzle-orm";
+import { eq, and, desc, or, isNull, inArray } from "drizzle-orm";
 import { isAuthenticated } from "../replit_integrations/auth/index.js";
 import {
   generateAIBrief,
@@ -530,7 +530,7 @@ router.post("/submissions/:id/review", isAuthenticated, async (req: Request, res
 
     if (decision === "approved") {
       await db.update(contentSubmissions)
-        .set({ status: "approved" })
+        .set({ status: "approved", downloadUnlocked: true, approvedAt: new Date() })
         .where(eq(contentSubmissions.id, submissionId));
 
       await db.update(campaignAssignments)
@@ -625,6 +625,256 @@ router.post("/campaigns/:id/messages", isAuthenticated, async (req: Request, res
   } catch (error) {
     console.error("Error sending message:", error);
     res.status(500).json({ error: "Failed to send message" });
+  }
+});
+
+router.get("/submissions/:id/download", isAuthenticated, async (req: Request, res: Response) => {
+  try {
+    const submissionId = parseInt(req.params.id);
+    const userId = (req as any).user?.id;
+
+    const submission = await db.select({
+      submission: contentSubmissions,
+      assignment: campaignAssignments,
+      campaign: ugcCampaigns,
+    })
+      .from(contentSubmissions)
+      .innerJoin(campaignAssignments, eq(contentSubmissions.assignmentId, campaignAssignments.id))
+      .innerJoin(ugcCampaigns, eq(campaignAssignments.campaignId, ugcCampaigns.id))
+      .where(eq(contentSubmissions.id, submissionId))
+      .limit(1);
+
+    if (submission.length === 0) {
+      return res.status(404).json({ error: "Submission not found" });
+    }
+
+    if (submission[0].campaign.brandUserId !== userId) {
+      return res.status(403).json({ error: "Not authorized" });
+    }
+
+    if (!submission[0].submission.downloadUnlocked) {
+      return res.status(403).json({ 
+        error: "Content download is locked until final approval",
+        status: submission[0].submission.status,
+        isWatermarked: submission[0].submission.isWatermarked
+      });
+    }
+
+    const filePath = submission[0].submission.filePath;
+    if (!filePath) {
+      return res.status(404).json({ error: "File not found" });
+    }
+
+    res.download(filePath, submission[0].submission.fileName || "content");
+  } catch (error) {
+    console.error("Error downloading content:", error);
+    res.status(500).json({ error: "Failed to download content" });
+  }
+});
+
+router.post("/assignments/:id/accept-nda", isAuthenticated, async (req: Request, res: Response) => {
+  try {
+    const assignmentId = parseInt(req.params.id);
+    const userId = (req as any).user?.id;
+
+    const profile = await db.select().from(creatorProfiles)
+      .where(eq(creatorProfiles.userId, userId))
+      .limit(1);
+
+    if (profile.length === 0) {
+      return res.status(403).json({ error: "Creator profile required" });
+    }
+
+    const assignment = await db.select({
+      assignment: campaignAssignments,
+      campaign: ugcCampaigns,
+    })
+      .from(campaignAssignments)
+      .innerJoin(ugcCampaigns, eq(campaignAssignments.campaignId, ugcCampaigns.id))
+      .where(and(
+        eq(campaignAssignments.id, assignmentId),
+        eq(campaignAssignments.creatorId, profile[0].id)
+      ))
+      .limit(1);
+
+    if (assignment.length === 0) {
+      return res.status(404).json({ error: "Assignment not found" });
+    }
+
+    if (!assignment[0].campaign.requiresNda) {
+      return res.status(400).json({ error: "This campaign does not require NDA" });
+    }
+
+    const [updated] = await db.update(campaignAssignments)
+      .set({
+        ndaAccepted: true,
+        ndaAcceptedAt: new Date(),
+      })
+      .where(eq(campaignAssignments.id, assignmentId))
+      .returning();
+
+    res.json(updated);
+  } catch (error) {
+    console.error("Error accepting NDA:", error);
+    res.status(500).json({ error: "Failed to accept NDA" });
+  }
+});
+
+router.get("/dashboard/stats", isAuthenticated, async (req: Request, res: Response) => {
+  try {
+    const userId = (req as any).user?.id;
+
+    const campaigns = await db.select().from(ugcCampaigns)
+      .where(eq(ugcCampaigns.brandUserId, userId));
+
+    const activeRequests = campaigns.filter(c => 
+      ["open", "assigned", "in_progress"].includes(c.status || "")
+    ).length;
+
+    const pendingReviews = campaigns.filter(c => c.status === "review").length;
+    const completed = campaigns.filter(c => c.status === "completed").length;
+    const drafts = campaigns.filter(c => c.status === "draft").length;
+
+    const campaignIds = campaigns.map(c => c.id);
+    let totalSubmissions = 0;
+    let approvedSubmissions = 0;
+
+    if (campaignIds.length > 0) {
+      const assignments = await db.select().from(campaignAssignments)
+        .where(inArray(campaignAssignments.campaignId, campaignIds));
+      
+      const assignmentIds = assignments.map(a => a.id);
+      if (assignmentIds.length > 0) {
+        const submissions = await db.select().from(contentSubmissions)
+          .where(inArray(contentSubmissions.assignmentId, assignmentIds));
+        totalSubmissions = submissions.length;
+        approvedSubmissions = submissions.filter(s => s.status === "approved").length;
+      }
+    }
+
+    res.json({
+      activeRequests,
+      pendingReviews,
+      completed,
+      drafts,
+      totalCampaigns: campaigns.length,
+      totalSubmissions,
+      approvedSubmissions,
+    });
+  } catch (error) {
+    console.error("Error fetching dashboard stats:", error);
+    res.status(500).json({ error: "Failed to fetch stats" });
+  }
+});
+
+router.get("/dashboard/review-history", isAuthenticated, async (req: Request, res: Response) => {
+  try {
+    const userId = (req as any).user?.id;
+
+    const reviews = await db.select({
+      review: contentReviews,
+      submission: contentSubmissions,
+      assignment: campaignAssignments,
+      campaign: ugcCampaigns,
+    })
+      .from(contentReviews)
+      .innerJoin(contentSubmissions, eq(contentReviews.submissionId, contentSubmissions.id))
+      .innerJoin(campaignAssignments, eq(contentSubmissions.assignmentId, campaignAssignments.id))
+      .innerJoin(ugcCampaigns, eq(campaignAssignments.campaignId, ugcCampaigns.id))
+      .where(eq(contentReviews.reviewerUserId, userId))
+      .orderBy(desc(contentReviews.createdAt))
+      .limit(50);
+
+    res.json(reviews);
+  } catch (error) {
+    console.error("Error fetching review history:", error);
+    res.status(500).json({ error: "Failed to fetch review history" });
+  }
+});
+
+router.get("/dashboard/approved-library", isAuthenticated, async (req: Request, res: Response) => {
+  try {
+    const userId = (req as any).user?.id;
+
+    const approvedContent = await db.select({
+      submission: contentSubmissions,
+      assignment: campaignAssignments,
+      campaign: ugcCampaigns,
+      creator: creatorProfiles,
+    })
+      .from(contentSubmissions)
+      .innerJoin(campaignAssignments, eq(contentSubmissions.assignmentId, campaignAssignments.id))
+      .innerJoin(ugcCampaigns, eq(campaignAssignments.campaignId, ugcCampaigns.id))
+      .innerJoin(creatorProfiles, eq(campaignAssignments.creatorId, creatorProfiles.id))
+      .where(and(
+        eq(ugcCampaigns.brandUserId, userId),
+        eq(contentSubmissions.status, "approved")
+      ))
+      .orderBy(desc(contentSubmissions.approvedAt));
+
+    const library = approvedContent.map(item => ({
+      id: item.submission.id,
+      fileName: item.submission.fileName,
+      fileType: item.submission.fileType,
+      caption: item.submission.caption,
+      approvedAt: item.submission.approvedAt,
+      downloadUnlocked: item.submission.downloadUnlocked,
+      campaignTitle: item.campaign.title,
+      campaignId: item.campaign.id,
+      platform: item.campaign.platform,
+      contentType: item.campaign.contentType,
+      usageRights: item.campaign.usageRights,
+      usageRightsDetails: item.campaign.usageRightsDetails,
+      usageDuration: item.campaign.usageDuration,
+      creatorName: item.creator.displayName,
+    }));
+
+    res.json(library);
+  } catch (error) {
+    console.error("Error fetching approved library:", error);
+    res.status(500).json({ error: "Failed to fetch approved library" });
+  }
+});
+
+router.get("/dashboard/creator-status", isAuthenticated, async (req: Request, res: Response) => {
+  try {
+    const userId = (req as any).user?.id;
+
+    const campaigns = await db.select().from(ugcCampaigns)
+      .where(eq(ugcCampaigns.brandUserId, userId));
+
+    const campaignIds = campaigns.map(c => c.id);
+    if (campaignIds.length === 0) {
+      return res.json([]);
+    }
+
+    const assignments = await db.select({
+      assignment: campaignAssignments,
+      creator: creatorProfiles,
+      campaign: ugcCampaigns,
+    })
+      .from(campaignAssignments)
+      .innerJoin(creatorProfiles, eq(campaignAssignments.creatorId, creatorProfiles.id))
+      .innerJoin(ugcCampaigns, eq(campaignAssignments.campaignId, ugcCampaigns.id))
+      .where(inArray(campaignAssignments.campaignId, campaignIds));
+
+    const creatorStatus = assignments.map(item => ({
+      assignmentId: item.assignment.id,
+      creatorId: item.creator.id,
+      creatorName: item.creator.displayName,
+      campaignId: item.campaign.id,
+      campaignTitle: item.campaign.title,
+      status: item.assignment.status,
+      ndaAccepted: item.assignment.ndaAccepted,
+      assignedAt: item.assignment.assignedAt,
+      acceptedAt: item.assignment.acceptedAt,
+      completedAt: item.assignment.completedAt,
+    }));
+
+    res.json(creatorStatus);
+  } catch (error) {
+    console.error("Error fetching creator status:", error);
+    res.status(500).json({ error: "Failed to fetch creator status" });
   }
 });
 

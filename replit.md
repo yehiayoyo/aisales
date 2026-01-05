@@ -127,6 +127,25 @@ npm run db:studio  # Open Drizzle Studio for DB inspection
 - `GET /webhooks/whatsapp` - WhatsApp webhook verification
 - `POST /webhooks/whatsapp` - WhatsApp message webhook handler
 
+### UGC System
+- `POST /api/ugc/creator/profile` - Create/update creator profile
+- `GET /api/ugc/creator/profile` - Get creator profile
+- `GET /api/ugc/creators` - Search creators (with filters)
+- `POST /api/ugc/campaigns` - Create UGC campaign
+- `GET /api/ugc/campaigns` - List campaigns (brand or creator)
+- `GET /api/ugc/campaigns/:id` - Get campaign details
+- `POST /api/ugc/campaigns/:id/generate-brief` - Generate AI brief
+- `POST /api/ugc/campaigns/:id/assign` - Assign creator to campaign
+- `POST /api/ugc/assignments/:id/accept` - Creator accepts assignment
+- `POST /api/ugc/assignments/:id/accept-nda` - Creator accepts NDA
+- `POST /api/ugc/assignments/:id/submit` - Submit content
+- `POST /api/ugc/submissions/:id/review` - Brand reviews submission
+- `GET /api/ugc/submissions/:id/download` - Download approved content (protected)
+- `GET /api/ugc/dashboard/stats` - UGC dashboard statistics
+- `GET /api/ugc/dashboard/creator-status` - Creator assignment status
+- `GET /api/ugc/dashboard/review-history` - Review history
+- `GET /api/ugc/dashboard/approved-library` - Approved content library
+
 ## Webhook Configuration
 
 ### For Facebook/Instagram
@@ -152,6 +171,9 @@ npm run db:studio  # Open Drizzle Studio for DB inspection
 - Isolated webhook router mounted before JSON parser for proper HMAC verification
 - Added UGC Creator & Brand Collaboration System with full workflow lifecycle
 - UGC AI capabilities: brief generation, script writing, hook suggestions, quality analysis
+- UGC Content Protection: Downloads locked until final approval, watermark support, NDA acknowledgment
+- Enhanced UGC Dashboard: 4 sections (Campaigns, Creator Status, Review History, Approved Content Library)
+- Usage Rights Tracking: Platform, duration, exclusivity, territory metadata per submission
 
 ## Architecture Notes
 - Webhook router uses express.raw() and is mounted BEFORE express.json() for proper signature verification

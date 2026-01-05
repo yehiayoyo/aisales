@@ -37,6 +37,15 @@ export const ugcCampaigns = pgTable("ugc_campaigns", {
   budget: decimal("budget", { precision: 10, scale: 2 }),
   usageRights: varchar("usage_rights", { length: 100 }),
   usageDuration: varchar("usage_duration", { length: 50 }),
+  usageRightsDetails: jsonb("usage_rights_details").$type<{
+    platforms: string[];
+    duration: string;
+    exclusivity: boolean;
+    paidAds: boolean;
+    territory: string;
+  }>(),
+  requiresNda: boolean("requires_nda").default(false),
+  ndaText: text("nda_text"),
   status: varchar("status", { length: 30 }).default("draft"),
   isOpenRequest: boolean("is_open_request").default(false),
   aiBrief: text("ai_brief"),
@@ -51,6 +60,8 @@ export const campaignAssignments = pgTable("campaign_assignments", {
   status: varchar("status", { length: 30 }).default("pending"),
   agreedRate: decimal("agreed_rate", { precision: 10, scale: 2 }),
   notes: text("notes"),
+  ndaAccepted: boolean("nda_accepted").default(false),
+  ndaAcceptedAt: timestamp("nda_accepted_at"),
   assignedAt: timestamp("assigned_at").defaultNow(),
   acceptedAt: timestamp("accepted_at"),
   completedAt: timestamp("completed_at"),
@@ -65,12 +76,16 @@ export const contentSubmissions = pgTable("content_submissions", {
   filePath: varchar("file_path"),
   fileSize: integer("file_size"),
   thumbnailPath: varchar("thumbnail_path"),
+  watermarkedPath: varchar("watermarked_path"),
+  isWatermarked: boolean("is_watermarked").default(true),
+  downloadUnlocked: boolean("download_unlocked").default(false),
   caption: text("caption"),
   duration: integer("duration"),
   aiQualityScore: integer("ai_quality_score"),
   aiQualityNotes: jsonb("ai_quality_notes").$type<{ length?: string; structure?: string; engagement?: string }>(),
   status: varchar("status", { length: 30 }).default("submitted"),
   submittedAt: timestamp("submitted_at").defaultNow(),
+  approvedAt: timestamp("approved_at"),
 });
 
 export const contentReviews = pgTable("content_reviews", {

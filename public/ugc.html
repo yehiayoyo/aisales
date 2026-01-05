@@ -59,9 +59,9 @@
     </div>
 
     <div id="content-brand">
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
         <div class="bg-white rounded-xl shadow-sm p-6">
-          <div class="text-sm text-gray-500 mb-1">Active Campaigns</div>
+          <div class="text-sm text-gray-500 mb-1">Active Requests</div>
           <div id="stat-campaigns" class="text-3xl font-bold text-gray-900">0</div>
         </div>
         <div class="bg-white rounded-xl shadow-sm p-6">
@@ -69,17 +69,56 @@
           <div id="stat-reviews" class="text-3xl font-bold text-orange-600">0</div>
         </div>
         <div class="bg-white rounded-xl shadow-sm p-6">
+          <div class="text-sm text-gray-500 mb-1">Approved Content</div>
+          <div id="stat-approved" class="text-3xl font-bold text-green-600">0</div>
+        </div>
+        <div class="bg-white rounded-xl shadow-sm p-6">
           <div class="text-sm text-gray-500 mb-1">Completed</div>
-          <div id="stat-completed" class="text-3xl font-bold text-green-600">0</div>
+          <div id="stat-completed" class="text-3xl font-bold text-purple-600">0</div>
         </div>
       </div>
 
-      <div class="bg-white rounded-xl shadow-sm">
+      <div class="flex space-x-4 mb-6">
+        <button onclick="showBrandSection('campaigns')" id="btn-campaigns" class="px-4 py-2 bg-purple-600 text-white rounded-lg">Campaigns</button>
+        <button onclick="showBrandSection('creators')" id="btn-creators" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300">Creator Status</button>
+        <button onclick="showBrandSection('reviews')" id="btn-reviews" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300">Review History</button>
+        <button onclick="showBrandSection('library')" id="btn-library" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300">Approved Library</button>
+      </div>
+
+      <div id="section-campaigns" class="bg-white rounded-xl shadow-sm">
         <div class="px-6 py-4 border-b border-gray-200">
           <h2 class="text-lg font-semibold">Your Campaigns</h2>
         </div>
         <div id="campaigns-list" class="divide-y divide-gray-200">
           <div class="p-6 text-center text-gray-500">Loading campaigns...</div>
+        </div>
+      </div>
+
+      <div id="section-creators" class="bg-white rounded-xl shadow-sm hidden">
+        <div class="px-6 py-4 border-b border-gray-200">
+          <h2 class="text-lg font-semibold">Creator Status</h2>
+        </div>
+        <div id="creator-status-list" class="divide-y divide-gray-200">
+          <div class="p-6 text-center text-gray-500">Loading creator status...</div>
+        </div>
+      </div>
+
+      <div id="section-reviews" class="bg-white rounded-xl shadow-sm hidden">
+        <div class="px-6 py-4 border-b border-gray-200">
+          <h2 class="text-lg font-semibold">Review History</h2>
+        </div>
+        <div id="review-history-list" class="divide-y divide-gray-200">
+          <div class="p-6 text-center text-gray-500">Loading review history...</div>
+        </div>
+      </div>
+
+      <div id="section-library" class="bg-white rounded-xl shadow-sm hidden">
+        <div class="px-6 py-4 border-b border-gray-200">
+          <h2 class="text-lg font-semibold">Approved Content Library</h2>
+          <p class="text-sm text-gray-500 mt-1">Download your approved content with usage rights tracking</p>
+        </div>
+        <div id="approved-library-list" class="divide-y divide-gray-200">
+          <div class="p-6 text-center text-gray-500">Loading approved content...</div>
         </div>
       </div>
     </div>
@@ -663,7 +702,182 @@
       }
     });
 
-    init();
+    function showBrandSection(section) {
+      const sections = ['campaigns', 'creators', 'reviews', 'library'];
+      sections.forEach(s => {
+        document.getElementById(`section-${s}`).classList.toggle('hidden', s !== section);
+        document.getElementById(`btn-${s}`).classList.toggle('bg-purple-600', s === section);
+        document.getElementById(`btn-${s}`).classList.toggle('text-white', s === section);
+        document.getElementById(`btn-${s}`).classList.toggle('bg-gray-200', s !== section);
+        document.getElementById(`btn-${s}`).classList.toggle('text-gray-700', s !== section);
+      });
+      
+      if (section === 'creators') loadCreatorStatus();
+      if (section === 'reviews') loadReviewHistory();
+      if (section === 'library') loadApprovedLibrary();
+    }
+
+    async function loadDashboardStats() {
+      try {
+        const res = await fetch('/api/ugc/dashboard/stats', { credentials: 'include' });
+        const stats = await res.json();
+        document.getElementById('stat-campaigns').textContent = stats.activeRequests || 0;
+        document.getElementById('stat-reviews').textContent = stats.pendingReviews || 0;
+        document.getElementById('stat-approved').textContent = stats.approvedSubmissions || 0;
+        document.getElementById('stat-completed').textContent = stats.completed || 0;
+      } catch (e) {
+        console.error('Error loading stats:', e);
+      }
+    }
+
+    async function loadCreatorStatus() {
+      try {
+        const res = await fetch('/api/ugc/dashboard/creator-status', { credentials: 'include' });
+        const creators = await res.json();
+        
+        const list = document.getElementById('creator-status-list');
+        if (!creators.length) {
+          list.innerHTML = '<div class="p-6 text-center text-gray-500">No creators assigned yet</div>';
+          return;
+        }
+
+        const statusColors = {
+          pending: 'bg-gray-100 text-gray-700',
+          accepted: 'bg-blue-100 text-blue-700',
+          submitted: 'bg-yellow-100 text-yellow-700',
+          revision_requested: 'bg-orange-100 text-orange-700',
+          completed: 'bg-green-100 text-green-700',
+        };
+
+        list.innerHTML = creators.map(c => `
+          <div class="p-4">
+            <div class="flex justify-between items-center">
+              <div>
+                <span class="font-semibold">${c.creatorName}</span>
+                <span class="text-gray-500 mx-2">-</span>
+                <span class="text-gray-600">${c.campaignTitle}</span>
+              </div>
+              <div class="flex items-center space-x-3">
+                ${c.ndaAccepted ? '<span class="text-xs bg-purple-100 text-purple-700 px-2 py-1 rounded">NDA Signed</span>' : ''}
+                <span class="px-3 py-1 rounded-full text-sm ${statusColors[c.status] || 'bg-gray-100'}">${c.status}</span>
+              </div>
+            </div>
+            <div class="text-sm text-gray-500 mt-1">
+              Assigned: ${c.assignedAt ? new Date(c.assignedAt).toLocaleDateString() : 'N/A'}
+              ${c.completedAt ? ` | Completed: ${new Date(c.completedAt).toLocaleDateString()}` : ''}
+            </div>
+          </div>
+        `).join('');
+      } catch (e) {
+        console.error('Error loading creator status:', e);
+      }
+    }
+
+    async function loadReviewHistory() {
+      try {
+        const res = await fetch('/api/ugc/dashboard/review-history', { credentials: 'include' });
+        const reviews = await res.json();
+        
+        const list = document.getElementById('review-history-list');
+        if (!reviews.length) {
+          list.innerHTML = '<div class="p-6 text-center text-gray-500">No reviews yet</div>';
+          return;
+        }
+
+        const decisionColors = {
+          approved: 'bg-green-100 text-green-700',
+          revision_requested: 'bg-orange-100 text-orange-700',
+          rejected: 'bg-red-100 text-red-700',
+        };
+
+        list.innerHTML = reviews.map(r => `
+          <div class="p-4">
+            <div class="flex justify-between items-center">
+              <div>
+                <span class="font-semibold">${r.campaign.title}</span>
+                <span class="text-gray-500 mx-2">-</span>
+                <span class="text-gray-600">Version ${r.submission.version}</span>
+              </div>
+              <span class="px-3 py-1 rounded-full text-sm ${decisionColors[r.review.decision] || 'bg-gray-100'}">${r.review.decision}</span>
+            </div>
+            ${r.review.feedback ? `<p class="text-sm text-gray-600 mt-2">${r.review.feedback}</p>` : ''}
+            <div class="text-sm text-gray-500 mt-1">${new Date(r.review.createdAt).toLocaleString()}</div>
+          </div>
+        `).join('');
+      } catch (e) {
+        console.error('Error loading review history:', e);
+      }
+    }
+
+    async function loadApprovedLibrary() {
+      try {
+        const res = await fetch('/api/ugc/dashboard/approved-library', { credentials: 'include' });
+        const library = await res.json();
+        
+        const list = document.getElementById('approved-library-list');
+        if (!library.length) {
+          list.innerHTML = '<div class="p-6 text-center text-gray-500">No approved content yet</div>';
+          return;
+        }
+
+        list.innerHTML = library.map(item => `
+          <div class="p-4">
+            <div class="flex justify-between items-start">
+              <div>
+                <div class="flex items-center space-x-3">
+                  <span class="text-2xl">${item.fileType === 'video' ? '🎬' : '🖼️'}</span>
+                  <div>
+                    <span class="font-semibold">${item.fileName}</span>
+                    <span class="text-gray-500 mx-2">from</span>
+                    <span class="text-purple-600">${item.campaignTitle}</span>
+                  </div>
+                </div>
+                <div class="mt-2 text-sm text-gray-600">
+                  <span class="bg-gray-100 px-2 py-1 rounded mr-2">${item.platform}</span>
+                  <span class="bg-gray-100 px-2 py-1 rounded mr-2">${item.contentType}</span>
+                  <span class="text-gray-500">by ${item.creatorName}</span>
+                </div>
+              </div>
+              <div class="text-right">
+                ${item.downloadUnlocked ? 
+                  `<a href="/api/ugc/submissions/${item.id}/download" class="inline-block bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 text-sm">Download</a>` :
+                  `<span class="text-sm text-orange-600">Download Locked</span>`
+                }
+              </div>
+            </div>
+            <div class="mt-3 p-3 bg-gray-50 rounded-lg">
+              <div class="text-sm font-medium text-gray-700 mb-1">Usage Rights</div>
+              <div class="text-sm text-gray-600">
+                <span class="mr-4"><strong>Type:</strong> ${item.usageRights || 'Standard'}</span>
+                <span class="mr-4"><strong>Duration:</strong> ${item.usageDuration || 'Perpetual'}</span>
+                <span><strong>Approved:</strong> ${item.approvedAt ? new Date(item.approvedAt).toLocaleDateString() : 'N/A'}</span>
+              </div>
+            </div>
+          </div>
+        `).join('');
+      } catch (e) {
+        console.error('Error loading approved library:', e);
+      }
+    }
+
+    async function initEnhanced() {
+      try {
+        const res = await fetch('/api/auth/user', { credentials: 'include' });
+        if (!res.ok) {
+          window.location.href = '/';
+          return;
+        }
+        currentUser = await res.json();
+        document.getElementById('userName').textContent = currentUser.firstName || currentUser.username;
+        
+        await loadCreatorProfile();
+        await Promise.all([loadCampaigns(), loadDashboardStats()]);
+      } catch (e) {
+        console.error('Init error:', e);
+      }
+    }
+
+    initEnhanced();
   </script>
 </body>
 </html>
