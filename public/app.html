@@ -4,27 +4,32 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>MT Hub - AI Business Platform</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/css/design-system.css">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-  <div class="app-container">
+  <div class="app-layout">
+    <!-- Premium Sidebar -->
     <aside class="sidebar" id="sidebar">
       <div class="sidebar-header">
-        <div class="sidebar-logo">MT</div>
+        <div class="sidebar-logo">M</div>
         <span class="sidebar-brand">MT Hub</span>
       </div>
       
       <nav class="sidebar-nav">
+        <!-- Overview -->
         <div class="nav-section">
-          <div class="nav-section-title">Overview</div>
-          <a href="#" class="nav-item active" data-section="dashboard">
+          <div class="nav-section-label">Overview</div>
+          <a class="nav-item active" data-section="dashboard">
             <span class="nav-item-icon">
               <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
             </span>
             <span class="nav-item-text">Dashboard</span>
           </a>
-          <a href="#" class="nav-item" data-section="analytics">
+          <a class="nav-item" data-section="analytics">
             <span class="nav-item-icon">
               <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
             </span>
@@ -32,21 +37,29 @@
           </a>
         </div>
         
+        <!-- AI Hub -->
         <div class="nav-section">
-          <div class="nav-section-title">AI Hub</div>
-          <a href="#" class="nav-item" data-section="ai-chat">
+          <div class="nav-section-label">AI Hub</div>
+          <a class="nav-item" data-section="ai-chat">
             <span class="nav-item-icon">
-              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/></svg>
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
             </span>
             <span class="nav-item-text">AI Chat</span>
+            <span class="nav-item-badge">GPT-5</span>
           </a>
-          <a href="#" class="nav-item" data-section="ai-images">
+          <a class="nav-item" data-section="ai-media">
             <span class="nav-item-icon">
               <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
             </span>
             <span class="nav-item-text">Image & Video</span>
           </a>
-          <a href="#" class="nav-item" data-section="ai-sales">
+          <a class="nav-item" data-section="ai-search">
+            <span class="nav-item-icon">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+            </span>
+            <span class="nav-item-text">Web Search</span>
+          </a>
+          <a class="nav-item" data-section="ai-sales">
             <span class="nav-item-icon">
               <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
             </span>
@@ -54,27 +67,29 @@
           </a>
         </div>
         
+        <!-- Social Media -->
         <div class="nav-section">
-          <div class="nav-section-title">Social Media</div>
-          <a href="#" class="nav-item" data-section="inbox">
+          <div class="nav-section-label">Social Media</div>
+          <a class="nav-item" data-section="inbox">
             <span class="nav-item-icon">
               <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"/></svg>
             </span>
             <span class="nav-item-text">Unified Inbox</span>
+            <span class="nav-item-badge">12</span>
           </a>
-          <a href="#" class="nav-item" data-section="auto-replies">
+          <a class="nav-item" data-section="auto-replies">
             <span class="nav-item-icon">
               <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
             </span>
             <span class="nav-item-text">Auto Replies</span>
           </a>
-          <a href="#" class="nav-item" data-section="accounts">
+          <a class="nav-item" data-section="accounts">
             <span class="nav-item-icon">
               <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/></svg>
             </span>
             <span class="nav-item-text">Accounts</span>
           </a>
-          <a href="#" class="nav-item" data-section="scheduler">
+          <a class="nav-item" data-section="scheduler">
             <span class="nav-item-icon">
               <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
             </span>
@@ -82,92 +97,100 @@
           </a>
         </div>
         
+        <!-- UGC -->
         <div class="nav-section">
-          <div class="nav-section-title">UGC</div>
-          <a href="#" class="nav-item" data-section="ugc-campaigns">
+          <div class="nav-section-label">UGC Platform</div>
+          <a class="nav-item" data-section="ugc-campaigns">
             <span class="nav-item-icon">
               <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
             </span>
             <span class="nav-item-text">Campaigns</span>
           </a>
-          <a href="#" class="nav-item" data-section="ugc-orders">
+          <a class="nav-item" data-section="ugc-orders">
             <span class="nav-item-icon">
               <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg>
             </span>
             <span class="nav-item-text">Orders</span>
           </a>
-          <a href="#" class="nav-item" data-section="ugc-creators">
+          <a class="nav-item" data-section="ugc-creators">
             <span class="nav-item-icon">
               <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
             </span>
             <span class="nav-item-text">Creators</span>
           </a>
         </div>
-        
-        <div class="nav-section">
-          <div class="nav-section-title">Settings</div>
-          <a href="#" class="nav-item" data-section="settings">
-            <span class="nav-item-icon">
-              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-            </span>
-            <span class="nav-item-text">Settings</span>
-          </a>
-        </div>
       </nav>
       
       <div class="sidebar-footer">
-        <div class="user-menu" id="userMenu">
-          <div class="user-avatar" id="userAvatar">U</div>
+        <a class="nav-item" data-section="settings">
+          <span class="nav-item-icon">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+          </span>
+          <span class="nav-item-text">Settings</span>
+        </a>
+        <div class="user-profile">
+          <div class="user-avatar" id="userAvatar">G</div>
           <div class="user-info">
-            <div class="user-name" id="userName">Loading...</div>
-            <div class="user-role">Admin</div>
+            <div class="user-name" id="userName">Guest</div>
+            <div class="user-role">Free Plan</div>
           </div>
         </div>
       </div>
     </aside>
     
-    <div class="main-content">
-      <header class="topbar">
-        <div class="topbar-left">
-          <button class="topbar-toggle" id="sidebarToggle">
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Header -->
+      <header class="header">
+        <div class="header-left">
+          <button class="sidebar-toggle" id="sidebarToggle">
             <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
           </button>
           <h1 class="page-title" id="pageTitle">Dashboard</h1>
         </div>
-        <div class="topbar-right">
-          <div class="topbar-search">
-            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-            <input type="text" placeholder="Search...">
+        
+        <div class="header-center">
+          <div class="search-box">
+            <svg class="search-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+            <input type="text" class="search-input" placeholder="Search anything...">
           </div>
-          <button class="topbar-btn">
+        </div>
+        
+        <div class="header-right">
+          <button class="header-btn">
             <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
-            <span class="badge"></span>
+            <span class="header-btn-badge"></span>
           </button>
-          <a href="/api/logout" class="btn btn-ghost btn-sm">Logout</a>
+          <button class="btn btn-primary btn-sm" onclick="handleLogout()">Logout</button>
         </div>
       </header>
       
-      <main class="content-area" id="contentArea">
-        <section id="section-dashboard">
-          <div class="grid-cols-4 mb-6">
+      <!-- Content Wrapper -->
+      <div class="content-wrapper">
+        <!-- Dashboard Section -->
+        <section id="section-dashboard" class="section">
+          <div class="page-header">
+            <h2 class="page-header-title">Welcome back!</h2>
+            <p class="page-header-subtitle">Here's what's happening with your business today.</p>
+          </div>
+          
+          <!-- Stats Grid -->
+          <div class="grid grid-cols-4 mb-8">
             <div class="stat-card">
-              <div class="stat-card-header">
-                <div class="stat-card-icon primary">
-                  <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/></svg>
-                </div>
+              <div class="stat-card-icon primary">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
               </div>
               <div class="stat-card-value" id="statConversations">0</div>
-              <div class="stat-card-label">Active Conversations</div>
+              <div class="stat-card-label">Total Conversations</div>
               <div class="stat-card-trend up">
                 <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"/></svg>
                 <span>12%</span>
               </div>
             </div>
+            
             <div class="stat-card">
-              <div class="stat-card-header">
-                <div class="stat-card-icon success">
-                  <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                </div>
+              <div class="stat-card-icon success">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
               </div>
               <div class="stat-card-value" id="statAiReplies">0</div>
               <div class="stat-card-label">AI Replies Sent</div>
@@ -176,655 +199,702 @@
                 <span>8%</span>
               </div>
             </div>
+            
             <div class="stat-card">
-              <div class="stat-card-header">
-                <div class="stat-card-icon warning">
-                  <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/></svg>
-                </div>
+              <div class="stat-card-icon info">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/></svg>
               </div>
               <div class="stat-card-value" id="statAccounts">0</div>
               <div class="stat-card-label">Connected Accounts</div>
             </div>
+            
             <div class="stat-card">
-              <div class="stat-card-header">
-                <div class="stat-card-icon info">
-                  <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
-                </div>
+              <div class="stat-card-icon accent">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
               </div>
               <div class="stat-card-value" id="statCampaigns">0</div>
               <div class="stat-card-label">Active Campaigns</div>
             </div>
           </div>
           
-          <div class="grid-cols-3 mb-6">
-            <div class="card" style="grid-column: span 2;">
+          <!-- Charts Row -->
+          <div class="grid grid-cols-2 mb-8">
+            <div class="card">
               <div class="card-header">
                 <div>
                   <div class="card-title">Message Volume</div>
                   <div class="card-subtitle">Messages received over time</div>
                 </div>
-                <select class="input" style="width: 140px; height: 36px;">
+                <select class="form-input" style="width: auto; height: 36px; padding: 0 32px 0 12px;">
                   <option>Last 7 days</option>
                   <option>Last 30 days</option>
                   <option>Last 90 days</option>
                 </select>
               </div>
               <div class="card-body">
-                <canvas id="messageChart" height="200"></canvas>
+                <div class="chart-container">
+                  <canvas id="messageChart"></canvas>
+                </div>
               </div>
             </div>
+            
             <div class="card">
               <div class="card-header">
-                <div class="card-title">Platform Mix</div>
+                <div>
+                  <div class="card-title">Platform Distribution</div>
+                  <div class="card-subtitle">Messages by platform</div>
+                </div>
               </div>
               <div class="card-body">
-                <canvas id="platformChart" height="200"></canvas>
+                <div class="chart-container">
+                  <canvas id="platformChart"></canvas>
+                </div>
               </div>
             </div>
           </div>
           
-          <div class="grid-cols-2">
-            <div class="card">
-              <div class="card-header">
-                <div class="card-title">Recent Conversations</div>
-                <a href="#" class="btn btn-secondary btn-sm" data-section="inbox">View All</a>
-              </div>
-              <div class="card-body" id="recentConversations">
-                <div class="empty-state">
-                  <div class="empty-state-icon">
-                    <svg width="32" height="32" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/></svg>
-                  </div>
-                  <div class="empty-state-title">No conversations yet</div>
-                  <div class="empty-state-text">Connect a social account to start receiving messages</div>
-                </div>
-              </div>
-            </div>
-            <div class="card">
-              <div class="card-header">
-                <div class="card-title">AI Activity</div>
-                <span class="badge badge-success">Live</span>
-              </div>
-              <div class="card-body" id="aiActivity">
-                <div class="empty-state">
-                  <div class="empty-state-icon">
-                    <svg width="32" height="32" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
-                  </div>
-                  <div class="empty-state-title">AI is ready</div>
-                  <div class="empty-state-text">Auto-replies will appear here when AI responds to messages</div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-        
-        <section id="section-ai-chat" class="hidden">
-          <div class="card" style="height: calc(100vh - 180px);">
+          <!-- Quick Actions -->
+          <div class="card">
             <div class="card-header">
-              <div class="flex items-center gap-4">
-                <div class="card-title">AI Chat</div>
-                <div class="flex gap-2">
-                  <button class="btn btn-secondary btn-sm provider-btn active" data-provider="openai">ChatGPT</button>
-                  <button class="btn btn-secondary btn-sm provider-btn" data-provider="luma">Luma AI</button>
-                  <button class="btn btn-secondary btn-sm provider-btn" data-provider="tavily">Web Search</button>
-                </div>
-              </div>
-              <select class="input" id="aiModelSelect" style="width: 180px; height: 36px;">
-                <option value="gpt-4o">GPT-4o</option>
-                <option value="gpt-4o-mini">GPT-4o Mini</option>
-                <option value="o1-preview">O1 Preview</option>
-              </select>
+              <div class="card-title">Quick Actions</div>
             </div>
-            <div style="display: flex; height: calc(100% - 73px);">
-              <div style="width: 280px; border-right: 1px solid var(--color-gray-100); overflow-y: auto; padding: var(--spacing-4);">
-                <button class="btn btn-primary" style="width: 100%; margin-bottom: var(--spacing-4);" onclick="createNewChat()">
-                  <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
-                  New Chat
+            <div class="card-body">
+              <div class="flex gap-4">
+                <button class="btn btn-primary" onclick="showSection('ai-chat')">
+                  <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+                  Start AI Chat
                 </button>
-                <div id="chatHistoryList"></div>
-              </div>
-              <div style="flex: 1; display: flex; flex-direction: column;">
-                <div id="chatMessages" style="flex: 1; overflow-y: auto; padding: var(--spacing-6);"></div>
-                <div style="padding: var(--spacing-4); border-top: 1px solid var(--color-gray-100);">
-                  <div class="flex gap-3">
-                    <input type="text" class="input" id="chatInput" placeholder="Type your message..." style="flex: 1;">
-                    <button class="btn btn-primary" onclick="sendAiMessage()">Send</button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-        
-        <section id="section-ai-images" class="hidden">
-          <div class="grid-cols-2 mb-6">
-            <div class="card">
-              <div class="card-header">
-                <div class="card-title">Generate Image</div>
-              </div>
-              <div class="card-body">
-                <div class="mb-4">
-                  <label style="display: block; font-weight: 500; margin-bottom: var(--spacing-2);">Prompt</label>
-                  <textarea class="input" id="imagePrompt" style="height: 120px; padding: var(--spacing-3); resize: none;" placeholder="Describe the image you want to generate..."></textarea>
-                </div>
-                <div class="flex gap-4 mb-4">
-                  <div style="flex: 1;">
-                    <label style="display: block; font-weight: 500; margin-bottom: var(--spacing-2);">Aspect Ratio</label>
-                    <select class="input" id="imageAspect">
-                      <option value="16:9">16:9 Landscape</option>
-                      <option value="1:1">1:1 Square</option>
-                      <option value="9:16">9:16 Portrait</option>
-                    </select>
-                  </div>
-                </div>
-                <button class="btn btn-primary" onclick="generateImage()">Generate Image</button>
-              </div>
-            </div>
-            <div class="card">
-              <div class="card-header">
-                <div class="card-title">Generate Video</div>
-              </div>
-              <div class="card-body">
-                <div class="mb-4">
-                  <label style="display: block; font-weight: 500; margin-bottom: var(--spacing-2);">Prompt</label>
-                  <textarea class="input" id="videoPrompt" style="height: 120px; padding: var(--spacing-3); resize: none;" placeholder="Describe the video you want to generate..."></textarea>
-                </div>
-                <div class="flex gap-4 mb-4">
-                  <div style="flex: 1;">
-                    <label style="display: block; font-weight: 500; margin-bottom: var(--spacing-2);">Duration</label>
-                    <select class="input" id="videoDuration">
-                      <option value="5">5 seconds</option>
-                      <option value="10">10 seconds</option>
-                    </select>
-                  </div>
-                </div>
-                <button class="btn btn-primary" onclick="generateVideo()">Generate Video</button>
-              </div>
-            </div>
-          </div>
-          <div class="card">
-            <div class="card-header">
-              <div class="card-title">Generated Media</div>
-            </div>
-            <div class="card-body" id="generatedMedia">
-              <div class="empty-state">
-                <div class="empty-state-icon">
-                  <svg width="32" height="32" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-                </div>
-                <div class="empty-state-title">No media generated yet</div>
-                <div class="empty-state-text">Use the forms above to generate images or videos</div>
+                <button class="btn btn-secondary" onclick="showSection('inbox')">
+                  <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"/></svg>
+                  View Inbox
+                </button>
+                <button class="btn btn-secondary" onclick="showSection('ugc-campaigns')">
+                  <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                  Create Campaign
+                </button>
+                <button class="btn btn-secondary" onclick="showSection('accounts')">
+                  <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/></svg>
+                  Connect Account
+                </button>
               </div>
             </div>
           </div>
         </section>
         
-        <section id="section-ai-sales" class="hidden">
-          <div class="grid-cols-3 mb-6">
-            <div class="stat-card">
-              <div class="stat-card-value">156</div>
-              <div class="stat-card-label">Leads Generated</div>
-              <div class="stat-card-trend up">
-                <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"/></svg>
-                <span>23%</span>
-              </div>
-            </div>
-            <div class="stat-card">
-              <div class="stat-card-value">42</div>
-              <div class="stat-card-label">AI Outreach Sent</div>
-            </div>
-            <div class="stat-card">
-              <div class="stat-card-value">18%</div>
-              <div class="stat-card-label">Response Rate</div>
-              <div class="stat-card-trend up">
-                <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"/></svg>
-                <span>5%</span>
-              </div>
-            </div>
+        <!-- Analytics Section -->
+        <section id="section-analytics" class="section hidden">
+          <div class="page-header">
+            <h2 class="page-header-title">Analytics</h2>
+            <p class="page-header-subtitle">Track your performance metrics and growth.</p>
           </div>
-          <div class="grid-cols-2">
-            <div class="card">
-              <div class="card-header">
-                <div class="card-title">Sales Playbooks</div>
-                <button class="btn btn-primary btn-sm">+ New Playbook</button>
-              </div>
-              <div class="card-body">
-                <div style="padding: var(--spacing-4); border: 1px solid var(--color-gray-200); border-radius: var(--radius-lg); margin-bottom: var(--spacing-3);">
-                  <div class="flex items-center justify-between mb-2">
-                    <span style="font-weight: 600;">Cold Outreach Sequence</span>
-                    <span class="badge badge-success">Active</span>
-                  </div>
-                  <p style="color: var(--color-gray-500); font-size: var(--text-sm);">5-step email sequence for cold leads</p>
-                </div>
-                <div style="padding: var(--spacing-4); border: 1px solid var(--color-gray-200); border-radius: var(--radius-lg);">
-                  <div class="flex items-center justify-between mb-2">
-                    <span style="font-weight: 600;">Demo Follow-up</span>
-                    <span class="badge badge-warning">Draft</span>
-                  </div>
-                  <p style="color: var(--color-gray-500); font-size: var(--text-sm);">Post-demo nurture sequence</p>
-                </div>
-              </div>
-            </div>
-            <div class="card">
-              <div class="card-header">
-                <div class="card-title">AI Sales Assistant</div>
-              </div>
-              <div class="card-body">
-                <div class="mb-4">
-                  <label style="display: block; font-weight: 500; margin-bottom: var(--spacing-2);">Generate Sales Email</label>
-                  <textarea class="input" style="height: 100px; padding: var(--spacing-3); resize: none;" placeholder="Describe your prospect and what you're selling..."></textarea>
-                </div>
-                <button class="btn btn-primary">Generate Email</button>
-              </div>
-            </div>
-          </div>
-        </section>
-        
-        <section id="section-inbox" class="hidden">
-          <div class="card" style="height: calc(100vh - 180px);">
-            <div class="tabs">
-              <div class="tab active">All Messages</div>
-              <div class="tab">Facebook</div>
-              <div class="tab">Instagram</div>
-              <div class="tab">WhatsApp</div>
-            </div>
-            <div style="display: flex; height: calc(100% - 49px);">
-              <div style="width: 360px; border-right: 1px solid var(--color-gray-100); overflow-y: auto;" id="conversationList">
-                <div class="empty-state">
-                  <div class="empty-state-icon">
-                    <svg width="32" height="32" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"/></svg>
-                  </div>
-                  <div class="empty-state-title">No messages</div>
-                  <div class="empty-state-text">Connect social accounts to receive messages</div>
-                </div>
-              </div>
-              <div style="flex: 1; display: flex; flex-direction: column;" id="conversationView">
-                <div style="flex: 1; display: flex; align-items: center; justify-content: center;">
-                  <div class="empty-state">
-                    <div class="empty-state-icon">
-                      <svg width="32" height="32" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
-                    </div>
-                    <div class="empty-state-title">Select a conversation</div>
-                    <div class="empty-state-text">Choose a conversation from the list to view messages</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-        
-        <section id="section-auto-replies" class="hidden">
-          <div class="flex justify-between items-center mb-6">
-            <div>
-              <h2 style="font-size: var(--text-2xl); font-weight: 700; margin-bottom: var(--spacing-1);">Auto Reply Rules</h2>
-              <p style="color: var(--color-gray-500);">Configure AI-powered automatic responses</p>
-            </div>
-            <button class="btn btn-primary">+ New Rule</button>
-          </div>
-          <div class="card">
-            <table class="data-table">
-              <thead>
-                <tr>
-                  <th>Rule Name</th>
-                  <th>Platform</th>
-                  <th>Trigger</th>
-                  <th>Tone</th>
-                  <th>Status</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody id="autoReplyRules">
-                <tr>
-                  <td colspan="6" style="text-align: center; padding: var(--spacing-8);">
-                    <div class="empty-state">
-                      <div class="empty-state-title">No rules configured</div>
-                      <div class="empty-state-text">Create your first auto-reply rule to get started</div>
-                    </div>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </section>
-        
-        <section id="section-accounts" class="hidden">
-          <div class="flex justify-between items-center mb-6">
-            <div>
-              <h2 style="font-size: var(--text-2xl); font-weight: 700; margin-bottom: var(--spacing-1);">Connected Accounts</h2>
-              <p style="color: var(--color-gray-500);">Manage your social media connections</p>
-            </div>
-          </div>
-          <div class="grid-cols-3 mb-6">
-            <div class="card" style="cursor: pointer;" onclick="connectFacebook()">
-              <div class="card-body text-center">
-                <div style="width: 64px; height: 64px; margin: 0 auto var(--spacing-4); background: #1877F2; border-radius: var(--radius-xl); display: flex; align-items: center; justify-content: center;">
-                  <svg width="32" height="32" fill="white" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
-                </div>
-                <div style="font-weight: 600; margin-bottom: var(--spacing-1);">Facebook Pages</div>
-                <p style="color: var(--color-gray-500); font-size: var(--text-sm);">Connect your Facebook Business Pages</p>
-              </div>
-            </div>
-            <div class="card" style="cursor: pointer;">
-              <div class="card-body text-center">
-                <div style="width: 64px; height: 64px; margin: 0 auto var(--spacing-4); background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); border-radius: var(--radius-xl); display: flex; align-items: center; justify-content: center;">
-                  <svg width="32" height="32" fill="white" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
-                </div>
-                <div style="font-weight: 600; margin-bottom: var(--spacing-1);">Instagram Business</div>
-                <p style="color: var(--color-gray-500); font-size: var(--text-sm);">Connect your Instagram Business account</p>
-              </div>
-            </div>
-            <div class="card" style="cursor: pointer;">
-              <div class="card-body text-center">
-                <div style="width: 64px; height: 64px; margin: 0 auto var(--spacing-4); background: #25D366; border-radius: var(--radius-xl); display: flex; align-items: center; justify-content: center;">
-                  <svg width="32" height="32" fill="white" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
-                </div>
-                <div style="font-weight: 600; margin-bottom: var(--spacing-1);">WhatsApp Business</div>
-                <p style="color: var(--color-gray-500); font-size: var(--text-sm);">Connect WhatsApp Business API</p>
-              </div>
-            </div>
-          </div>
-          <div class="card">
-            <div class="card-header">
-              <div class="card-title">Your Accounts</div>
-            </div>
-            <div class="card-body" id="connectedAccountsList">
-              <div class="empty-state">
-                <div class="empty-state-title">No accounts connected</div>
-                <div class="empty-state-text">Click on a platform above to connect your first account</div>
-              </div>
-            </div>
-          </div>
-        </section>
-        
-        <section id="section-scheduler" class="hidden">
-          <div class="flex justify-between items-center mb-6">
-            <div>
-              <h2 style="font-size: var(--text-2xl); font-weight: 700; margin-bottom: var(--spacing-1);">Content Scheduler</h2>
-              <p style="color: var(--color-gray-500);">Plan and schedule your social media posts</p>
-            </div>
-            <button class="btn btn-primary">+ Schedule Post</button>
-          </div>
-          <div class="card">
-            <div class="card-body" id="scheduledPosts">
-              <div class="empty-state">
-                <div class="empty-state-icon">
-                  <svg width="32" height="32" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-                </div>
-                <div class="empty-state-title">No scheduled posts</div>
-                <div class="empty-state-text">Schedule your first post to see it here</div>
-              </div>
-            </div>
-          </div>
-        </section>
-        
-        <section id="section-ugc-campaigns" class="hidden">
-          <div class="flex justify-between items-center mb-6">
-            <div>
-              <h2 style="font-size: var(--text-2xl); font-weight: 700; margin-bottom: var(--spacing-1);">UGC Campaigns</h2>
-              <p style="color: var(--color-gray-500);">Manage your user-generated content campaigns</p>
-            </div>
-            <button class="btn btn-primary">+ New Campaign</button>
-          </div>
-          <div class="grid-cols-4 mb-6">
-            <div class="stat-card">
-              <div class="stat-card-value" id="ugcStatCampaigns">0</div>
-              <div class="stat-card-label">Active Campaigns</div>
-            </div>
-            <div class="stat-card">
-              <div class="stat-card-value" id="ugcStatPending">0</div>
-              <div class="stat-card-label">Pending Reviews</div>
-            </div>
-            <div class="stat-card">
-              <div class="stat-card-value" id="ugcStatApproved">0</div>
-              <div class="stat-card-label">Approved Content</div>
-            </div>
-            <div class="stat-card">
-              <div class="stat-card-value" id="ugcStatCreators">0</div>
-              <div class="stat-card-label">Active Creators</div>
-            </div>
-          </div>
-          <div class="card">
-            <div class="card-body" id="campaignsList">
-              <div class="empty-state">
-                <div class="empty-state-icon">
-                  <svg width="32" height="32" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
-                </div>
-                <div class="empty-state-title">No campaigns yet</div>
-                <div class="empty-state-text">Create your first UGC campaign to get started</div>
-              </div>
-            </div>
-          </div>
-        </section>
-        
-        <section id="section-ugc-orders" class="hidden">
-          <div class="flex justify-between items-center mb-6">
-            <div>
-              <h2 style="font-size: var(--text-2xl); font-weight: 700; margin-bottom: var(--spacing-1);">UGC Orders</h2>
-              <p style="color: var(--color-gray-500);">Track and manage content orders</p>
-            </div>
-          </div>
-          <div class="tabs mb-6" style="padding: 0;">
-            <div class="tab active">All Orders</div>
-            <div class="tab">In Progress</div>
-            <div class="tab">Delivered</div>
-            <div class="tab">Completed</div>
-          </div>
-          <div class="card">
-            <table class="data-table">
-              <thead>
-                <tr>
-                  <th>Order ID</th>
-                  <th>Creator</th>
-                  <th>Campaign</th>
-                  <th>Status</th>
-                  <th>Amount</th>
-                  <th>Due Date</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody id="ordersTableBody">
-                <tr>
-                  <td colspan="7" style="text-align: center; padding: var(--spacing-8);">
-                    <div class="empty-state">
-                      <div class="empty-state-title">No orders yet</div>
-                      <div class="empty-state-text">Orders will appear here when creators are assigned</div>
-                    </div>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </section>
-        
-        <section id="section-ugc-creators" class="hidden">
-          <div class="flex justify-between items-center mb-6">
-            <div>
-              <h2 style="font-size: var(--text-2xl); font-weight: 700; margin-bottom: var(--spacing-1);">UGC Creators</h2>
-              <p style="color: var(--color-gray-500);">Find and manage content creators</p>
-            </div>
-            <div class="flex gap-3">
-              <input type="text" class="input" placeholder="Search creators..." style="width: 280px;">
-              <button class="btn btn-primary">Find Creators</button>
-            </div>
-          </div>
-          <div class="card">
-            <div class="card-body" id="creatorsGrid">
-              <div class="empty-state">
-                <div class="empty-state-icon">
-                  <svg width="32" height="32" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
-                </div>
-                <div class="empty-state-title">No creators found</div>
-                <div class="empty-state-text">Search for creators or invite them to join your platform</div>
-              </div>
-            </div>
-          </div>
-        </section>
-        
-        <section id="section-analytics" class="hidden">
-          <div class="mb-6">
-            <h2 style="font-size: var(--text-2xl); font-weight: 700; margin-bottom: var(--spacing-1);">Analytics</h2>
-            <p style="color: var(--color-gray-500);">Track your performance metrics</p>
-          </div>
-          <div class="grid-cols-4 mb-6">
+          
+          <div class="grid grid-cols-4 mb-8">
             <div class="stat-card">
               <div class="stat-card-value" id="analyticsMessages">0</div>
               <div class="stat-card-label">Total Messages</div>
+              <div class="stat-card-trend up"><svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"/></svg><span>15%</span></div>
             </div>
             <div class="stat-card">
-              <div class="stat-card-value" id="analyticsAiRate">0%</div>
+              <div class="stat-card-value">89%</div>
               <div class="stat-card-label">AI Response Rate</div>
             </div>
             <div class="stat-card">
-              <div class="stat-card-value" id="analyticsResponseTime">--</div>
+              <div class="stat-card-value">&lt;1s</div>
               <div class="stat-card-label">Avg Response Time</div>
             </div>
             <div class="stat-card">
-              <div class="stat-card-value" id="analyticsScore">--</div>
+              <div class="stat-card-value">4.8</div>
               <div class="stat-card-label">Satisfaction Score</div>
             </div>
           </div>
-          <div class="grid-cols-2">
+          
+          <div class="grid grid-cols-2">
             <div class="card">
               <div class="card-header">
                 <div class="card-title">Message Trends</div>
               </div>
               <div class="card-body">
-                <canvas id="analyticsChart" height="250"></canvas>
+                <div class="chart-container">
+                  <canvas id="analyticsChart"></canvas>
+                </div>
               </div>
             </div>
             <div class="card">
               <div class="card-header">
-                <div class="card-title">Platform Distribution</div>
+                <div class="card-title">Platform Comparison</div>
               </div>
               <div class="card-body">
-                <canvas id="analyticsPlatformChart" height="250"></canvas>
+                <div class="chart-container">
+                  <canvas id="analyticsPlatformChart"></canvas>
+                </div>
               </div>
             </div>
           </div>
         </section>
         
-        <section id="section-settings" class="hidden">
-          <div class="mb-6">
-            <h2 style="font-size: var(--text-2xl); font-weight: 700; margin-bottom: var(--spacing-1);">Settings</h2>
-            <p style="color: var(--color-gray-500);">Manage your account and integrations</p>
-          </div>
-          <div class="card">
-            <div class="tabs">
-              <div class="tab active" data-settings-tab="profile">Profile</div>
-              <div class="tab" data-settings-tab="integrations">Integrations</div>
-              <div class="tab" data-settings-tab="api-keys">API Keys</div>
-              <div class="tab" data-settings-tab="team">Team</div>
-              <div class="tab" data-settings-tab="billing">Billing</div>
+        <!-- AI Chat Section -->
+        <section id="section-ai-chat" class="section hidden">
+          <div class="split-panel">
+            <!-- Chat History Sidebar -->
+            <div class="split-panel-sidebar">
+              <div class="p-4" style="border-bottom: 1px solid var(--color-gray-200);">
+                <button class="btn btn-primary w-full" onclick="createNewChat()">
+                  <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                  New Chat
+                </button>
+              </div>
+              
+              <div class="p-4" style="border-bottom: 1px solid var(--color-gray-200);">
+                <div class="text-xs font-semibold text-gray-500 mb-3" style="text-transform: uppercase; letter-spacing: 0.05em;">AI Providers</div>
+                <div class="flex gap-2 flex-wrap">
+                  <button class="provider-chip active" data-provider="openai" onclick="selectProvider('openai')">
+                    <span style="width: 8px; height: 8px; border-radius: 50%; background: #10a37f;"></span>
+                    ChatGPT
+                  </button>
+                  <button class="provider-chip" data-provider="luma" onclick="selectProvider('luma')">
+                    <span style="width: 8px; height: 8px; border-radius: 50%; background: #7c3aed;"></span>
+                    Luma AI
+                  </button>
+                  <button class="provider-chip" data-provider="tavily" onclick="selectProvider('tavily')">
+                    <span style="width: 8px; height: 8px; border-radius: 50%; background: #f59e0b;"></span>
+                    Tavily
+                  </button>
+                </div>
+              </div>
+              
+              <div class="flex-1" style="overflow-y: auto;">
+                <div class="p-4">
+                  <div class="text-xs font-semibold text-gray-500 mb-3" style="text-transform: uppercase; letter-spacing: 0.05em;">Recent Chats</div>
+                  <div id="chatHistory">
+                    <div class="empty-state" style="padding: var(--spacing-6);">
+                      <div class="text-sm text-gray-500">No chat history yet</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
-            <div class="card-body">
-              <div id="settings-profile">
-                <div style="max-width: 560px;">
-                  <div class="mb-4">
-                    <label style="display: block; font-weight: 500; margin-bottom: var(--spacing-2);">Display Name</label>
-                    <input type="text" class="input" id="settingsName" placeholder="Your name">
-                  </div>
-                  <div class="mb-4">
-                    <label style="display: block; font-weight: 500; margin-bottom: var(--spacing-2);">Email</label>
-                    <input type="email" class="input" id="settingsEmail" placeholder="your@email.com" disabled>
-                  </div>
-                  <div class="mb-4">
-                    <label style="display: block; font-weight: 500; margin-bottom: var(--spacing-2);">Company</label>
-                    <input type="text" class="input" id="settingsCompany" placeholder="Your company name">
-                  </div>
-                  <button class="btn btn-primary">Save Changes</button>
-                </div>
-              </div>
-              <div id="settings-integrations" class="hidden">
-                <div class="grid-cols-3 gap-4">
-                  <div style="padding: var(--spacing-4); border: 1px solid var(--color-gray-200); border-radius: var(--radius-lg);">
-                    <div class="flex items-center gap-3 mb-3">
-                      <div style="width: 40px; height: 40px; background: var(--color-gray-900); border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center;">
-                        <span style="color: white; font-weight: 600;">AI</span>
-                      </div>
-                      <div>
-                        <div style="font-weight: 600;">OpenAI</div>
-                        <span class="badge badge-success">Connected</span>
-                      </div>
+            
+            <!-- Chat Main Area -->
+            <div class="split-panel-main">
+              <div class="chat-container">
+                <div class="chat-messages" id="chatMessages">
+                  <div class="empty-state">
+                    <div class="empty-state-icon">
+                      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
                     </div>
-                    <p style="font-size: var(--text-sm); color: var(--color-gray-500);">GPT-4, GPT-4 Turbo, and more</p>
-                  </div>
-                  <div style="padding: var(--spacing-4); border: 1px solid var(--color-gray-200); border-radius: var(--radius-lg);">
-                    <div class="flex items-center gap-3 mb-3">
-                      <div style="width: 40px; height: 40px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center;">
-                        <span style="color: white; font-weight: 600;">L</span>
-                      </div>
-                      <div>
-                        <div style="font-weight: 600;">Luma AI</div>
-                        <span class="badge badge-success">Connected</span>
-                      </div>
-                    </div>
-                    <p style="font-size: var(--text-sm); color: var(--color-gray-500);">Image and video generation</p>
-                  </div>
-                  <div style="padding: var(--spacing-4); border: 1px solid var(--color-gray-200); border-radius: var(--radius-lg);">
-                    <div class="flex items-center gap-3 mb-3">
-                      <div style="width: 40px; height: 40px; background: #0066FF; border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center;">
-                        <span style="color: white; font-weight: 600;">T</span>
-                      </div>
-                      <div>
-                        <div style="font-weight: 600;">Tavily</div>
-                        <span class="badge badge-success">Connected</span>
-                      </div>
-                    </div>
-                    <p style="font-size: var(--text-sm); color: var(--color-gray-500);">Real-time web search</p>
+                    <div class="empty-state-title">Start a conversation</div>
+                    <div class="empty-state-text">Choose an AI provider and ask anything. Get instant, intelligent responses.</div>
                   </div>
                 </div>
-              </div>
-              <div id="settings-api-keys" class="hidden">
-                <div style="max-width: 560px;">
-                  <p style="margin-bottom: var(--spacing-4); color: var(--color-gray-600);">API keys are managed securely through Replit Secrets. Contact your administrator to update them.</p>
-                  <div style="padding: var(--spacing-4); background: var(--color-gray-50); border-radius: var(--radius-lg); margin-bottom: var(--spacing-3);">
-                    <div class="flex items-center justify-between">
-                      <span style="font-weight: 500;">OPENAI_API_KEY</span>
-                      <span class="badge badge-success">Configured</span>
-                    </div>
+                
+                <div class="chat-composer">
+                  <div class="chat-composer-input">
+                    <textarea id="chatInput" placeholder="Type your message..." rows="1"></textarea>
+                    <button class="btn btn-primary btn-icon" onclick="sendMessage()">
+                      <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
+                    </button>
                   </div>
-                  <div style="padding: var(--spacing-4); background: var(--color-gray-50); border-radius: var(--radius-lg); margin-bottom: var(--spacing-3);">
-                    <div class="flex items-center justify-between">
-                      <span style="font-weight: 500;">LUMAAI_API_KEY</span>
-                      <span class="badge badge-success">Configured</span>
-                    </div>
-                  </div>
-                  <div style="padding: var(--spacing-4); background: var(--color-gray-50); border-radius: var(--radius-lg);">
-                    <div class="flex items-center justify-between">
-                      <span style="font-weight: 500;">TAVILY_API_KEY</span>
-                      <span class="badge badge-success">Configured</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div id="settings-team" class="hidden">
-                <div class="flex justify-between items-center mb-4">
-                  <div style="font-weight: 600;">Team Members</div>
-                  <button class="btn btn-primary btn-sm">+ Invite Member</button>
-                </div>
-                <div class="empty-state">
-                  <div class="empty-state-title">No team members</div>
-                  <div class="empty-state-text">Invite team members to collaborate</div>
-                </div>
-              </div>
-              <div id="settings-billing" class="hidden">
-                <div style="max-width: 560px;">
-                  <div style="padding: var(--spacing-6); background: linear-gradient(135deg, var(--color-primary-600) 0%, var(--color-accent-600) 100%); border-radius: var(--radius-xl); color: white; margin-bottom: var(--spacing-6);">
-                    <div style="font-size: var(--text-sm); opacity: 0.9; margin-bottom: var(--spacing-2);">Current Plan</div>
-                    <div style="font-size: var(--text-2xl); font-weight: 700;">Pro Plan</div>
-                    <div style="margin-top: var(--spacing-4);">$49/month</div>
-                  </div>
-                  <button class="btn btn-secondary">Manage Subscription</button>
                 </div>
               </div>
             </div>
           </div>
         </section>
-      </main>
-    </div>
+        
+        <!-- AI Media Section -->
+        <section id="section-ai-media" class="section hidden">
+          <div class="page-header">
+            <h2 class="page-header-title">Image & Video Generation</h2>
+            <p class="page-header-subtitle">Create stunning visuals with Luma AI.</p>
+          </div>
+          
+          <div class="grid grid-cols-2">
+            <div class="card">
+              <div class="card-header">
+                <div class="card-title">Generate Image</div>
+              </div>
+              <div class="card-body">
+                <div class="form-group">
+                  <label class="form-label">Prompt</label>
+                  <textarea class="form-input form-textarea" id="imagePrompt" placeholder="Describe the image you want to create..."></textarea>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Aspect Ratio</label>
+                  <select class="form-input form-select" id="imageAspect">
+                    <option value="1:1">Square (1:1)</option>
+                    <option value="16:9">Landscape (16:9)</option>
+                    <option value="9:16">Portrait (9:16)</option>
+                  </select>
+                </div>
+                <button class="btn btn-primary" onclick="generateImage()">
+                  <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                  Generate Image
+                </button>
+              </div>
+            </div>
+            
+            <div class="card">
+              <div class="card-header">
+                <div class="card-title">Generate Video</div>
+              </div>
+              <div class="card-body">
+                <div class="form-group">
+                  <label class="form-label">Prompt</label>
+                  <textarea class="form-input form-textarea" id="videoPrompt" placeholder="Describe the video you want to create..."></textarea>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Duration</label>
+                  <select class="form-input form-select" id="videoDuration">
+                    <option value="5">5 seconds</option>
+                    <option value="10">10 seconds</option>
+                  </select>
+                </div>
+                <button class="btn btn-primary" onclick="generateVideo()">
+                  <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                  Generate Video
+                </button>
+              </div>
+            </div>
+          </div>
+          
+          <div class="card mt-6">
+            <div class="card-header">
+              <div class="card-title">Generated Media</div>
+            </div>
+            <div class="card-body">
+              <div id="generatedMedia" class="empty-state">
+                <div class="empty-state-title">No media generated yet</div>
+                <div class="empty-state-text">Use the forms above to generate images or videos.</div>
+              </div>
+            </div>
+          </div>
+        </section>
+        
+        <!-- AI Search Section -->
+        <section id="section-ai-search" class="section hidden">
+          <div class="page-header">
+            <h2 class="page-header-title">AI Web Search</h2>
+            <p class="page-header-subtitle">Search the web with Tavily AI for real-time information.</p>
+          </div>
+          
+          <div class="card">
+            <div class="card-body">
+              <div class="flex gap-4 mb-6">
+                <input type="text" class="form-input" id="searchQuery" placeholder="What do you want to search?">
+                <button class="btn btn-primary" onclick="performSearch()">
+                  <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                  Search
+                </button>
+              </div>
+              <div id="searchResults" class="empty-state">
+                <div class="empty-state-title">Search the web</div>
+                <div class="empty-state-text">Enter a query to get AI-powered search results.</div>
+              </div>
+            </div>
+          </div>
+        </section>
+        
+        <!-- AI Sales Section -->
+        <section id="section-ai-sales" class="section hidden">
+          <div class="page-header">
+            <h2 class="page-header-title">Sales AI</h2>
+            <p class="page-header-subtitle">Generate persuasive sales replies and content.</p>
+          </div>
+          
+          <div class="grid grid-cols-2">
+            <div class="card">
+              <div class="card-header">
+                <div class="card-title">Sales Reply Generator</div>
+              </div>
+              <div class="card-body">
+                <div class="form-group">
+                  <label class="form-label">Customer Message</label>
+                  <textarea class="form-input form-textarea" id="salesCustomerMessage" placeholder="Paste the customer message here..."></textarea>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Tone</label>
+                  <select class="form-input form-select" id="salesTone">
+                    <option value="professional">Professional</option>
+                    <option value="friendly">Friendly</option>
+                    <option value="persuasive">Persuasive</option>
+                    <option value="empathetic">Empathetic</option>
+                  </select>
+                </div>
+                <button class="btn btn-primary" onclick="generateSalesReply()">Generate Reply</button>
+              </div>
+            </div>
+            
+            <div class="card">
+              <div class="card-header">
+                <div class="card-title">Generated Reply</div>
+              </div>
+              <div class="card-body">
+                <div id="salesReplyOutput" class="empty-state">
+                  <div class="text-sm text-gray-500">Your AI-generated sales reply will appear here.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+        
+        <!-- Inbox Section -->
+        <section id="section-inbox" class="section hidden">
+          <div class="page-header">
+            <h2 class="page-header-title">Unified Inbox</h2>
+            <p class="page-header-subtitle">Manage all your social media conversations in one place.</p>
+          </div>
+          
+          <div class="split-panel">
+            <div class="split-panel-sidebar">
+              <div class="p-4" style="border-bottom: 1px solid var(--color-gray-200);">
+                <input type="text" class="form-input" placeholder="Search conversations...">
+              </div>
+              <div class="flex-1" style="overflow-y: auto;">
+                <div id="conversationList" class="empty-state" style="padding: var(--spacing-8);">
+                  <div class="text-sm text-gray-500">No conversations yet</div>
+                  <div class="text-xs text-gray-400 mt-2">Connect social accounts to start receiving messages</div>
+                </div>
+              </div>
+            </div>
+            
+            <div class="split-panel-main">
+              <div class="empty-state">
+                <div class="empty-state-icon">
+                  <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"/></svg>
+                </div>
+                <div class="empty-state-title">Select a conversation</div>
+                <div class="empty-state-text">Choose a conversation from the sidebar to view messages.</div>
+              </div>
+            </div>
+          </div>
+        </section>
+        
+        <!-- Auto Replies Section -->
+        <section id="section-auto-replies" class="section hidden">
+          <div class="page-header flex justify-between items-center">
+            <div>
+              <h2 class="page-header-title">Auto Reply Rules</h2>
+              <p class="page-header-subtitle">Configure AI-powered automatic responses.</p>
+            </div>
+            <button class="btn btn-primary">
+              <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+              Create Rule
+            </button>
+          </div>
+          
+          <div class="card">
+            <div class="table-wrapper">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Rule Name</th>
+                    <th>Trigger</th>
+                    <th>Platform</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="autoReplyRules">
+                  <tr>
+                    <td colspan="5" class="text-center text-gray-500" style="padding: var(--spacing-8);">No auto-reply rules configured yet</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+        
+        <!-- Accounts Section -->
+        <section id="section-accounts" class="section hidden">
+          <div class="page-header">
+            <h2 class="page-header-title">Connected Accounts</h2>
+            <p class="page-header-subtitle">Manage your social media integrations.</p>
+          </div>
+          
+          <div class="grid grid-cols-3 mb-8">
+            <div class="card" style="cursor: pointer;" onclick="connectFacebook()">
+              <div class="card-body text-center">
+                <div style="width: 56px; height: 56px; background: #1877F2; border-radius: var(--radius-xl); display: flex; align-items: center; justify-content: center; margin: 0 auto var(--spacing-4);">
+                  <svg width="28" height="28" fill="white" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+                </div>
+                <div class="font-semibold text-gray-900 mb-1">Facebook Pages</div>
+                <div class="text-sm text-gray-500">Connect your pages</div>
+              </div>
+            </div>
+            
+            <div class="card" style="cursor: pointer;">
+              <div class="card-body text-center">
+                <div style="width: 56px; height: 56px; background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); border-radius: var(--radius-xl); display: flex; align-items: center; justify-content: center; margin: 0 auto var(--spacing-4);">
+                  <svg width="28" height="28" fill="white" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+                </div>
+                <div class="font-semibold text-gray-900 mb-1">Instagram</div>
+                <div class="text-sm text-gray-500">Connect your business</div>
+              </div>
+            </div>
+            
+            <div class="card" style="cursor: pointer;">
+              <div class="card-body text-center">
+                <div style="width: 56px; height: 56px; background: #25D366; border-radius: var(--radius-xl); display: flex; align-items: center; justify-content: center; margin: 0 auto var(--spacing-4);">
+                  <svg width="28" height="28" fill="white" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                </div>
+                <div class="font-semibold text-gray-900 mb-1">WhatsApp</div>
+                <div class="text-sm text-gray-500">Connect your business</div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">Connected Accounts</div>
+            </div>
+            <div class="card-body">
+              <div id="connectedAccounts" class="empty-state">
+                <div class="empty-state-title">No accounts connected</div>
+                <div class="empty-state-text">Connect your social media accounts above to get started.</div>
+              </div>
+            </div>
+          </div>
+        </section>
+        
+        <!-- Scheduler Section -->
+        <section id="section-scheduler" class="section hidden">
+          <div class="page-header flex justify-between items-center">
+            <div>
+              <h2 class="page-header-title">Content Scheduler</h2>
+              <p class="page-header-subtitle">Schedule posts across all your platforms.</p>
+            </div>
+            <button class="btn btn-primary">
+              <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+              Schedule Post
+            </button>
+          </div>
+          
+          <div class="card">
+            <div class="card-body">
+              <div class="empty-state">
+                <div class="empty-state-title">No scheduled posts</div>
+                <div class="empty-state-text">Create your first scheduled post to reach your audience at the perfect time.</div>
+                <button class="btn btn-primary mt-4">Create Post</button>
+              </div>
+            </div>
+          </div>
+        </section>
+        
+        <!-- UGC Campaigns Section -->
+        <section id="section-ugc-campaigns" class="section hidden">
+          <div class="page-header flex justify-between items-center">
+            <div>
+              <h2 class="page-header-title">UGC Campaigns</h2>
+              <p class="page-header-subtitle">Manage your user-generated content campaigns.</p>
+            </div>
+            <button class="btn btn-primary">
+              <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+              Create Campaign
+            </button>
+          </div>
+          
+          <div class="grid grid-cols-4 mb-8">
+            <div class="stat-card">
+              <div class="stat-card-value">0</div>
+              <div class="stat-card-label">Active Campaigns</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-card-value">0</div>
+              <div class="stat-card-label">Pending Reviews</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-card-value">0</div>
+              <div class="stat-card-label">Completed</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-card-value">$0</div>
+              <div class="stat-card-label">Total Spent</div>
+            </div>
+          </div>
+          
+          <div class="card">
+            <div class="table-wrapper">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Campaign</th>
+                    <th>Creator</th>
+                    <th>Status</th>
+                    <th>Deadline</th>
+                    <th>Budget</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td colspan="6" class="text-center text-gray-500" style="padding: var(--spacing-8);">No campaigns yet. Create your first campaign to get started.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+        
+        <!-- UGC Orders Section -->
+        <section id="section-ugc-orders" class="section hidden">
+          <div class="page-header">
+            <h2 class="page-header-title">UGC Orders</h2>
+            <p class="page-header-subtitle">Track and manage content orders.</p>
+          </div>
+          
+          <div class="tabs">
+            <button class="tab active">All Orders</button>
+            <button class="tab">In Progress</button>
+            <button class="tab">Pending Review</button>
+            <button class="tab">Completed</button>
+          </div>
+          
+          <div class="card">
+            <div class="card-body">
+              <div class="empty-state">
+                <div class="empty-state-title">No orders yet</div>
+                <div class="empty-state-text">Orders will appear here once creators start working on your campaigns.</div>
+              </div>
+            </div>
+          </div>
+        </section>
+        
+        <!-- UGC Creators Section -->
+        <section id="section-ugc-creators" class="section hidden">
+          <div class="page-header flex justify-between items-center">
+            <div>
+              <h2 class="page-header-title">UGC Creators</h2>
+              <p class="page-header-subtitle">Browse and manage your creator network.</p>
+            </div>
+            <div class="flex gap-3">
+              <input type="text" class="form-input" placeholder="Search creators..." style="width: 240px;">
+              <button class="btn btn-primary">Find Creators</button>
+            </div>
+          </div>
+          
+          <div class="card">
+            <div class="card-body">
+              <div class="empty-state">
+                <div class="empty-state-title">No creators found</div>
+                <div class="empty-state-text">Search for creators or invite them to join your network.</div>
+              </div>
+            </div>
+          </div>
+        </section>
+        
+        <!-- Settings Section -->
+        <section id="section-settings" class="section hidden">
+          <div class="page-header">
+            <h2 class="page-header-title">Settings</h2>
+            <p class="page-header-subtitle">Manage your account and preferences.</p>
+          </div>
+          
+          <div class="tabs" id="settingsTabs">
+            <button class="tab active" data-tab="profile">Profile</button>
+            <button class="tab" data-tab="integrations">Integrations</button>
+            <button class="tab" data-tab="api">API Keys</button>
+            <button class="tab" data-tab="team">Team</button>
+            <button class="tab" data-tab="billing">Billing</button>
+          </div>
+          
+          <div id="settings-profile" class="card">
+            <div class="card-body">
+              <div style="max-width: 480px;">
+                <div class="form-group">
+                  <label class="form-label">Full Name</label>
+                  <input type="text" class="form-input" placeholder="Your name">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Email</label>
+                  <input type="email" class="form-input" placeholder="your@email.com">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Company</label>
+                  <input type="text" class="form-input" placeholder="Your company">
+                </div>
+                <button class="btn btn-primary">Save Changes</button>
+              </div>
+            </div>
+          </div>
+          
+          <div id="settings-integrations" class="card hidden">
+            <div class="card-body">
+              <div class="grid grid-cols-3 gap-4">
+                <div style="padding: var(--spacing-6); border: 1px solid var(--color-gray-200); border-radius: var(--radius-xl); text-align: center;">
+                  <div style="width: 48px; height: 48px; background: #10a37f; border-radius: var(--radius-lg); display: flex; align-items: center; justify-content: center; margin: 0 auto var(--spacing-3);">
+                    <svg width="24" height="24" fill="white" viewBox="0 0 24 24"><path d="M22.2819 9.8211a5.9847 5.9847 0 0 0-.5157-4.9108 6.0462 6.0462 0 0 0-6.5098-2.9A6.0651 6.0651 0 0 0 4.9807 4.1818a5.9847 5.9847 0 0 0-3.9977 2.9 6.0462 6.0462 0 0 0 .7427 7.0966 5.98 5.98 0 0 0 .511 4.9107 6.051 6.051 0 0 0 6.5146 2.9001A5.9847 5.9847 0 0 0 13.2599 24a6.0557 6.0557 0 0 0 5.7718-4.2058 5.9894 5.9894 0 0 0 3.9977-2.9001 6.0557 6.0557 0 0 0-.7475-7.0729zm-9.022 12.6081a4.4755 4.4755 0 0 1-2.8764-1.0408l.1419-.0804 4.7783-2.7582a.7948.7948 0 0 0 .3927-.6813v-6.7369l2.02 1.1686a.071.071 0 0 1 .038.052v5.5826a4.504 4.504 0 0 1-4.4945 4.4944zm-9.6607-4.1254a4.4708 4.4708 0 0 1-.5346-3.0137l.142.0852 4.783 2.7582a.7712.7712 0 0 0 .7806 0l5.8428-3.3685v2.3324a.0804.0804 0 0 1-.0332.0615L9.74 19.9502a4.4992 4.4992 0 0 1-6.1408-1.6464zM2.3408 7.8956a4.485 4.485 0 0 1 2.3655-1.9728V11.6a.7664.7664 0 0 0 .3879.6765l5.8144 3.3543-2.0201 1.1685a.0757.0757 0 0 1-.071 0l-4.8303-2.7865A4.504 4.504 0 0 1 2.3408 7.872zm16.5963 3.8558L13.1038 8.364l2.0201-1.1685a.0757.0757 0 0 1 .071 0l4.8303 2.7913a4.4944 4.4944 0 0 1-.6765 8.1042v-5.6772a.79.79 0 0 0-.407-.667zm2.0107-3.0231l-.142-.0852-4.7735-2.7818a.7759.7759 0 0 0-.7854 0L9.409 9.2297V6.8974a.0662.0662 0 0 1 .0284-.0615l4.8303-2.7866a4.4992 4.4992 0 0 1 6.6802 4.66zM8.3065 12.863l-2.02-1.1638a.0804.0804 0 0 1-.038-.0567V6.0742a4.4992 4.4992 0 0 1 7.3757-3.4537l-.142.0805L8.704 5.459a.7948.7948 0 0 0-.3927.6813zm1.0976-2.3654l2.602-1.4998 2.6069 1.4998v2.9994l-2.5974 1.4997-2.6067-1.4997Z"/></svg>
+                  </div>
+                  <div class="font-semibold text-gray-900">OpenAI</div>
+                  <div class="text-sm text-gray-500 mb-3">GPT-4, GPT-5</div>
+                  <span class="badge badge-success">Connected</span>
+                </div>
+                
+                <div style="padding: var(--spacing-6); border: 1px solid var(--color-gray-200); border-radius: var(--radius-xl); text-align: center;">
+                  <div style="width: 48px; height: 48px; background: var(--gradient-accent); border-radius: var(--radius-lg); display: flex; align-items: center; justify-content: center; margin: 0 auto var(--spacing-3);">
+                    <svg width="24" height="24" fill="white" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+                  </div>
+                  <div class="font-semibold text-gray-900">Luma AI</div>
+                  <div class="text-sm text-gray-500 mb-3">Image & Video</div>
+                  <span class="badge badge-success">Connected</span>
+                </div>
+                
+                <div style="padding: var(--spacing-6); border: 1px solid var(--color-gray-200); border-radius: var(--radius-xl); text-align: center;">
+                  <div style="width: 48px; height: 48px; background: #f59e0b; border-radius: var(--radius-lg); display: flex; align-items: center; justify-content: center; margin: 0 auto var(--spacing-3);">
+                    <svg width="24" height="24" fill="white" viewBox="0 0 24 24"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" stroke="white" stroke-width="2" fill="none"/></svg>
+                  </div>
+                  <div class="font-semibold text-gray-900">Tavily</div>
+                  <div class="text-sm text-gray-500 mb-3">Web Search</div>
+                  <span class="badge badge-success">Connected</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div id="settings-api" class="card hidden">
+            <div class="card-body">
+              <div class="empty-state">
+                <div class="empty-state-title">API Keys</div>
+                <div class="empty-state-text">Generate API keys to integrate MT Hub with your applications.</div>
+                <button class="btn btn-primary mt-4">Generate API Key</button>
+              </div>
+            </div>
+          </div>
+          
+          <div id="settings-team" class="card hidden">
+            <div class="card-header">
+              <div class="card-title">Team Members</div>
+              <button class="btn btn-primary btn-sm">Invite Member</button>
+            </div>
+            <div class="card-body">
+              <div class="empty-state">
+                <div class="empty-state-title">No team members</div>
+                <div class="empty-state-text">Invite team members to collaborate on MT Hub.</div>
+              </div>
+            </div>
+          </div>
+          
+          <div id="settings-billing" class="card hidden">
+            <div class="card-body">
+              <div style="max-width: 560px;">
+                <div style="padding: var(--spacing-6); background: var(--gradient-primary); border-radius: var(--radius-2xl); color: white; margin-bottom: var(--spacing-6);">
+                  <div style="font-size: var(--text-sm); opacity: 0.9; margin-bottom: var(--spacing-2);">Current Plan</div>
+                  <div style="font-size: var(--text-2xl); font-weight: 700;">Pro Plan</div>
+                  <div style="margin-top: var(--spacing-4);">$49/month</div>
+                </div>
+                <button class="btn btn-secondary">Manage Subscription</button>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
   </div>
 
   <script>
     let currentSection = 'dashboard';
     let currentUser = null;
+    let currentProvider = 'openai';
+    let currentChatId = null;
+    let aiChats = [];
 
     async function init() {
       try {
@@ -840,32 +910,40 @@
         
         loadDashboardData();
         initCharts();
+        loadAiChats();
+        loadConnectedAccounts();
       } catch (error) {
-        console.error('Auth error:', error);
+        console.error('Init error:', error);
         document.getElementById('userName').textContent = 'Guest';
         document.getElementById('userAvatar').textContent = 'G';
-        loadDashboardData();
         initCharts();
       }
     }
 
     function showSection(section) {
-      document.querySelectorAll('[id^="section-"]').forEach(el => el.classList.add('hidden'));
-      document.getElementById('section-' + section).classList.remove('hidden');
+      document.querySelectorAll('.section').forEach(el => el.classList.add('hidden'));
+      const sectionEl = document.getElementById('section-' + section);
+      if (sectionEl) {
+        sectionEl.classList.remove('hidden');
+      }
       
       document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-      document.querySelector(`[data-section="${section}"]`).classList.add('active');
+      const navItem = document.querySelector(`[data-section="${section}"]`);
+      if (navItem) {
+        navItem.classList.add('active');
+      }
       
       const titles = {
         'dashboard': 'Dashboard',
         'analytics': 'Analytics',
         'ai-chat': 'AI Chat',
-        'ai-images': 'Image & Video Generation',
+        'ai-media': 'Image & Video',
+        'ai-search': 'Web Search',
         'ai-sales': 'Sales AI',
         'inbox': 'Unified Inbox',
-        'auto-replies': 'Auto Reply Rules',
-        'accounts': 'Connected Accounts',
-        'scheduler': 'Content Scheduler',
+        'auto-replies': 'Auto Replies',
+        'accounts': 'Accounts',
+        'scheduler': 'Scheduler',
         'ugc-campaigns': 'UGC Campaigns',
         'ugc-orders': 'UGC Orders',
         'ugc-creators': 'UGC Creators',
@@ -887,35 +965,30 @@
       document.getElementById('sidebar').classList.toggle('collapsed');
     });
 
-    document.querySelectorAll('[data-settings-tab]').forEach(tab => {
+    document.querySelectorAll('#settingsTabs .tab').forEach(tab => {
       tab.addEventListener('click', () => {
-        document.querySelectorAll('[data-settings-tab]').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('#settingsTabs .tab').forEach(t => t.classList.remove('active'));
         tab.classList.add('active');
         
         document.querySelectorAll('[id^="settings-"]').forEach(el => el.classList.add('hidden'));
-        document.getElementById('settings-' + tab.dataset.settingsTab).classList.remove('hidden');
+        const tabId = 'settings-' + tab.dataset.tab;
+        const tabEl = document.getElementById(tabId);
+        if (tabEl) tabEl.classList.remove('hidden');
       });
     });
 
-    let dashboardStats = null;
-    let chartsInitialized = false;
-
     async function loadDashboardData() {
       try {
-        const statsRes = await fetch('/api/dashboard/stats');
-        if (statsRes.ok) {
-          dashboardStats = await statsRes.json();
-          document.getElementById('statConversations').textContent = dashboardStats.totalConversations || 0;
-          document.getElementById('statAiReplies').textContent = dashboardStats.messagesThisWeek || 0;
-          document.getElementById('statAccounts').textContent = dashboardStats.connectedAccounts || 0;
-          document.getElementById('statCampaigns').textContent = dashboardStats.pendingPosts || 0;
+        const res = await fetch('/api/dashboard/stats');
+        if (res.ok) {
+          const stats = await res.json();
+          document.getElementById('statConversations').textContent = stats.totalConversations || 0;
+          document.getElementById('statAiReplies').textContent = stats.messagesThisWeek || 0;
+          document.getElementById('statAccounts').textContent = stats.connectedAccounts || 0;
+          document.getElementById('statCampaigns').textContent = stats.pendingPosts || 0;
           
           if (document.getElementById('analyticsMessages')) {
-            document.getElementById('analyticsMessages').textContent = dashboardStats.totalConversations || 0;
-            const aiRate = dashboardStats.connectedAccounts > 0 ? Math.round((dashboardStats.messagesThisWeek / (dashboardStats.totalConversations || 1)) * 100) : 0;
-            document.getElementById('analyticsAiRate').textContent = aiRate + '%';
-            document.getElementById('analyticsResponseTime').textContent = '< 1s';
-            document.getElementById('analyticsScore').textContent = '4.8';
+            document.getElementById('analyticsMessages').textContent = stats.totalConversations || 0;
           }
         }
       } catch (error) {
@@ -924,9 +997,6 @@
     }
 
     function initCharts() {
-      if (chartsInitialized) return;
-      chartsInitialized = true;
-
       const messageCtx = document.getElementById('messageChart');
       if (messageCtx && messageCtx.getContext) {
         new Chart(messageCtx.getContext('2d'), {
@@ -935,19 +1005,12 @@
             labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
             datasets: [{
               label: 'Messages',
-              data: [
-                Math.floor(Math.random() * 50) + 30,
-                Math.floor(Math.random() * 50) + 40,
-                Math.floor(Math.random() * 50) + 45,
-                Math.floor(Math.random() * 50) + 35,
-                Math.floor(Math.random() * 50) + 50,
-                Math.floor(Math.random() * 50) + 25,
-                Math.floor(Math.random() * 50) + 40
-              ],
+              data: [42, 58, 75, 62, 89, 45, 67],
               borderColor: '#6366f1',
               backgroundColor: 'rgba(99, 102, 241, 0.1)',
               fill: true,
-              tension: 0.4
+              tension: 0.4,
+              borderWidth: 2
             }]
           },
           options: {
@@ -971,7 +1034,8 @@
             datasets: [{
               data: [45, 35, 20],
               backgroundColor: ['#1877F2', '#E4405F', '#25D366'],
-              borderWidth: 0
+              borderWidth: 0,
+              cutout: '70%'
             }]
           },
           options: {
@@ -982,9 +1046,9 @@
         });
       }
 
-      const analyticsChartCtx = document.getElementById('analyticsChart');
-      if (analyticsChartCtx && analyticsChartCtx.getContext) {
-        new Chart(analyticsChartCtx.getContext('2d'), {
+      const analyticsCtx = document.getElementById('analyticsChart');
+      if (analyticsCtx && analyticsCtx.getContext) {
+        new Chart(analyticsCtx.getContext('2d'), {
           type: 'line',
           data: {
             labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
@@ -1046,9 +1110,33 @@
       window.location.href = '/api/social/connect/facebook';
     }
 
-    let currentChatId = null;
-    let aiChats = [];
-    let currentProvider = 'openai';
+    async function loadConnectedAccounts() {
+      try {
+        const res = await fetch('/api/social/accounts');
+        if (res.ok) {
+          const accounts = await res.json();
+          const container = document.getElementById('connectedAccounts');
+          if (accounts.length === 0) {
+            container.innerHTML = '<div class="empty-state"><div class="empty-state-title">No accounts connected</div><div class="empty-state-text">Connect your social media accounts above to get started.</div></div>';
+          } else {
+            container.innerHTML = accounts.map(acc => `
+              <div class="list-item">
+                <div style="width: 40px; height: 40px; border-radius: var(--radius-full); background: ${acc.platform === 'facebook' ? '#1877F2' : acc.platform === 'instagram' ? '#E4405F' : '#25D366'}; display: flex; align-items: center; justify-content: center;">
+                  <svg width="20" height="20" fill="white" viewBox="0 0 24 24"><path d="${acc.platform === 'facebook' ? 'M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z' : ''}"/></svg>
+                </div>
+                <div style="flex: 1;">
+                  <div class="font-semibold">${acc.accountName || acc.platform}</div>
+                  <div class="text-sm text-gray-500">${acc.platform}</div>
+                </div>
+                <span class="badge badge-success">Connected</span>
+              </div>
+            `).join('');
+          }
+        }
+      } catch (error) {
+        console.error('Failed to load accounts:', error);
+      }
+    }
 
     async function loadAiChats() {
       try {
@@ -1063,17 +1151,25 @@
     }
 
     function renderChatHistory() {
-      const container = document.getElementById('chatHistoryList');
-      if (!aiChats.length) {
-        container.innerHTML = '<p style="color: var(--color-gray-500); text-align: center; padding: var(--spacing-4);">No chat history</p>';
+      const container = document.getElementById('chatHistory');
+      if (!aiChats || aiChats.length === 0) {
+        container.innerHTML = '<div class="empty-state" style="padding: var(--spacing-6);"><div class="text-sm text-gray-500">No chat history yet</div></div>';
         return;
       }
       container.innerHTML = aiChats.map(chat => `
-        <div style="padding: var(--spacing-3); border-radius: var(--radius-lg); cursor: pointer; margin-bottom: var(--spacing-2); ${currentChatId === chat.id ? 'background: var(--color-primary-100);' : ''}" onclick="selectChat(${chat.id})">
-          <div style="font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${escapeHtml(chat.title || 'New Chat')}</div>
-          <div style="font-size: var(--text-xs); color: var(--color-gray-500);">${chat.providerId || 'Chat'}</div>
+        <div class="list-item ${currentChatId === chat.id ? 'active' : ''}" onclick="selectChat(${chat.id})">
+          <div style="flex: 1; min-width: 0;">
+            <div class="font-medium" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${escapeHtml(chat.title || 'New Chat')}</div>
+            <div class="text-xs text-gray-400">${chat.providerId || 'Chat'}</div>
+          </div>
         </div>
       `).join('');
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
     }
 
     async function createNewChat() {
@@ -1087,8 +1183,7 @@
           const chat = await res.json();
           currentChatId = chat.id;
           await loadAiChats();
-          document.getElementById('chatMessages').innerHTML = '';
-          showSection('ai-chat');
+          document.getElementById('chatMessages').innerHTML = '<div class="empty-state"><div class="empty-state-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg></div><div class="empty-state-title">Start a conversation</div><div class="empty-state-text">Type your message below to begin.</div></div>';
         }
       } catch (error) {
         console.error('Failed to create chat:', error);
@@ -1102,130 +1197,108 @@
         const res = await fetch(`/api/ai-chat/chats/${chatId}`);
         if (res.ok) {
           const data = await res.json();
-          renderChatMessages(data.messages || []);
+          renderMessages(data.messages || []);
         }
       } catch (error) {
         console.error('Failed to load chat:', error);
       }
     }
 
-    function renderChatMessages(messages) {
+    function renderMessages(messages) {
       const container = document.getElementById('chatMessages');
-      if (!messages.length) {
-        container.innerHTML = '<div style="display: flex; align-items: center; justify-content: center; height: 100%; color: var(--color-gray-400);">Start a conversation...</div>';
+      if (!messages || messages.length === 0) {
+        container.innerHTML = '<div class="empty-state"><div class="empty-state-title">No messages yet</div></div>';
         return;
       }
       container.innerHTML = messages.map(msg => `
-        <div style="display: flex; gap: var(--spacing-3); margin-bottom: var(--spacing-4); ${msg.role === 'user' ? 'justify-content: flex-end;' : ''}">
-          <div style="max-width: 70%; padding: var(--spacing-4); border-radius: var(--radius-xl); ${msg.role === 'user' ? 'background: var(--color-primary-600); color: white;' : 'background: var(--color-gray-100);'}">
-            ${msg.type === 'image' ? `<img src="${escapeHtml(msg.content)}" style="max-width: 100%; border-radius: var(--radius-lg);">` : escapeHtml(msg.content)}
+        <div class="chat-message">
+          <div class="chat-message-avatar ${msg.role === 'user' ? 'user' : 'ai'}">${msg.role === 'user' ? 'U' : 'AI'}</div>
+          <div class="chat-message-content">
+            <div class="chat-message-header">
+              <span class="chat-message-sender">${msg.role === 'user' ? 'You' : 'AI Assistant'}</span>
+            </div>
+            <div class="chat-message-text">${escapeHtml(msg.content)}</div>
           </div>
         </div>
       `).join('');
       container.scrollTop = container.scrollHeight;
     }
 
-    async function sendAiMessage() {
+    function selectProvider(provider) {
+      currentProvider = provider;
+      document.querySelectorAll('.provider-chip').forEach(chip => {
+        chip.classList.toggle('active', chip.dataset.provider === provider);
+      });
+    }
+
+    async function sendMessage() {
       const input = document.getElementById('chatInput');
-      const message = input.value.trim();
-      if (!message) return;
-      
+      const content = input.value.trim();
+      if (!content) return;
+
       if (!currentChatId) {
         await createNewChat();
       }
-      
-      input.value = '';
+
       const container = document.getElementById('chatMessages');
-      container.innerHTML += `<div style="display: flex; gap: var(--spacing-3); margin-bottom: var(--spacing-4); justify-content: flex-end;">
-        <div style="max-width: 70%; padding: var(--spacing-4); border-radius: var(--radius-xl); background: var(--color-primary-600); color: white;">${escapeHtml(message)}</div>
-      </div>`;
-      container.innerHTML += `<div id="typing" style="display: flex; gap: var(--spacing-3); margin-bottom: var(--spacing-4);">
-        <div style="padding: var(--spacing-4); border-radius: var(--radius-xl); background: var(--color-gray-100);">Thinking...</div>
-      </div>`;
+      const emptyState = container.querySelector('.empty-state');
+      if (emptyState) emptyState.remove();
+
+      container.innerHTML += `
+        <div class="chat-message">
+          <div class="chat-message-avatar user">U</div>
+          <div class="chat-message-content">
+            <div class="chat-message-header">
+              <span class="chat-message-sender">You</span>
+            </div>
+            <div class="chat-message-text">${escapeHtml(content)}</div>
+          </div>
+        </div>
+      `;
+      input.value = '';
       container.scrollTop = container.scrollHeight;
 
       try {
         const res = await fetch(`/api/ai-chat/chats/${currentChatId}/messages`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ content: message })
+          body: JSON.stringify({ content, providerId: currentProvider })
         });
         if (res.ok) {
           const data = await res.json();
-          document.getElementById('typing')?.remove();
-          container.innerHTML += `<div style="display: flex; gap: var(--spacing-3); margin-bottom: var(--spacing-4);">
-            <div style="max-width: 70%; padding: var(--spacing-4); border-radius: var(--radius-xl); background: var(--color-gray-100);">${escapeHtml(data.assistantMessage?.content || 'No response')}</div>
-          </div>`;
-          container.scrollTop = container.scrollHeight;
+          if (data.assistantMessage) {
+            container.innerHTML += `
+              <div class="chat-message">
+                <div class="chat-message-avatar ai">AI</div>
+                <div class="chat-message-content">
+                  <div class="chat-message-header">
+                    <span class="chat-message-sender">AI Assistant</span>
+                  </div>
+                  <div class="chat-message-text">${escapeHtml(data.assistantMessage.content)}</div>
+                </div>
+              </div>
+            `;
+            container.scrollTop = container.scrollHeight;
+          }
         }
       } catch (error) {
-        document.getElementById('typing')?.remove();
         console.error('Failed to send message:', error);
       }
     }
 
-    function escapeHtml(text) {
-      const div = document.createElement('div');
-      div.textContent = text;
-      return div.innerHTML;
-    }
-
-    document.querySelectorAll('.provider-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        document.querySelectorAll('.provider-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        currentProvider = btn.dataset.provider;
-      });
+    document.getElementById('chatInput').addEventListener('keypress', (e) => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        sendMessage();
+      }
     });
 
-    async function loadConnectedAccounts() {
-      try {
-        const res = await fetch('/api/social/accounts');
-        if (res.ok) {
-          const accounts = await res.json();
-          const container = document.getElementById('connectedAccountsList');
-          if (!accounts.length) {
-            container.innerHTML = '<div class="empty-state"><div class="empty-state-title">No accounts connected</div><div class="empty-state-text">Click on a platform above to connect your first account</div></div>';
-            return;
-          }
-          container.innerHTML = accounts.map(acc => `
-            <div style="display: flex; align-items: center; justify-content: space-between; padding: var(--spacing-4); border: 1px solid var(--color-gray-200); border-radius: var(--radius-lg); margin-bottom: var(--spacing-3);">
-              <div style="display: flex; align-items: center; gap: var(--spacing-3);">
-                <div style="width: 40px; height: 40px; background: ${acc.platform === 'facebook' ? '#1877F2' : acc.platform === 'instagram' ? '#E4405F' : '#25D366'}; border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center;">
-                  <span style="color: white; font-weight: 600;">${acc.platform.charAt(0).toUpperCase()}</span>
-                </div>
-                <div>
-                  <div style="font-weight: 600;">${escapeHtml(acc.accountName)}</div>
-                  <div style="font-size: var(--text-xs); color: var(--color-gray-500);">${acc.platform}</div>
-                </div>
-              </div>
-              <button class="btn btn-secondary btn-sm" onclick="disconnectAccount(${acc.id})">Disconnect</button>
-            </div>
-          `).join('');
-        }
-      } catch (error) {
-        console.error('Failed to load accounts:', error);
-      }
-    }
-
-    async function disconnectAccount(id) {
-      if (!confirm('Are you sure you want to disconnect this account?')) return;
-      try {
-        await fetch(`/api/social/accounts/${id}`, { method: 'DELETE' });
-        loadConnectedAccounts();
-        loadDashboardData();
-      } catch (error) {
-        console.error('Failed to disconnect:', error);
-      }
-    }
-
     async function generateImage() {
-      const prompt = document.getElementById('imagePrompt').value;
-      if (!prompt) return;
+      const prompt = document.getElementById('imagePrompt').value.trim();
+      if (!prompt) return alert('Please enter a prompt');
       
-      const btn = event.target;
-      btn.disabled = true;
-      btn.textContent = 'Generating...';
+      const container = document.getElementById('generatedMedia');
+      container.innerHTML = '<div class="text-center p-6"><div class="animate-pulse text-gray-500">Generating image...</div></div>';
       
       try {
         const res = await fetch('/api/ai-chat/quick', {
@@ -1235,24 +1308,21 @@
         });
         if (res.ok) {
           const data = await res.json();
-          const mediaContainer = document.getElementById('generatedMedia');
-          mediaContainer.innerHTML = `<img src="${data.content}" style="max-width: 100%; border-radius: var(--radius-lg);">`;
+          container.innerHTML = '<div class="text-center p-6"><div class="badge badge-success">Image generation started</div><div class="text-sm text-gray-500 mt-2">Check your Luma dashboard for results.</div></div>';
+        } else {
+          container.innerHTML = '<div class="text-center p-6"><div class="badge badge-error">Generation failed</div></div>';
         }
       } catch (error) {
-        console.error('Image generation failed:', error);
-        alert('Image generation failed. Please try again.');
+        container.innerHTML = '<div class="text-center p-6"><div class="badge badge-error">Error</div></div>';
       }
-      btn.disabled = false;
-      btn.textContent = 'Generate Image';
     }
 
     async function generateVideo() {
-      const prompt = document.getElementById('videoPrompt').value;
-      if (!prompt) return;
+      const prompt = document.getElementById('videoPrompt').value.trim();
+      if (!prompt) return alert('Please enter a prompt');
       
-      const btn = event.target;
-      btn.disabled = true;
-      btn.textContent = 'Generating...';
+      const container = document.getElementById('generatedMedia');
+      container.innerHTML = '<div class="text-center p-6"><div class="animate-pulse text-gray-500">Generating video...</div></div>';
       
       try {
         const res = await fetch('/api/ai-chat/quick', {
@@ -1261,27 +1331,68 @@
           body: JSON.stringify({ providerId: 'luma', content: prompt, options: { model: 'ray-2', duration: parseInt(document.getElementById('videoDuration').value) } })
         });
         if (res.ok) {
-          const data = await res.json();
-          const mediaContainer = document.getElementById('generatedMedia');
-          mediaContainer.innerHTML = `<video controls style="max-width: 100%; border-radius: var(--radius-lg);"><source src="${data.content}" type="video/mp4"></video>`;
+          container.innerHTML = '<div class="text-center p-6"><div class="badge badge-success">Video generation started</div><div class="text-sm text-gray-500 mt-2">Check your Luma dashboard for results.</div></div>';
+        } else {
+          container.innerHTML = '<div class="text-center p-6"><div class="badge badge-error">Generation failed</div></div>';
         }
       } catch (error) {
-        console.error('Video generation failed:', error);
-        alert('Video generation failed. Please try again.');
+        container.innerHTML = '<div class="text-center p-6"><div class="badge badge-error">Error</div></div>';
       }
-      btn.disabled = false;
-      btn.textContent = 'Generate Video';
     }
 
-    document.getElementById('chatInput').addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' && !e.shiftKey) {
-        e.preventDefault();
-        sendAiMessage();
+    async function performSearch() {
+      const query = document.getElementById('searchQuery').value.trim();
+      if (!query) return alert('Please enter a search query');
+      
+      const container = document.getElementById('searchResults');
+      container.innerHTML = '<div class="text-center p-6"><div class="animate-pulse text-gray-500">Searching...</div></div>';
+      
+      try {
+        const res = await fetch('/api/ai-chat/quick', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ providerId: 'tavily', content: query })
+        });
+        if (res.ok) {
+          const data = await res.json();
+          if (data.assistantMessage) {
+            container.innerHTML = `<div class="p-4 bg-gray-50 rounded-xl"><div class="font-semibold mb-2">Search Results</div><div class="text-sm text-gray-700">${escapeHtml(data.assistantMessage.content)}</div></div>`;
+          }
+        }
+      } catch (error) {
+        container.innerHTML = '<div class="text-center p-6"><div class="badge badge-error">Search failed</div></div>';
       }
-    });
+    }
 
-    loadAiChats();
-    loadConnectedAccounts();
+    async function generateSalesReply() {
+      const message = document.getElementById('salesCustomerMessage').value.trim();
+      if (!message) return alert('Please enter a customer message');
+      
+      const container = document.getElementById('salesReplyOutput');
+      container.innerHTML = '<div class="text-center p-6"><div class="animate-pulse text-gray-500">Generating reply...</div></div>';
+      
+      try {
+        const tone = document.getElementById('salesTone').value;
+        const res = await fetch('/api/ai-chat/quick', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ providerId: 'openai', content: `Generate a ${tone} sales reply to this customer message: "${message}"` })
+        });
+        if (res.ok) {
+          const data = await res.json();
+          if (data.assistantMessage) {
+            container.innerHTML = `<div class="p-4 bg-gray-50 rounded-xl"><div class="text-sm text-gray-700">${escapeHtml(data.assistantMessage.content)}</div></div>`;
+          }
+        }
+      } catch (error) {
+        container.innerHTML = '<div class="text-center p-6"><div class="badge badge-error">Failed to generate</div></div>';
+      }
+    }
+
+    function handleLogout() {
+      window.location.href = '/api/logout';
+    }
+
     init();
   </script>
 </body>
