@@ -318,5 +318,17 @@
   <footer class="footer">
     MT Hub - Your AI-Powered Business Brain
   </footer>
+
+  <script>
+    async function checkAuth() {
+      try {
+        const res = await fetch('/api/auth/user', { credentials: 'include' });
+        if (res.ok) {
+          window.location.href = '/app';
+        }
+      } catch (e) {}
+    }
+    checkAuth();
+  </script>
 </body>
 </html>
