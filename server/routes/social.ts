@@ -21,24 +21,31 @@ export function registerSocialRoutes(app: Express): void {
     const domain = process.env.REPLIT_DEV_DOMAIN || req.hostname;
     const redirectUri = `https://${domain}/api/social/callback/facebook`;
     // Basic scopes that work in development mode without App Review
-    // Note: Page permissions require Business Verification in Meta Business Suite
     const scope = "public_profile,email";
+    
+    console.log("Facebook OAuth - Starting connection");
+    console.log("Facebook OAuth - App ID:", fbAppId ? "SET" : "NOT SET");
+    console.log("Facebook OAuth - Redirect URI:", redirectUri);
     
     if (!fbAppId) {
       return res.status(500).json({ error: "Facebook App not configured. Please add FACEBOOK_APP_ID secret." });
     }
     
     const authUrl = `https://www.facebook.com/v18.0/dialog/oauth?client_id=${fbAppId}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=${scope}&response_type=code&state=${req.user.claims.sub}`;
+    console.log("Facebook OAuth - Redirecting to:", authUrl);
     res.redirect(authUrl);
   });
 
   app.get("/api/social/callback/facebook", isAuthenticated, async (req: any, res: Response) => {
-    const { code, error: oauthError } = req.query;
+    console.log("Facebook OAuth - Callback received");
+    console.log("Facebook OAuth - Query params:", JSON.stringify(req.query));
+    
+    const { code, error: oauthError, error_reason, error_description } = req.query;
     const userId = req.user.claims.sub;
     
     if (oauthError || !code) {
-      console.error("Facebook OAuth denied:", oauthError);
-      return res.redirect("/app?error=oauth_denied");
+      console.error("Facebook OAuth denied:", oauthError, error_reason, error_description);
+      return res.redirect(`/app?error=oauth_denied&reason=${encodeURIComponent(error_description || oauthError || 'unknown')}`);
     }
     
     try {
