@@ -490,6 +490,26 @@
         </div>
       </div>
 
+      <!-- Facebook Pages Selection Modal -->
+      <div id="facebookPagesModal" class="modal hidden">
+        <div class="modal-backdrop" onclick="closeFacebookPagesModal()"></div>
+        <div class="modal-content" style="max-width: 550px;">
+          <div class="modal-header">
+            <h2 class="modal-title">Select Facebook Pages</h2>
+            <button class="modal-close" onclick="closeFacebookPagesModal()">&times;</button>
+          </div>
+          <div class="modal-body" id="facebookPagesBody">
+            <div style="text-align: center; padding: 40px;">
+              <div class="loading-spinner" style="margin: 0 auto 16px;"></div>
+              <p style="color: #64748b;">Loading your Facebook Pages...</p>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="closeFacebookPagesModal()">Close</button>
+          </div>
+        </div>
+      </div>
+
       <!-- Smart Reply Tab -->
       <section id="tab-smart-reply" class="tab-content hidden">
         <div class="section-header">
@@ -745,6 +765,10 @@
         container.innerHTML = '<div class="empty-state"><div class="empty-state-title">No accounts connected</div><p class="empty-state-text">Connect your social accounts above.</p></div>';
         return;
       }
+      
+      // Check if there's a Facebook profile connected (for showing Manage Pages button)
+      const hasFacebookProfile = accounts.some(acc => acc.platform === 'facebook' && acc.accountType === 'Profile');
+      
       container.innerHTML = accounts.map(acc => `
         <div style="display:flex;align-items:center;justify-content:space-between;padding:16px;border:1px solid #e2e8f0;border-radius:8px;margin-bottom:12px;">
           <div style="display:flex;align-items:center;gap:12px;">
@@ -757,6 +781,7 @@
             </div>
           </div>
           <div style="display:flex;align-items:center;gap:8px;">
+            ${acc.platform === 'facebook' && acc.accountType === 'Profile' ? '<button class="btn btn-sm btn-primary" onclick="openFacebookPagesModal()">Manage Pages</button>' : ''}
             <span class="badge badge-success">Connected</span>
             <button class="btn btn-sm btn-secondary" onclick="disconnectAccount(${acc.id})">Disconnect</button>
           </div>
@@ -776,6 +801,86 @@
         if (res.ok) { showNotification('Account disconnected', 'success'); loadSocialAccounts(); }
         else showNotification('Failed to disconnect', 'error');
       } catch (e) { showNotification('Error disconnecting', 'error'); }
+    }
+
+    // Facebook Pages selection
+    function openFacebookPagesModal() {
+      document.getElementById('facebookPagesModal').classList.remove('hidden');
+      loadFacebookPages();
+    }
+
+    function closeFacebookPagesModal() {
+      document.getElementById('facebookPagesModal').classList.add('hidden');
+    }
+
+    async function loadFacebookPages() {
+      const body = document.getElementById('facebookPagesBody');
+      body.innerHTML = '<div style="text-align:center;padding:40px;"><div class="loading-spinner" style="margin:0 auto 16px;"></div><p style="color:#64748b;">Loading your Facebook Pages...</p></div>';
+      
+      try {
+        const res = await fetch('/api/social/facebook/pages');
+        if (!res.ok) {
+          const err = await res.json();
+          body.innerHTML = `<div class="empty-state"><div class="empty-state-title">Unable to load pages</div><p class="empty-state-text">${escapeHtml(err.error || 'Please reconnect your Facebook account.')}</p></div>`;
+          return;
+        }
+        
+        const data = await res.json();
+        
+        if (!data.pages || data.pages.length === 0) {
+          body.innerHTML = `
+            <div class="empty-state">
+              <div class="empty-state-title">No Pages Found</div>
+              <p class="empty-state-text">Your Facebook account doesn't manage any Pages, or additional permissions are needed. To manage Pages, you may need to complete Meta Business Verification.</p>
+            </div>`;
+          return;
+        }
+        
+        body.innerHTML = `
+          <p style="color:#64748b;margin-bottom:20px;">Profile: <strong>${escapeHtml(data.profileName)}</strong> - Select which Pages to connect:</p>
+          <div id="pagesList">
+            ${data.pages.map(page => `
+              <div style="display:flex;align-items:center;justify-content:space-between;padding:16px;border:1px solid #e2e8f0;border-radius:12px;margin-bottom:12px;background:#fff;">
+                <div style="display:flex;align-items:center;gap:14px;">
+                  <img src="${page.picture || 'https://via.placeholder.com/48'}" alt="" style="width:48px;height:48px;border-radius:10px;object-fit:cover;border:1px solid #e2e8f0;">
+                  <div>
+                    <div style="font-weight:600;font-size:15px;color:#0f172a;">${escapeHtml(page.name)}</div>
+                    <div style="font-size:13px;color:#64748b;">${escapeHtml(page.category)}</div>
+                  </div>
+                </div>
+                ${page.isConnected 
+                  ? '<span class="badge badge-success">Connected</span>'
+                  : `<button class="btn btn-primary btn-sm" onclick="connectFacebookPage('${page.id}')">Connect</button>`
+                }
+              </div>
+            `).join('')}
+          </div>`;
+      } catch (e) {
+        console.error('Error loading pages:', e);
+        body.innerHTML = '<div class="empty-state"><div class="empty-state-title">Error</div><p class="empty-state-text">Failed to load Facebook Pages. Please try again.</p></div>';
+      }
+    }
+
+    async function connectFacebookPage(pageId) {
+      try {
+        const res = await fetch('/api/social/facebook/pages', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ pageId })
+        });
+        
+        if (res.ok) {
+          const data = await res.json();
+          showNotification(data.message || 'Page connected!', 'success');
+          loadFacebookPages(); // Refresh the list
+          loadSocialAccounts(); // Refresh connected accounts
+        } else {
+          const err = await res.json();
+          showNotification(err.error || 'Failed to connect page', 'error');
+        }
+      } catch (e) {
+        showNotification('Error connecting page', 'error');
+      }
     }
 
     // Main tab switching
