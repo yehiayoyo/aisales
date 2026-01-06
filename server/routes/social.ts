@@ -1,7 +1,7 @@
 import type { Express, Request, Response } from "express";
 import { isAuthenticated } from "../replit_integrations/auth/index.js";
 import { db } from "../db.js";
-import { socialAccounts } from "../../shared/schema.js";
+import { socialAccounts, autoReplyRules } from "../../shared/schema.js";
 import { eq, and } from "drizzle-orm";
 
 export function registerSocialRoutes(app: Express): void {
@@ -71,7 +71,7 @@ export function registerSocialRoutes(app: Express): void {
       }
       
       if (pagesData.data && pagesData.data.length > 0) {
-        // Save connected pages
+        // Save connected pages with AI features auto-enabled
         for (const page of pagesData.data) {
           const existing = await db.select().from(socialAccounts).where(
             and(
@@ -80,8 +80,9 @@ export function registerSocialRoutes(app: Express): void {
             )
           );
           
+          let accountId: number;
           if (existing.length === 0) {
-            await db.insert(socialAccounts).values({
+            const [newAccount] = await db.insert(socialAccounts).values({
               userId: userId,
               platform: "facebook",
               platformAccountId: page.id,
@@ -91,15 +92,32 @@ export function registerSocialRoutes(app: Express): void {
               pageAccessToken: page.access_token,
               permissions: ["public_profile", "email"],
               isActive: true,
+              aiAutoReplyEnabled: true,
+              autoPostingEnabled: true,
+              defaultTone: "professional",
+            }).returning();
+            accountId = newAccount.id;
+            
+            // Auto-create default AI auto-reply rule
+            await db.insert(autoReplyRules).values({
+              userId: userId,
+              socialAccountId: accountId,
+              name: `Smart Reply - ${page.name}`,
+              isEnabled: true,
+              mode: "ai_suggested",
+              aiPrompt: "You are a helpful business assistant. Respond professionally and helpfully to customer inquiries. Be friendly and try to assist with their questions or direct them appropriately.",
             });
           } else {
+            accountId = existing[0].id;
             await db.update(socialAccounts)
               .set({
                 accessToken: tokenData.access_token,
                 pageAccessToken: page.access_token,
+                aiAutoReplyEnabled: true,
+                autoPostingEnabled: true,
                 updatedAt: new Date(),
               })
-              .where(eq(socialAccounts.id, existing[0].id));
+              .where(eq(socialAccounts.id, accountId));
           }
         }
       } else {
@@ -111,8 +129,9 @@ export function registerSocialRoutes(app: Express): void {
           )
         );
         
+        let accountId: number;
         if (existing.length === 0) {
-          await db.insert(socialAccounts).values({
+          const [newAccount] = await db.insert(socialAccounts).values({
             userId: userId,
             platform: "facebook",
             platformAccountId: userData.id,
@@ -121,11 +140,27 @@ export function registerSocialRoutes(app: Express): void {
             accessToken: tokenData.access_token,
             permissions: ["public_profile", "email"],
             isActive: true,
+            aiAutoReplyEnabled: true,
+            autoPostingEnabled: true,
+            defaultTone: "professional",
+          }).returning();
+          accountId = newAccount.id;
+          
+          // Auto-create default AI auto-reply rule
+          await db.insert(autoReplyRules).values({
+            userId: userId,
+            socialAccountId: accountId,
+            name: `Smart Reply - ${userData.name}`,
+            isEnabled: true,
+            mode: "ai_suggested",
+            aiPrompt: "You are a helpful business assistant. Respond professionally and helpfully to customer inquiries. Be friendly and try to assist with their questions or direct them appropriately.",
           });
         } else {
           await db.update(socialAccounts)
             .set({
               accessToken: tokenData.access_token,
+              aiAutoReplyEnabled: true,
+              autoPostingEnabled: true,
               updatedAt: new Date(),
             })
             .where(eq(socialAccounts.id, existing[0].id));

@@ -1,6 +1,6 @@
 import { sql, relations } from "drizzle-orm";
 import { pgTable, varchar, timestamp, text, boolean, jsonb, serial } from "drizzle-orm/pg-core";
-import { users } from "./auth";
+import { users } from "./auth.js";
 
 export const socialAccounts = pgTable("social_accounts", {
   id: serial("id").primaryKey(),
@@ -16,6 +16,9 @@ export const socialAccounts = pgTable("social_accounts", {
   permissions: jsonb("permissions").$type<string[]>(),
   metadata: jsonb("metadata"),
   isActive: boolean("is_active").default(true),
+  aiAutoReplyEnabled: boolean("ai_auto_reply_enabled").default(true),
+  autoPostingEnabled: boolean("auto_posting_enabled").default(true),
+  defaultTone: varchar("default_tone", { length: 20 }).default("professional"),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
