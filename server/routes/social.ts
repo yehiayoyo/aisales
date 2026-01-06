@@ -20,7 +20,9 @@ export function registerSocialRoutes(app: Express): void {
     const fbAppId = process.env.FACEBOOK_APP_ID;
     const domain = process.env.REPLIT_DEV_DOMAIN || req.hostname;
     const redirectUri = `https://${domain}/api/social/callback/facebook`;
-    const scope = "pages_show_list,pages_read_engagement,pages_messaging,pages_manage_metadata,instagram_basic,instagram_manage_messages";
+    // Basic scopes that work in development mode without App Review
+    // Note: Page permissions require Business Verification in Meta Business Suite
+    const scope = "public_profile,email";
     
     if (!fbAppId) {
       return res.status(500).json({ error: "Facebook App not configured. Please add FACEBOOK_APP_ID secret." });
@@ -31,11 +33,12 @@ export function registerSocialRoutes(app: Express): void {
   });
 
   app.get("/api/social/callback/facebook", isAuthenticated, async (req: any, res: Response) => {
-    const { code } = req.query;
+    const { code, error: oauthError } = req.query;
     const userId = req.user.claims.sub;
     
-    if (!code) {
-      return res.redirect("/app?error=oauth_failed");
+    if (oauthError || !code) {
+      console.error("Facebook OAuth denied:", oauthError);
+      return res.redirect("/app?error=oauth_denied");
     }
     
     try {
@@ -54,13 +57,21 @@ export function registerSocialRoutes(app: Express): void {
         return res.redirect("/app?error=token_failed");
       }
       
-      const userResponse = await fetch(`https://graph.facebook.com/me?access_token=${tokenData.access_token}&fields=id,name`);
-      const userData = await userResponse.json() as { id: string; name: string };
+      // Get user profile
+      const userResponse = await fetch(`https://graph.facebook.com/me?access_token=${tokenData.access_token}&fields=id,name,email`);
+      const userData = await userResponse.json() as { id: string; name: string; email?: string };
       
-      const pagesResponse = await fetch(`https://graph.facebook.com/me/accounts?access_token=${tokenData.access_token}&fields=id,name,access_token,category`);
-      const pagesData = await pagesResponse.json() as { data?: Array<{ id: string; name: string; access_token: string; category: string }> };
+      // Try to get pages (may fail without business verification)
+      let pagesData: { data?: Array<{ id: string; name: string; access_token: string; category: string }> } = { data: [] };
+      try {
+        const pagesResponse = await fetch(`https://graph.facebook.com/me/accounts?access_token=${tokenData.access_token}&fields=id,name,access_token,category`);
+        pagesData = await pagesResponse.json();
+      } catch (e) {
+        console.log("Could not fetch pages (may require business verification)");
+      }
       
       if (pagesData.data && pagesData.data.length > 0) {
+        // Save connected pages
         for (const page of pagesData.data) {
           const existing = await db.select().from(socialAccounts).where(
             and(
@@ -75,10 +86,10 @@ export function registerSocialRoutes(app: Express): void {
               platform: "facebook",
               platformAccountId: page.id,
               accountName: page.name,
-              accountType: page.category,
+              accountType: page.category || "Page",
               accessToken: tokenData.access_token,
               pageAccessToken: page.access_token,
-              permissions: ["pages_show_list", "pages_read_engagement", "pages_messaging"],
+              permissions: ["public_profile", "email"],
               isActive: true,
             });
           } else {
@@ -90,6 +101,34 @@ export function registerSocialRoutes(app: Express): void {
               })
               .where(eq(socialAccounts.id, existing[0].id));
           }
+        }
+      } else {
+        // Save user's Facebook profile if no pages available
+        const existing = await db.select().from(socialAccounts).where(
+          and(
+            eq(socialAccounts.userId, userId),
+            eq(socialAccounts.platformAccountId, userData.id)
+          )
+        );
+        
+        if (existing.length === 0) {
+          await db.insert(socialAccounts).values({
+            userId: userId,
+            platform: "facebook",
+            platformAccountId: userData.id,
+            accountName: userData.name,
+            accountType: "Profile",
+            accessToken: tokenData.access_token,
+            permissions: ["public_profile", "email"],
+            isActive: true,
+          });
+        } else {
+          await db.update(socialAccounts)
+            .set({
+              accessToken: tokenData.access_token,
+              updatedAt: new Date(),
+            })
+            .where(eq(socialAccounts.id, existing[0].id));
         }
       }
       
