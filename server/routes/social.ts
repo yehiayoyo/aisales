@@ -36,12 +36,19 @@ export function registerSocialRoutes(app: Express): void {
     res.redirect(authUrl);
   });
 
-  app.get("/api/social/callback/facebook", isAuthenticated, async (req: any, res: Response) => {
+  app.get("/api/social/callback/facebook", async (req: any, res: Response) => {
     console.log("Facebook OAuth - Callback received");
     console.log("Facebook OAuth - Query params:", JSON.stringify(req.query));
     
-    const { code, error: oauthError, error_reason, error_description } = req.query;
-    const userId = req.user.claims.sub;
+    const { code, error: oauthError, error_reason, error_description, state } = req.query;
+    
+    // Use state parameter as userId (passed during OAuth initiation)
+    const userId = state as string;
+    
+    if (!userId) {
+      console.error("Facebook OAuth - No state/userId in callback");
+      return res.redirect("/app?error=invalid_state");
+    }
     
     if (oauthError || !code) {
       console.error("Facebook OAuth denied:", oauthError, error_reason, error_description);
