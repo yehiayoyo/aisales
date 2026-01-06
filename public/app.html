@@ -722,7 +722,24 @@
       }
     }
 
-    function connectFacebook() { window.location.href = '/api/social/connect/facebook'; }
+    async function connectFacebook() {
+      try {
+        const res = await fetch('/api/social/connect/facebook');
+        if (res.ok) {
+          const data = await res.json();
+          // Open Facebook OAuth in new window (Facebook blocks iframes)
+          const popup = window.open(data.authUrl, 'facebook_oauth', 'width=600,height=700,scrollbars=yes');
+          if (!popup) {
+            // Popup blocked, try direct navigation in new tab
+            window.open(data.authUrl, '_blank');
+          }
+        } else {
+          showNotification('Failed to start Facebook connection', 'error');
+        }
+      } catch (e) {
+        showNotification('Error connecting to Facebook', 'error');
+      }
+    }
 
     async function createNewChat() {
       try {

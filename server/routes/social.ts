@@ -20,11 +20,9 @@ export function registerSocialRoutes(app: Express): void {
     const fbAppId = process.env.FACEBOOK_APP_ID;
     const domain = process.env.REPLIT_DEV_DOMAIN || req.hostname;
     const redirectUri = `https://${domain}/api/social/callback/facebook`;
-    // Basic scopes that work in development mode without App Review
     const scope = "public_profile,email";
     
     console.log("Facebook OAuth - Starting connection");
-    console.log("Facebook OAuth - App ID:", fbAppId ? "SET" : "NOT SET");
     console.log("Facebook OAuth - Redirect URI:", redirectUri);
     
     if (!fbAppId) {
@@ -32,8 +30,9 @@ export function registerSocialRoutes(app: Express): void {
     }
     
     const authUrl = `https://www.facebook.com/v18.0/dialog/oauth?client_id=${fbAppId}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=${scope}&response_type=code&state=${req.user.claims.sub}`;
-    console.log("Facebook OAuth - Redirecting to:", authUrl);
-    res.redirect(authUrl);
+    
+    // Return JSON with auth URL so frontend can open in new window (Facebook blocks iframes)
+    res.json({ authUrl });
   });
 
   app.get("/api/social/callback/facebook", async (req: any, res: Response) => {
