@@ -18,11 +18,12 @@ export function registerSocialRoutes(app: Express): void {
 
   app.get("/api/social/connect/facebook", isAuthenticated, async (req: any, res: Response) => {
     const fbAppId = process.env.FACEBOOK_APP_ID;
-    const redirectUri = `${process.env.BASE_URL || `https://${req.hostname}`}/api/social/callback/facebook`;
+    const domain = process.env.REPLIT_DEV_DOMAIN || req.hostname;
+    const redirectUri = `https://${domain}/api/social/callback/facebook`;
     const scope = "pages_show_list,pages_read_engagement,pages_messaging,pages_manage_metadata,instagram_basic,instagram_manage_messages";
     
     if (!fbAppId) {
-      return res.status(500).json({ error: "Facebook App not configured" });
+      return res.status(500).json({ error: "Facebook App not configured. Please add FACEBOOK_APP_ID secret." });
     }
     
     const authUrl = `https://www.facebook.com/v18.0/dialog/oauth?client_id=${fbAppId}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=${scope}&response_type=code&state=${req.user.claims.sub}`;
@@ -40,7 +41,8 @@ export function registerSocialRoutes(app: Express): void {
     try {
       const fbAppId = process.env.FACEBOOK_APP_ID;
       const fbAppSecret = process.env.FACEBOOK_APP_SECRET;
-      const redirectUri = `${process.env.BASE_URL || `https://${req.hostname}`}/api/social/callback/facebook`;
+      const domain = process.env.REPLIT_DEV_DOMAIN || req.hostname;
+      const redirectUri = `https://${domain}/api/social/callback/facebook`;
       
       const tokenResponse = await fetch(
         `https://graph.facebook.com/v18.0/oauth/access_token?client_id=${fbAppId}&redirect_uri=${encodeURIComponent(redirectUri)}&client_secret=${fbAppSecret}&code=${code}`
