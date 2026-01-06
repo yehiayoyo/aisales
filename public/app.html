@@ -362,15 +362,133 @@
         
         <!-- Scheduler -->
         <div id="subtab-social-scheduler" class="subtab-content hidden">
-          <div style="display: flex; justify-content: space-between; margin-bottom: 20px;">
-            <div></div>
-            <button class="btn btn-primary">+ Schedule Post</button>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <div class="stats-grid" style="margin: 0; flex: 1; max-width: 400px;">
+              <div class="stat-card" style="padding: 12px;"><div class="stat-value" id="statPendingPosts">0</div><div class="stat-label">Pending</div></div>
+              <div class="stat-card" style="padding: 12px;"><div class="stat-value" id="statPublishedPosts">0</div><div class="stat-label">Published</div></div>
+            </div>
+            <div style="display: flex; gap: 12px;">
+              <button class="btn btn-secondary" onclick="openScheduleModal()">+ Schedule Post</button>
+              <button class="btn btn-primary" onclick="openCampaignModal()">AI Campaign Generator</button>
+            </div>
           </div>
+          
           <div class="card">
-            <div class="card-body"><div class="empty-state"><div class="empty-state-title">No scheduled posts</div><p class="empty-state-text">Create your first scheduled post.</p></div></div>
+            <div class="card-header">
+              <span class="card-title">Scheduled Posts</span>
+              <button class="btn btn-sm btn-secondary" onclick="loadScheduledPosts()">Refresh</button>
+            </div>
+            <div class="card-body">
+              <div id="scheduledPostsList" class="empty-state">
+                <div class="empty-state-title">No scheduled posts</div>
+                <p class="empty-state-text">Create your first scheduled post or generate an AI campaign.</p>
+              </div>
+            </div>
           </div>
         </div>
       </section>
+      
+      <!-- Schedule Post Modal -->
+      <div id="scheduleModal" class="modal hidden">
+        <div class="modal-backdrop" onclick="closeScheduleModal()"></div>
+        <div class="modal-content">
+          <div class="modal-header">
+            <h2 class="modal-title">Schedule Post</h2>
+            <button class="modal-close" onclick="closeScheduleModal()">&times;</button>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <label class="form-label">Post Content</label>
+              <textarea class="form-input" id="scheduleContent" rows="4" placeholder="Write your post content..."></textarea>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Generate with AI</label>
+              <div style="display: flex; gap: 8px;">
+                <input type="text" class="form-input" id="aiTopicInput" placeholder="Topic for AI to write about" style="flex: 1;">
+                <button class="btn btn-secondary" onclick="generateSinglePost()">Generate</button>
+              </div>
+            </div>
+            <div class="grid-2">
+              <div class="form-group">
+                <label class="form-label">Schedule Date & Time</label>
+                <input type="datetime-local" class="form-input" id="scheduleDateTime">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Platform</label>
+                <select class="form-input form-select" id="schedulePlatform">
+                  <option value="general">All Platforms</option>
+                  <option value="facebook">Facebook</option>
+                  <option value="instagram">Instagram</option>
+                  <option value="whatsapp">WhatsApp</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="closeScheduleModal()">Cancel</button>
+            <button class="btn btn-primary" onclick="schedulePost()">Schedule Post</button>
+          </div>
+        </div>
+      </div>
+      
+      <!-- AI Campaign Generator Modal -->
+      <div id="campaignModal" class="modal hidden">
+        <div class="modal-backdrop" onclick="closeCampaignModal()"></div>
+        <div class="modal-content" style="max-width: 600px;">
+          <div class="modal-header">
+            <h2 class="modal-title">AI Campaign Generator</h2>
+            <button class="modal-close" onclick="closeCampaignModal()">&times;</button>
+          </div>
+          <div class="modal-body">
+            <p style="color: #64748b; margin-bottom: 20px;">Generate multiple AI-powered posts for your product campaign. Posts will be automatically scheduled over multiple days.</p>
+            <div class="form-group">
+              <label class="form-label">Product Name *</label>
+              <input type="text" class="form-input" id="campaignProductName" placeholder="e.g., Premium Wireless Headphones">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Product Description</label>
+              <textarea class="form-input" id="campaignProductDesc" rows="3" placeholder="Describe your product features, benefits, target audience..."></textarea>
+            </div>
+            <div class="grid-2">
+              <div class="form-group">
+                <label class="form-label">Number of Posts</label>
+                <select class="form-input form-select" id="campaignPostCount">
+                  <option value="5">5 posts (3 days)</option>
+                  <option value="10" selected>10 posts (5 days)</option>
+                  <option value="14">14 posts (1 week)</option>
+                  <option value="20">20 posts (10 days)</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Start Date</label>
+                <input type="date" class="form-input" id="campaignStartDate">
+              </div>
+            </div>
+            <div class="grid-2">
+              <div class="form-group">
+                <label class="form-label">Platform</label>
+                <select class="form-input form-select" id="campaignPlatform">
+                  <option value="general">All Platforms</option>
+                  <option value="facebook">Facebook</option>
+                  <option value="instagram">Instagram</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Tone</label>
+                <select class="form-input form-select" id="campaignTone">
+                  <option value="professional">Professional</option>
+                  <option value="friendly">Friendly</option>
+                  <option value="sales">Sales-Focused</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="closeCampaignModal()">Cancel</button>
+            <button class="btn btn-primary" id="generateCampaignBtn" onclick="generateCampaign()">Generate Campaign</button>
+          </div>
+        </div>
+      </div>
 
       <!-- Smart Reply Tab -->
       <section id="tab-smart-reply" class="tab-content hidden">
@@ -774,6 +892,194 @@
     async function performSearch() { const q = document.getElementById('searchQuery').value.trim(); if (!q) return alert('Enter a query'); document.getElementById('searchResults').innerHTML = '<p style="text-align:center;color:#64748b;">Searching...</p>'; try { const res = await fetch('/api/ai-chat/quick', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ providerId: 'tavily', content: q }) }); if (res.ok) { const d = await res.json(); document.getElementById('searchResults').innerHTML = d.assistantMessage ? `<div style="padding:16px;background:#f8fafc;border-radius:8px;"><p style="font-size:14px;color:#334155;">${escapeHtml(d.assistantMessage.content)}</p></div>` : '<span class="badge badge-error">No results</span>'; } } catch (e) { document.getElementById('searchResults').innerHTML = '<span class="badge badge-error">Error</span>'; } }
 
     async function generateSalesReply() { const msg = document.getElementById('salesMessage').value.trim(); if (!msg) return alert('Enter message'); const c = document.getElementById('salesReplyOutput'); c.innerHTML = '<p style="text-align:center;color:#64748b;">Generating...</p>'; try { const tone = document.getElementById('salesTone').value; const res = await fetch('/api/ai-chat/quick', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ providerId: 'openai', content: `Generate a ${tone} sales reply to this customer message: "${msg}"` }) }); if (res.ok) { const d = await res.json(); c.innerHTML = d.assistantMessage ? `<div style="padding:16px;background:#f8fafc;border-radius:8px;"><p style="font-size:14px;color:#334155;">${escapeHtml(d.assistantMessage.content)}</p></div>` : '<p class="empty-state-text">No reply generated</p>'; } } catch (e) { c.innerHTML = '<span class="badge badge-error">Error</span>'; } }
+
+    // Scheduling functions
+    function openScheduleModal() {
+      document.getElementById('scheduleModal').classList.remove('hidden');
+      const now = new Date();
+      now.setHours(now.getHours() + 1);
+      document.getElementById('scheduleDateTime').value = now.toISOString().slice(0, 16);
+    }
+
+    function closeScheduleModal() {
+      document.getElementById('scheduleModal').classList.add('hidden');
+      document.getElementById('scheduleContent').value = '';
+      document.getElementById('aiTopicInput').value = '';
+    }
+
+    function openCampaignModal() {
+      document.getElementById('campaignModal').classList.remove('hidden');
+      const tomorrow = new Date();
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      document.getElementById('campaignStartDate').value = tomorrow.toISOString().slice(0, 10);
+    }
+
+    function closeCampaignModal() {
+      document.getElementById('campaignModal').classList.add('hidden');
+      document.getElementById('campaignProductName').value = '';
+      document.getElementById('campaignProductDesc').value = '';
+    }
+
+    async function generateSinglePost() {
+      const topic = document.getElementById('aiTopicInput').value.trim();
+      if (!topic) return alert('Enter a topic for AI to write about');
+      const platform = document.getElementById('schedulePlatform').value;
+      const contentArea = document.getElementById('scheduleContent');
+      contentArea.value = 'Generating...';
+      try {
+        const res = await fetch('/api/ai/generate-content', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ type: 'post', topic, platform, tone: 'professional' })
+        });
+        if (res.ok) {
+          const data = await res.json();
+          contentArea.value = data.content;
+        } else {
+          contentArea.value = '';
+          showNotification('Failed to generate content', 'error');
+        }
+      } catch (e) {
+        contentArea.value = '';
+        showNotification('Error generating content', 'error');
+      }
+    }
+
+    async function schedulePost() {
+      const content = document.getElementById('scheduleContent').value.trim();
+      const scheduledFor = document.getElementById('scheduleDateTime').value;
+      if (!content) return alert('Please enter post content');
+      if (!scheduledFor) return alert('Please select a date and time');
+      try {
+        const res = await fetch('/api/scheduled-posts', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ content, scheduledFor: new Date(scheduledFor).toISOString() })
+        });
+        if (res.ok) {
+          closeScheduleModal();
+          loadScheduledPosts();
+          showNotification('Post scheduled successfully!', 'success');
+        } else {
+          showNotification('Failed to schedule post', 'error');
+        }
+      } catch (e) {
+        showNotification('Error scheduling post', 'error');
+      }
+    }
+
+    async function generateCampaign() {
+      const productName = document.getElementById('campaignProductName').value.trim();
+      const productDescription = document.getElementById('campaignProductDesc').value.trim();
+      const numberOfPosts = parseInt(document.getElementById('campaignPostCount').value);
+      const startDate = document.getElementById('campaignStartDate').value;
+      const platform = document.getElementById('campaignPlatform').value;
+      const tone = document.getElementById('campaignTone').value;
+      
+      if (!productName) return alert('Please enter a product name');
+      if (!startDate) return alert('Please select a start date');
+      
+      const btn = document.getElementById('generateCampaignBtn');
+      btn.disabled = true;
+      btn.textContent = 'Generating...';
+      
+      try {
+        const res = await fetch('/api/ai/generate-campaign', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ productName, productDescription, numberOfPosts, startDate, platform, tone })
+        });
+        if (res.ok) {
+          const data = await res.json();
+          closeCampaignModal();
+          loadScheduledPosts();
+          showNotification(`Campaign created! ${data.campaign.totalPosts} posts scheduled.`, 'success');
+        } else {
+          showNotification('Failed to generate campaign', 'error');
+        }
+      } catch (e) {
+        showNotification('Error generating campaign', 'error');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Generate Campaign';
+      }
+    }
+
+    async function loadScheduledPosts() {
+      try {
+        const res = await fetch('/api/scheduled-posts');
+        if (res.ok) {
+          const posts = await res.json();
+          const container = document.getElementById('scheduledPostsList');
+          
+          if (posts.length === 0) {
+            container.innerHTML = '<div class="empty-state"><div class="empty-state-title">No scheduled posts</div><p class="empty-state-text">Create your first scheduled post or generate an AI campaign.</p></div>';
+            document.getElementById('statPendingPosts').textContent = '0';
+            document.getElementById('statPublishedPosts').textContent = '0';
+            return;
+          }
+          
+          const pending = posts.filter(p => p.status === 'pending').length;
+          const published = posts.filter(p => p.status === 'published').length;
+          document.getElementById('statPendingPosts').textContent = pending;
+          document.getElementById('statPublishedPosts').textContent = published;
+          
+          container.innerHTML = posts.map(post => {
+            const date = new Date(post.scheduledFor);
+            const day = date.getDate();
+            const month = date.toLocaleDateString('en', { month: 'short' });
+            const time = date.toLocaleTimeString('en', { hour: '2-digit', minute: '2-digit' });
+            const statusClass = post.status === 'published' ? 'badge-success' : 'badge-warning';
+            return `
+              <div class="post-card">
+                <div class="post-date">
+                  <div class="post-date-day">${day}</div>
+                  <div class="post-date-month">${month}</div>
+                  <div class="post-date-time">${time}</div>
+                </div>
+                <div class="post-content">
+                  <p class="post-text">${escapeHtml(post.content)}</p>
+                  <div class="post-meta">
+                    <span class="badge ${statusClass}">${post.status}</span>
+                  </div>
+                </div>
+                <div class="post-actions">
+                  <button class="post-action-btn delete" onclick="deletePost(${post.id})" title="Delete">
+                    <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            `;
+          }).join('');
+        }
+      } catch (e) {
+        console.error('Error loading posts:', e);
+      }
+    }
+
+    async function deletePost(postId) {
+      if (!confirm('Delete this scheduled post?')) return;
+      try {
+        const res = await fetch(`/api/scheduled-posts/${postId}`, { method: 'DELETE' });
+        if (res.ok) {
+          loadScheduledPosts();
+          showNotification('Post deleted', 'success');
+        }
+      } catch (e) {
+        showNotification('Error deleting post', 'error');
+      }
+    }
+
+    // Load scheduled posts when switching to scheduler tab
+    document.querySelectorAll('.sub-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        if (tab.dataset.subtab === 'social-scheduler') {
+          loadScheduledPosts();
+        }
+      });
+    });
 
     init();
   </script>

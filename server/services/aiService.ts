@@ -217,3 +217,92 @@ export function clearConversationMemory(userId: string, conversationId?: number)
 export function getToneProfiles(): ToneProfile[] {
   return Object.values(TONE_PROFILES);
 }
+
+interface CampaignParams {
+  productName: string;
+  productDescription: string;
+  platform: string;
+  tone: string;
+  numberOfPosts: number;
+  postTypes: string[];
+}
+
+interface GeneratedPost {
+  content: string;
+  type: string;
+}
+
+export async function generateCampaignPosts(params: CampaignParams): Promise<GeneratedPost[]> {
+  const { productName, productDescription, platform, tone, numberOfPosts, postTypes } = params;
+  const toneProfile = TONE_PROFILES[tone] || TONE_PROFILES.professional;
+
+  const platformGuidelines: Record<string, string> = {
+    facebook: "Facebook: conversational, can be longer, include CTAs",
+    instagram: "Instagram: visual focus, concise, use emojis and hashtags",
+    whatsapp: "WhatsApp: brief, personal, direct messaging style",
+    general: "General social media: balance professional and engaging",
+  };
+
+  try {
+    const response = await openai.chat.completions.create({
+      model: "gpt-4o",
+      messages: [
+        {
+          role: "system",
+          content: `You are an expert social media marketing strategist. ${toneProfile.systemPrompt}
+
+Your task is to create a cohesive marketing campaign with ${numberOfPosts} unique posts for the product.
+Platform focus: ${platformGuidelines[platform] || platformGuidelines.general}
+
+Guidelines:
+- Each post should be unique but maintain brand consistency
+- Vary the content types: regular posts, stories, ads, testimonials, tips
+- Include calls-to-action where appropriate
+- Create a narrative arc across the campaign
+- Make posts engaging and shareable
+
+IMPORTANT: Respond with a JSON array of objects, each with "content" (the post text) and "type" (post/story/ad/tip/testimonial).`,
+        },
+        {
+          role: "user",
+          content: `Create ${numberOfPosts} unique social media posts for this product:
+
+Product: ${productName}
+Description: ${productDescription}
+Post types to include: ${postTypes.join(", ")}
+
+Generate varied, engaging content for a multi-day campaign.`,
+        },
+      ],
+      max_tokens: 3000,
+      temperature: 0.9,
+    });
+
+    const content = response.choices[0]?.message?.content || "[]";
+    
+    try {
+      // Try to parse JSON from the response
+      const jsonMatch = content.match(/\[[\s\S]*\]/);
+      if (jsonMatch) {
+        const posts = JSON.parse(jsonMatch[0]);
+        return posts.slice(0, numberOfPosts);
+      }
+    } catch (parseError) {
+      console.error("Failed to parse campaign posts JSON:", parseError);
+    }
+
+    // Fallback: generate simple posts if JSON parsing fails
+    const fallbackPosts: GeneratedPost[] = [];
+    for (let i = 0; i < numberOfPosts; i++) {
+      fallbackPosts.push({
+        content: `Check out ${productName}! ${productDescription} #${productName.replace(/\s+/g, '')}`,
+        type: postTypes[i % postTypes.length]
+      });
+    }
+    return fallbackPosts;
+
+  } catch (error) {
+    console.error("Campaign generation failed:", error);
+    throw new Error("Failed to generate campaign posts");
+  }
+}
