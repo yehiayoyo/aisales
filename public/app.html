@@ -828,10 +828,17 @@
         const data = await res.json();
         
         if (!data.pages || data.pages.length === 0) {
+          // Check if user needs to authorize Pages app (separate from login)
+          const needsPagesAuth = !data.hasPagesToken;
           body.innerHTML = `
             <div class="empty-state">
               <div class="empty-state-title">No Pages Found</div>
-              <p class="empty-state-text">Your Facebook account doesn't manage any Pages, or additional permissions are needed. To manage Pages, you may need to complete Meta Business Verification.</p>
+              <p class="empty-state-text">${needsPagesAuth 
+                ? 'You need to authorize access to your Facebook Pages. Click below to grant permissions.'
+                : 'Your Facebook account doesn\'t manage any Pages, or you need to complete Meta Business Verification.'}</p>
+              ${needsPagesAuth 
+                ? '<button class="btn btn-primary" onclick="authorizeFacebookPages()" style="margin-top:16px;">Authorize Pages Access</button>'
+                : ''}
             </div>`;
           return;
         }
@@ -858,6 +865,29 @@
       } catch (e) {
         console.error('Error loading pages:', e);
         body.innerHTML = '<div class="empty-state"><div class="empty-state-title">Error</div><p class="empty-state-text">Failed to load Facebook Pages. Please try again.</p></div>';
+      }
+    }
+
+    async function authorizeFacebookPages() {
+      try {
+        const res = await fetch('/api/social/connect/facebook-pages');
+        const data = await res.json();
+        if (data.authUrl) {
+          // Open in new window (Facebook blocks iframes)
+          const authWindow = window.open(data.authUrl, 'FacebookPagesAuth', 'width=600,height=700');
+          // Poll for completion
+          const checkClosed = setInterval(() => {
+            if (authWindow && authWindow.closed) {
+              clearInterval(checkClosed);
+              loadFacebookPages(); // Refresh pages after auth
+              loadSocialAccounts();
+            }
+          }, 500);
+        } else {
+          showNotification(data.error || 'Failed to start authorization', 'error');
+        }
+      } catch (e) {
+        showNotification('Error starting authorization', 'error');
       }
     }
 
