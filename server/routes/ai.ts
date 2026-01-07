@@ -2,8 +2,8 @@ import type { Express, Request, Response } from "express";
 import { isAuthenticated } from "../replit_integrations/auth/index.js";
 import { generateAIReply, generateContent, analyzeSentiment, getToneProfiles, clearConversationMemory, generateCampaignPosts } from "../services/aiService.js";
 import { db } from "../db.js";
-import { scheduledPosts } from "../../shared/schema.js";
-import { eq } from "drizzle-orm";
+import { scheduledPosts, socialAccounts } from "../../shared/schema.js";
+import { eq, and } from "drizzle-orm";
 
 export function registerAIRoutes(app: Express): void {
   app.post("/api/ai/generate-reply", isAuthenticated, async (req: any, res: Response) => {
@@ -98,6 +98,22 @@ export function registerAIRoutes(app: Express): void {
 
       if (!productName || !numberOfPosts || !startDate) {
         return res.status(400).json({ error: "Product name, number of posts, and start date are required" });
+      }
+
+      if (!socialAccountId) {
+        return res.status(400).json({ error: "Please select a social account to post to" });
+      }
+
+      // Verify the social account exists and belongs to user
+      const account = await db.select().from(socialAccounts).where(
+        and(
+          eq(socialAccounts.id, socialAccountId),
+          eq(socialAccounts.userId, userId)
+        )
+      );
+      
+      if (account.length === 0) {
+        return res.status(400).json({ error: "Selected social account not found" });
       }
 
       // Generate posts using AI
