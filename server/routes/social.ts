@@ -22,7 +22,8 @@ export function registerSocialRoutes(app: Express): void {
     const fbAppId = process.env.FACEBOOK_LOGIN_APP_ID || process.env.FACEBOOK_APP_ID;
     const domain = process.env.REPLIT_DEV_DOMAIN || req.hostname;
     const redirectUri = `https://${domain}/api/social/callback/facebook`;
-    const scope = "public_profile,email";
+    // Use only public_profile (email requires Advanced Access)
+    const scope = "public_profile";
     
     console.log("Facebook OAuth - Starting connection (Login App)");
     console.log("Facebook OAuth - Redirect URI:", redirectUri);
