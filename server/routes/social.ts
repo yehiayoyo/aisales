@@ -391,6 +391,37 @@ export function registerSocialRoutes(app: Express): void {
     }
   });
 
+  // Update AI settings for a social account
+  app.patch("/api/social/accounts/:id/ai-settings", isAuthenticated, async (req: any, res: Response) => {
+    try {
+      const userId = req.user.claims.sub;
+      const accountId = parseInt(req.params.id);
+      const { aiAutoReply, aiTone } = req.body;
+      
+      const updateData: any = { updatedAt: new Date() };
+      if (typeof aiAutoReply === 'boolean') {
+        updateData.aiAutoReplyEnabled = aiAutoReply;
+      }
+      if (aiTone) {
+        updateData.defaultTone = aiTone;
+      }
+      
+      await db.update(socialAccounts)
+        .set(updateData)
+        .where(
+          and(
+            eq(socialAccounts.id, accountId),
+            eq(socialAccounts.userId, userId)
+          )
+        );
+      
+      res.json({ success: true });
+    } catch (error) {
+      console.error("Error updating AI settings:", error);
+      res.status(500).json({ error: "Failed to update AI settings" });
+    }
+  });
+
   app.delete("/api/social/accounts/:id", isAuthenticated, async (req: any, res: Response) => {
     try {
       const userId = req.user.claims.sub;

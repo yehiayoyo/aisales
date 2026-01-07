@@ -534,9 +534,25 @@
           <div class="stats-grid">
             <div class="stat-card"><div class="stat-icon green"><svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg></div><div class="stat-value" id="statAiReplies">0</div><div class="stat-label">AI Replies Sent</div><div class="stat-trend up"><svg width="12" height="12" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5.293 9.707a1 1 0 010-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 01-1.414 1.414L11 7.414V15a1 1 0 11-2 0V7.414L6.707 9.707a1 1 0 01-1.414 0z" clip-rule="evenodd"/></svg> 12%</div></div>
             <div class="stat-card"><div class="stat-icon purple"><svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg></div><div class="stat-value" id="statConversations">0</div><div class="stat-label">Conversations</div></div>
-            <div class="stat-card"><div class="stat-icon blue"><svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg></div><div class="stat-value">0</div><div class="stat-label">Active Rules</div></div>
+            <div class="stat-card"><div class="stat-icon blue"><svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg></div><div class="stat-value" id="statActiveAccounts">0</div><div class="stat-label">Active Accounts</div></div>
             <div class="stat-card"><div class="stat-icon orange"><svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div><div class="stat-value">&lt;1s</div><div class="stat-label">Avg Response</div></div>
           </div>
+          
+          <!-- Connected Accounts for Smart Reply -->
+          <div class="card" style="margin-bottom: 24px;">
+            <div class="card-header">
+              <span class="card-title">Connected Accounts for AI Auto-Reply</span>
+              <p style="color: #64748b; font-size: 13px; margin-top: 4px;">Enable AI auto-reply for your connected Facebook Pages. Connect more pages in the Social tab.</p>
+            </div>
+            <div class="card-body" id="smartReplyAccountsList">
+              <div class="empty-state" style="padding: 32px;">
+                <div class="empty-state-title">No accounts connected</div>
+                <p class="empty-state-text">Connect your Facebook Pages in the Social tab first.</p>
+                <button class="btn btn-primary" style="margin-top: 16px;" onclick="switchTab('social')">Go to Social</button>
+              </div>
+            </div>
+          </div>
+          
           <div class="grid-2">
             <div class="card">
               <div class="card-header"><span class="card-title">Reply Volume</span></div>
@@ -919,6 +935,109 @@
       }
     }
 
+    // Smart Reply - Load connected accounts with AI toggle
+    async function loadSmartReplyAccounts() {
+      try {
+        const res = await fetch('/api/social/accounts');
+        if (res.ok) {
+          const accounts = await res.json();
+          renderSmartReplyAccounts(accounts);
+        }
+      } catch (e) { console.error('Failed to load smart reply accounts:', e); }
+    }
+
+    function renderSmartReplyAccounts(accounts) {
+      const container = document.getElementById('smartReplyAccountsList');
+      // Filter to only show Facebook Pages (accounts with pageAccessToken)
+      const pageAccounts = accounts.filter(acc => acc.platform === 'facebook' && acc.accountType === 'Page');
+      
+      if (pageAccounts.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state" style="padding: 32px;">
+            <div class="empty-state-title">No Facebook Pages connected</div>
+            <p class="empty-state-text">Connect your Facebook Pages in the Social tab to enable AI auto-reply.</p>
+            <button class="btn btn-primary" style="margin-top: 16px;" onclick="switchTab('social')">Go to Social</button>
+          </div>`;
+        document.getElementById('statActiveAccounts').textContent = '0';
+        return;
+      }
+      
+      const activeCount = pageAccounts.filter(acc => acc.aiAutoReplyEnabled).length;
+      document.getElementById('statActiveAccounts').textContent = activeCount;
+      
+      container.innerHTML = pageAccounts.map(acc => `
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:16px;border:1px solid #e2e8f0;border-radius:12px;margin-bottom:12px;background:#fff;">
+          <div style="display:flex;align-items:center;gap:14px;">
+            <div style="width:48px;height:48px;border-radius:10px;display:flex;align-items:center;justify-content:center;background:#1877F2;">
+              <svg width="24" height="24" fill="white" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+            </div>
+            <div>
+              <div style="font-weight:600;font-size:15px;color:#0f172a;">${escapeHtml(acc.accountName)}</div>
+              <div style="font-size:13px;color:#64748b;">Facebook Page</div>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;gap:16px;">
+            <div style="display:flex;align-items:center;gap:8px;">
+              <span style="font-size:13px;color:#64748b;">AI Auto-Reply</span>
+              <label class="toggle-switch">
+                <input type="checkbox" ${acc.aiAutoReplyEnabled ? 'checked' : ''} onchange="toggleAiAutoReply(${acc.id}, this.checked)">
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+            <select class="form-select" style="width:140px;font-size:13px;" onchange="updateAccountTone(${acc.id}, this.value)" ${!acc.aiAutoReplyEnabled ? 'disabled' : ''}>
+              <option value="sales" ${acc.defaultTone === 'sales' ? 'selected' : ''}>Sales-Focused</option>
+              <option value="professional" ${(!acc.defaultTone || acc.defaultTone === 'professional') ? 'selected' : ''}>Professional</option>
+              <option value="friendly" ${acc.defaultTone === 'friendly' ? 'selected' : ''}>Friendly</option>
+              <option value="support" ${acc.defaultTone === 'support' ? 'selected' : ''}>Support</option>
+            </select>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    async function toggleAiAutoReply(accountId, enabled) {
+      try {
+        const res = await fetch('/api/social/accounts/' + accountId + '/ai-settings', {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ aiAutoReply: enabled })
+        });
+        if (res.ok) {
+          showNotification(enabled ? 'AI Auto-Reply enabled' : 'AI Auto-Reply disabled', 'success');
+          loadSmartReplyAccounts();
+        } else {
+          showNotification('Failed to update setting', 'error');
+        }
+      } catch (e) {
+        showNotification('Error updating setting', 'error');
+      }
+    }
+
+    async function updateAccountTone(accountId, tone) {
+      try {
+        const res = await fetch('/api/social/accounts/' + accountId + '/ai-settings', {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ aiTone: tone })
+        });
+        if (res.ok) {
+          showNotification('Tone updated to ' + tone, 'success');
+        } else {
+          showNotification('Failed to update tone', 'error');
+        }
+      } catch (e) {
+        showNotification('Error updating tone', 'error');
+      }
+    }
+
+    function switchTab(tabName) {
+      document.querySelectorAll('.main-tab').forEach(t => t.classList.remove('active'));
+      document.querySelector(`.main-tab[data-tab="${tabName}"]`)?.classList.add('active');
+      document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
+      document.getElementById('tab-' + tabName)?.classList.remove('hidden');
+      currentTab = tabName;
+    }
+
     // Main tab switching
     document.querySelectorAll('.main-tab').forEach(tab => {
       tab.addEventListener('click', () => {
@@ -927,6 +1046,11 @@
         document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
         document.getElementById('tab-' + tab.dataset.tab)?.classList.remove('hidden');
         currentTab = tab.dataset.tab;
+        
+        // Load data for specific tabs
+        if (tab.dataset.tab === 'smart-reply') {
+          loadSmartReplyAccounts();
+        }
       });
     });
 
