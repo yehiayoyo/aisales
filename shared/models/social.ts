@@ -1,6 +1,6 @@
 import { sql, relations } from "drizzle-orm";
-import { pgTable, varchar, timestamp, text, boolean, jsonb, serial } from "drizzle-orm/pg-core";
-import { users } from "./auth.js";
+import { pgTable, varchar, timestamp, text, boolean, jsonb, serial, integer, numeric } from "drizzle-orm/pg-core";
+import { users } from "./auth";
 
 export const socialAccounts = pgTable("social_accounts", {
   id: serial("id").primaryKey(),
@@ -58,9 +58,60 @@ export const scheduledPosts = pgTable("scheduled_posts", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
+// Business Profile for each social account (for AI context)
+export const businessProfiles = pgTable("business_profiles", {
+  id: serial("id").primaryKey(),
+  socialAccountId: integer("social_account_id").notNull().references(() => socialAccounts.id, { onDelete: "cascade" }),
+  businessName: varchar("business_name"),
+  businessCategory: varchar("business_category", { length: 100 }),
+  businessType: varchar("business_type", { length: 50 }), // "product" or "service"
+  description: text("description"),
+  paymentMethods: jsonb("payment_methods").$type<string[]>(),
+  shippingInfo: text("shipping_info"),
+  workingHours: text("working_hours"),
+  contactInfo: text("contact_info"),
+  customPrompt: text("custom_prompt"), // Additional AI instructions
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+// Products/Services catalog for AI to reference
+export const businessProducts = pgTable("business_products", {
+  id: serial("id").primaryKey(),
+  businessProfileId: integer("business_profile_id").notNull().references(() => businessProfiles.id, { onDelete: "cascade" }),
+  name: varchar("name").notNull(),
+  type: varchar("type", { length: 50 }), // "product" or "service"
+  description: text("description"),
+  price: numeric("price", { precision: 10, scale: 2 }),
+  currency: varchar("currency", { length: 10 }).default("USD"),
+  features: jsonb("features").$type<string[]>(),
+  availability: varchar("availability", { length: 50 }).default("in_stock"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const businessProfilesRelations = relations(businessProfiles, ({ one, many }) => ({
+  socialAccount: one(socialAccounts, {
+    fields: [businessProfiles.socialAccountId],
+    references: [socialAccounts.id],
+  }),
+  products: many(businessProducts),
+}));
+
+export const businessProductsRelations = relations(businessProducts, ({ one }) => ({
+  businessProfile: one(businessProfiles, {
+    fields: [businessProducts.businessProfileId],
+    references: [businessProfiles.id],
+  }),
+}));
+
 export type SocialAccount = typeof socialAccounts.$inferSelect;
 export type InsertSocialAccount = typeof socialAccounts.$inferInsert;
 export type AutoReplyRule = typeof autoReplyRules.$inferSelect;
 export type InsertAutoReplyRule = typeof autoReplyRules.$inferInsert;
 export type ScheduledPost = typeof scheduledPosts.$inferSelect;
 export type InsertScheduledPost = typeof scheduledPosts.$inferInsert;
+export type BusinessProfile = typeof businessProfiles.$inferSelect;
+export type InsertBusinessProfile = typeof businessProfiles.$inferInsert;
+export type BusinessProduct = typeof businessProducts.$inferSelect;
+export type InsertBusinessProduct = typeof businessProducts.$inferInsert;
