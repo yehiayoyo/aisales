@@ -398,6 +398,12 @@
           </div>
           <div class="modal-body">
             <div class="form-group">
+              <label class="form-label">Post To *</label>
+              <select class="form-input" id="scheduleAccountId">
+                <option value="">Select a social account...</option>
+              </select>
+            </div>
+            <div class="form-group">
               <label class="form-label">Post Content</label>
               <textarea class="form-input" id="scheduleContent" rows="4" placeholder="Write your post content..."></textarea>
             </div>
@@ -1029,11 +1035,26 @@
     async function generateSalesReply() { const msg = document.getElementById('salesMessage').value.trim(); if (!msg) return alert('Enter message'); const c = document.getElementById('salesReplyOutput'); c.innerHTML = '<p style="text-align:center;color:#64748b;">Generating...</p>'; try { const tone = document.getElementById('salesTone').value; const res = await fetch('/api/ai-chat/quick', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ providerId: 'openai', content: `Generate a ${tone} sales reply to this customer message: "${msg}"` }) }); if (res.ok) { const d = await res.json(); c.innerHTML = d.assistantMessage ? `<div style="padding:16px;background:#f8fafc;border-radius:8px;"><p style="font-size:14px;color:#334155;">${escapeHtml(d.assistantMessage.content)}</p></div>` : '<p class="empty-state-text">No reply generated</p>'; } } catch (e) { c.innerHTML = '<span class="badge badge-error">Error</span>'; } }
 
     // Scheduling functions
-    function openScheduleModal() {
+    async function openScheduleModal() {
       document.getElementById('scheduleModal').classList.remove('hidden');
       const now = new Date();
       now.setHours(now.getHours() + 1);
       document.getElementById('scheduleDateTime').value = now.toISOString().slice(0, 16);
+      
+      // Load social accounts for dropdown
+      try {
+        const res = await fetch('/api/social/accounts');
+        if (res.ok) {
+          const accounts = await res.json();
+          const select = document.getElementById('scheduleAccountId');
+          select.innerHTML = '<option value="">Select a social account...</option>';
+          accounts.filter(a => a.accountType !== 'Profile' && a.accountType !== 'PagesToken').forEach(acc => {
+            select.innerHTML += `<option value="${acc.id}">${escapeHtml(acc.accountName)} (${acc.platform})</option>`;
+          });
+        }
+      } catch (e) {
+        console.error('Error loading accounts:', e);
+      }
     }
 
     function closeScheduleModal() {
@@ -1083,20 +1104,23 @@
     async function schedulePost() {
       const content = document.getElementById('scheduleContent').value.trim();
       const scheduledFor = document.getElementById('scheduleDateTime').value;
+      const socialAccountId = document.getElementById('scheduleAccountId').value;
+      if (!socialAccountId) return alert('Please select a social account');
       if (!content) return alert('Please enter post content');
       if (!scheduledFor) return alert('Please select a date and time');
       try {
         const res = await fetch('/api/scheduled-posts', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ content, scheduledFor: new Date(scheduledFor).toISOString() })
+          body: JSON.stringify({ content, scheduledFor: new Date(scheduledFor).toISOString(), socialAccountId: parseInt(socialAccountId) })
         });
         if (res.ok) {
           closeScheduleModal();
           loadScheduledPosts();
           showNotification('Post scheduled successfully!', 'success');
         } else {
-          showNotification('Failed to schedule post', 'error');
+          const err = await res.json();
+          showNotification(err.error || 'Failed to schedule post', 'error');
         }
       } catch (e) {
         showNotification('Error scheduling post', 'error');
