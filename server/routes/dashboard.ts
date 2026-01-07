@@ -122,6 +122,26 @@ export function registerDashboardRoutes(app: Express): void {
       const userId = req.user.claims.sub;
       const { content, socialAccountId, scheduledFor, mediaUrls } = req.body;
       
+      if (!content || !scheduledFor) {
+        return res.status(400).json({ error: "Content and scheduled time are required" });
+      }
+      
+      if (!socialAccountId) {
+        return res.status(400).json({ error: "Please select a social account to post to" });
+      }
+      
+      // Verify the social account exists and belongs to user
+      const account = await db.select().from(socialAccounts).where(
+        and(
+          eq(socialAccounts.id, socialAccountId),
+          eq(socialAccounts.userId, userId)
+        )
+      );
+      
+      if (account.length === 0) {
+        return res.status(400).json({ error: "Selected social account not found. Please reconnect your account." });
+      }
+      
       const [post] = await db.insert(scheduledPosts).values({
         userId,
         socialAccountId,
