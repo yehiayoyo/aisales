@@ -14,6 +14,7 @@ import { registerDashboardRoutes } from "./routes/dashboard.js";
 import { webhookRouter } from "./routes/webhooks.js";
 import { registerUGCRoutes } from "./routes/ugc.js";
 import { registerAIChatRoutes } from "./routes/aiChat.js";
+import { registerBusinessRoutes } from "./routes/business.js";
 import { startPostScheduler } from "./services/postingService.js";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -38,6 +39,7 @@ async function startServer() {
   registerDashboardRoutes(app);
   registerUGCRoutes(app);
   registerAIChatRoutes(app);
+  registerBusinessRoutes(app);
 
   app.get("/api/health", (req: Request, res: Response) => {
     res.json({ status: "ok", service: "MT Hub" });

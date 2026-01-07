@@ -68,12 +68,79 @@ function getMemory(key: string): Array<{ role: "user" | "assistant"; content: st
   return conversationMemory.get(key) || [];
 }
 
+interface BusinessContext {
+  businessName?: string;
+  businessCategory?: string;
+  businessType?: string;
+  description?: string;
+  paymentMethods?: string[];
+  shippingInfo?: string;
+  workingHours?: string;
+  contactInfo?: string;
+  customPrompt?: string;
+  products?: Array<{
+    name: string;
+    type?: string;
+    description?: string;
+    price?: string;
+    features?: string[];
+  }>;
+}
+
+function buildBusinessContext(business: BusinessContext): string {
+  if (!business || (!business.businessName && !business.products?.length)) {
+    return "";
+  }
+  
+  let context = "\n\n=== BUSINESS INFORMATION ===\n";
+  
+  if (business.businessName) {
+    context += `Business Name: ${business.businessName}\n`;
+  }
+  if (business.businessCategory) {
+    context += `Category: ${business.businessCategory}\n`;
+  }
+  if (business.description) {
+    context += `About: ${business.description}\n`;
+  }
+  if (business.paymentMethods?.length) {
+    context += `Payment Methods: ${business.paymentMethods.join(", ")}\n`;
+  }
+  if (business.shippingInfo) {
+    context += `Shipping: ${business.shippingInfo}\n`;
+  }
+  if (business.workingHours) {
+    context += `Working Hours: ${business.workingHours}\n`;
+  }
+  if (business.contactInfo) {
+    context += `Contact: ${business.contactInfo}\n`;
+  }
+  
+  if (business.products?.length) {
+    context += "\n=== PRODUCTS/SERVICES ===\n";
+    business.products.forEach((p, i) => {
+      context += `${i + 1}. ${p.name}`;
+      if (p.price) context += ` - Price: ${p.price}`;
+      if (p.type) context += ` (${p.type})`;
+      context += "\n";
+      if (p.description) context += `   ${p.description}\n`;
+    });
+  }
+  
+  if (business.customPrompt) {
+    context += `\n=== SPECIAL INSTRUCTIONS ===\n${business.customPrompt}\n`;
+  }
+  
+  return context;
+}
+
 export async function generateAIReply(
   incomingMessage: string,
   recentMessages: Message[],
   userId: string,
   tone: string = "professional",
-  conversationId?: number
+  conversationId?: number,
+  businessContext?: BusinessContext
 ): Promise<string> {
   const toneProfile = TONE_PROFILES[tone] || TONE_PROFILES.professional;
   const memoryKey = getConversationKey(userId, conversationId);
@@ -95,6 +162,8 @@ export async function generateAIReply(
       index === self.findIndex((m) => m.content === msg.content && m.role === msg.role)
   ).slice(-10);
 
+  const businessInfo = buildBusinessContext(businessContext || {});
+
   try {
     const response = await openai.chat.completions.create({
       model: "gpt-4o",
@@ -102,10 +171,11 @@ export async function generateAIReply(
         {
           role: "system",
           content: `${toneProfile.systemPrompt}
-
+${businessInfo}
 Important guidelines:
 - Keep responses concise (2-3 sentences for simple queries, more for complex ones)
 - Match the language of the customer
+- Use the business information above to answer questions about products, prices, shipping, and payment
 - If you don't know something, say so honestly
 - Never share sensitive business information
 - Suggest human assistance for complex issues that need escalation`,

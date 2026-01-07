@@ -525,7 +525,7 @@
         
         <div class="sub-tabs">
           <button class="sub-tab active" data-subtab="reply-dashboard">Dashboard</button>
-          <button class="sub-tab" data-subtab="reply-rules">Auto Reply Rules</button>
+          <button class="sub-tab" data-subtab="reply-setup">Business Setup</button>
           <button class="sub-tab" data-subtab="reply-generator">Reply Generator</button>
         </div>
         
@@ -565,17 +565,119 @@
           </div>
         </div>
         
-        <!-- Rules -->
-        <div id="subtab-reply-rules" class="subtab-content hidden">
-          <div style="display: flex; justify-content: space-between; margin-bottom: 20px;">
-            <div></div>
-            <button class="btn btn-primary">+ Create Rule</button>
+        <!-- Business Setup -->
+        <div id="subtab-reply-setup" class="subtab-content hidden">
+          <div class="card" style="margin-bottom: 24px;">
+            <div class="card-header">
+              <span class="card-title">Select Page to Configure</span>
+            </div>
+            <div class="card-body">
+              <select class="form-input form-select" id="businessPageSelect" onchange="loadBusinessProfile(this.value)" style="max-width: 400px;">
+                <option value="">-- Select a Facebook Page --</option>
+              </select>
+            </div>
           </div>
-          <div class="card">
-            <table class="table">
-              <thead><tr><th>Rule Name</th><th>Trigger</th><th>Platform</th><th>Status</th><th>Actions</th></tr></thead>
-              <tbody id="autoReplyRules"><tr><td colspan="5" style="text-align: center; padding: 48px;"><div class="empty-state-title">No rules configured</div><p style="color: #64748b; font-size: 14px;">Create your first auto-reply rule.</p></td></tr></tbody>
-            </table>
+          
+          <div id="businessSetupForm" class="hidden">
+            <div class="grid-2" style="gap: 24px;">
+              <!-- Business Info -->
+              <div class="card">
+                <div class="card-header"><span class="card-title">Business Information</span></div>
+                <div class="card-body">
+                  <div class="form-group">
+                    <label class="form-label">Business Name</label>
+                    <input type="text" class="form-input" id="bizName" placeholder="Your business name">
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Business Category</label>
+                    <select class="form-input form-select" id="bizCategory">
+                      <option value="">Select category</option>
+                      <option value="retail">Retail / E-commerce</option>
+                      <option value="fashion">Fashion & Clothing</option>
+                      <option value="electronics">Electronics</option>
+                      <option value="food">Food & Restaurant</option>
+                      <option value="beauty">Beauty & Cosmetics</option>
+                      <option value="health">Health & Wellness</option>
+                      <option value="services">Professional Services</option>
+                      <option value="education">Education</option>
+                      <option value="other">Other</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Business Type</label>
+                    <div style="display: flex; gap: 16px;">
+                      <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                        <input type="radio" name="bizType" value="product" checked> Products
+                      </label>
+                      <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                        <input type="radio" name="bizType" value="service"> Services
+                      </label>
+                      <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                        <input type="radio" name="bizType" value="both"> Both
+                      </label>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Business Description</label>
+                    <textarea class="form-input form-textarea" id="bizDescription" placeholder="Describe your business, what you sell, your unique value..."></textarea>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Payment & Shipping -->
+              <div class="card">
+                <div class="card-header"><span class="card-title">Payment & Delivery</span></div>
+                <div class="card-body">
+                  <div class="form-group">
+                    <label class="form-label">Payment Methods</label>
+                    <div style="display: flex; flex-wrap: wrap; gap: 12px;">
+                      <label style="display: flex; align-items: center; gap: 6px;"><input type="checkbox" id="payCash" checked> Cash</label>
+                      <label style="display: flex; align-items: center; gap: 6px;"><input type="checkbox" id="payCard"> Credit/Debit Card</label>
+                      <label style="display: flex; align-items: center; gap: 6px;"><input type="checkbox" id="payBank"> Bank Transfer</label>
+                      <label style="display: flex; align-items: center; gap: 6px;"><input type="checkbox" id="payPaypal"> PayPal</label>
+                      <label style="display: flex; align-items: center; gap: 6px;"><input type="checkbox" id="payCod"> Cash on Delivery</label>
+                    </div>
+                  </div>
+                  <div class="form-group" id="shippingGroup">
+                    <label class="form-label">Shipping Information</label>
+                    <textarea class="form-input form-textarea" id="bizShipping" placeholder="Shipping costs, delivery times, areas covered..."></textarea>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Working Hours</label>
+                    <input type="text" class="form-input" id="bizHours" placeholder="e.g., Mon-Fri 9am-6pm, Sat 10am-4pm">
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Contact Info</label>
+                    <input type="text" class="form-input" id="bizContact" placeholder="Phone, WhatsApp, email...">
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Products/Services -->
+            <div class="card" style="margin-top: 24px;">
+              <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
+                <span class="card-title">Products / Services</span>
+                <button class="btn btn-primary btn-sm" onclick="addProductRow()">+ Add Product</button>
+              </div>
+              <div class="card-body">
+                <div id="productsList">
+                  <p style="color: #64748b; text-align: center; padding: 24px;">No products added yet. Click "Add Product" to start.</p>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Custom AI Instructions -->
+            <div class="card" style="margin-top: 24px;">
+              <div class="card-header"><span class="card-title">Custom AI Instructions (Optional)</span></div>
+              <div class="card-body">
+                <textarea class="form-input form-textarea" id="bizCustomPrompt" placeholder="Add any special instructions for how the AI should respond. E.g., 'Always mention our free shipping on orders over $50' or 'If customer asks for discount, offer 10% for first order'"></textarea>
+              </div>
+            </div>
+            
+            <div style="margin-top: 24px; display: flex; gap: 12px;">
+              <button class="btn btn-primary" onclick="saveBusinessProfile()">Save Business Profile</button>
+            </div>
           </div>
         </div>
         
@@ -1042,6 +1144,182 @@
       currentTab = tabName;
     }
 
+    // Business Setup
+    let currentBusinessAccountId = null;
+    let currentProducts = [];
+
+    async function loadBusinessPagesDropdown() {
+      try {
+        const res = await fetch('/api/social/accounts');
+        if (res.ok) {
+          const accounts = await res.json();
+          const pages = accounts.filter(acc => 
+            acc.platform === 'facebook' && 
+            acc.accountType !== 'Profile' && 
+            acc.accountType !== 'PagesToken'
+          );
+          
+          const select = document.getElementById('businessPageSelect');
+          select.innerHTML = '<option value="">-- Select a Facebook Page --</option>' +
+            pages.map(p => `<option value="${p.id}">${escapeHtml(p.accountName)}</option>`).join('');
+        }
+      } catch (e) { console.error('Error loading pages:', e); }
+    }
+
+    async function loadBusinessProfile(accountId) {
+      if (!accountId) {
+        document.getElementById('businessSetupForm').classList.add('hidden');
+        return;
+      }
+      
+      currentBusinessAccountId = parseInt(accountId);
+      document.getElementById('businessSetupForm').classList.remove('hidden');
+      
+      try {
+        const res = await fetch('/api/business/profile/' + accountId);
+        if (res.ok) {
+          const data = await res.json();
+          const p = data.profile || {};
+          
+          document.getElementById('bizName').value = p.businessName || '';
+          document.getElementById('bizCategory').value = p.businessCategory || '';
+          document.getElementById('bizDescription').value = p.description || '';
+          document.getElementById('bizShipping').value = p.shippingInfo || '';
+          document.getElementById('bizHours').value = p.workingHours || '';
+          document.getElementById('bizContact').value = p.contactInfo || '';
+          document.getElementById('bizCustomPrompt').value = p.customPrompt || '';
+          
+          if (p.businessType) {
+            document.querySelector(`input[name="bizType"][value="${p.businessType}"]`).checked = true;
+          }
+          
+          const methods = p.paymentMethods || [];
+          document.getElementById('payCash').checked = methods.includes('cash');
+          document.getElementById('payCard').checked = methods.includes('card');
+          document.getElementById('payBank').checked = methods.includes('bank');
+          document.getElementById('payPaypal').checked = methods.includes('paypal');
+          document.getElementById('payCod').checked = methods.includes('cod');
+          
+          currentProducts = data.products || [];
+          renderProducts();
+        }
+      } catch (e) {
+        console.error('Error loading profile:', e);
+        showNotification('Error loading business profile', 'error');
+      }
+    }
+
+    function renderProducts() {
+      const container = document.getElementById('productsList');
+      if (currentProducts.length === 0) {
+        container.innerHTML = '<p style="color: #64748b; text-align: center; padding: 24px;">No products added yet. Click "Add Product" to start.</p>';
+        return;
+      }
+      
+      container.innerHTML = currentProducts.map((prod, i) => `
+        <div style="border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px; margin-bottom: 12px; background: #f8fafc;">
+          <div style="display: grid; grid-template-columns: 2fr 1fr 1fr auto; gap: 12px; align-items: start;">
+            <div>
+              <label class="form-label" style="font-size: 12px;">Name</label>
+              <input type="text" class="form-input" value="${escapeHtml(prod.name || '')}" onchange="updateProduct(${i}, 'name', this.value)">
+            </div>
+            <div>
+              <label class="form-label" style="font-size: 12px;">Price</label>
+              <input type="number" class="form-input" value="${prod.price || ''}" onchange="updateProduct(${i}, 'price', this.value)" placeholder="0.00">
+            </div>
+            <div>
+              <label class="form-label" style="font-size: 12px;">Type</label>
+              <select class="form-input form-select" onchange="updateProduct(${i}, 'type', this.value)">
+                <option value="product" ${prod.type === 'product' ? 'selected' : ''}>Product</option>
+                <option value="service" ${prod.type === 'service' ? 'selected' : ''}>Service</option>
+              </select>
+            </div>
+            <button class="btn btn-sm" style="background: #fee2e2; color: #dc2626; margin-top: 20px;" onclick="removeProduct(${i})">Remove</button>
+          </div>
+          <div style="margin-top: 12px;">
+            <label class="form-label" style="font-size: 12px;">Description & Features</label>
+            <textarea class="form-input" style="min-height: 60px;" placeholder="Describe this product/service, its features, benefits..." onchange="updateProduct(${i}, 'description', this.value)">${escapeHtml(prod.description || '')}</textarea>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function addProductRow() {
+      currentProducts.push({ name: '', type: 'product', price: '', description: '', isNew: true });
+      renderProducts();
+    }
+
+    function updateProduct(index, field, value) {
+      currentProducts[index][field] = value;
+    }
+
+    function removeProduct(index) {
+      const prod = currentProducts[index];
+      if (prod.id && !prod.isNew) {
+        fetch('/api/business/products/' + prod.id, { method: 'DELETE' })
+          .then(res => res.ok && showNotification('Product removed', 'success'))
+          .catch(() => {});
+      }
+      currentProducts.splice(index, 1);
+      renderProducts();
+    }
+
+    async function saveBusinessProfile() {
+      if (!currentBusinessAccountId) return;
+      
+      const paymentMethods = [];
+      if (document.getElementById('payCash').checked) paymentMethods.push('cash');
+      if (document.getElementById('payCard').checked) paymentMethods.push('card');
+      if (document.getElementById('payBank').checked) paymentMethods.push('bank');
+      if (document.getElementById('payPaypal').checked) paymentMethods.push('paypal');
+      if (document.getElementById('payCod').checked) paymentMethods.push('cod');
+      
+      const profile = {
+        businessName: document.getElementById('bizName').value,
+        businessCategory: document.getElementById('bizCategory').value,
+        businessType: document.querySelector('input[name="bizType"]:checked')?.value || 'product',
+        description: document.getElementById('bizDescription').value,
+        paymentMethods,
+        shippingInfo: document.getElementById('bizShipping').value,
+        workingHours: document.getElementById('bizHours').value,
+        contactInfo: document.getElementById('bizContact').value,
+        customPrompt: document.getElementById('bizCustomPrompt').value,
+      };
+      
+      try {
+        const res = await fetch('/api/business/profile/' + currentBusinessAccountId, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(profile)
+        });
+        
+        if (res.ok) {
+          for (const prod of currentProducts) {
+            if (prod.isNew && prod.name) {
+              await fetch('/api/business/profile/' + currentBusinessAccountId + '/products', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(prod)
+              });
+            } else if (prod.id) {
+              await fetch('/api/business/products/' + prod.id, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(prod)
+              });
+            }
+          }
+          
+          showNotification('Business profile saved!', 'success');
+          loadBusinessProfile(currentBusinessAccountId);
+        } else {
+          showNotification('Failed to save profile', 'error');
+        }
+      } catch (e) {
+        showNotification('Error saving profile', 'error');
+      }
+    }
+
     // Main tab switching
     document.querySelectorAll('.main-tab').forEach(tab => {
       tab.addEventListener('click', () => {
@@ -1066,6 +1344,10 @@
         tab.classList.add('active');
         parent.querySelectorAll('.subtab-content').forEach(c => c.classList.add('hidden'));
         document.getElementById('subtab-' + tab.dataset.subtab)?.classList.remove('hidden');
+        
+        if (tab.dataset.subtab === 'reply-setup') {
+          loadBusinessPagesDropdown();
+        }
       });
     });
 

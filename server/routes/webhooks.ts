@@ -6,7 +6,7 @@ import * as schema from "../../shared/schema.js";
 import { eq, and } from "drizzle-orm";
 import { generateAIReply } from "../services/aiService.js";
 
-const { socialAccounts, conversations, messages } = schema;
+const { socialAccounts, conversations, messages, businessProfiles, businessProducts } = schema;
 
 const VERIFY_TOKEN = process.env.META_WEBHOOK_VERIFY_TOKEN || "mt_hub_verify_token";
 
@@ -251,6 +251,41 @@ async function handleWhatsAppMessage(account: any, msg: any, contact: any): Prom
   }
 }
 
+async function getBusinessContext(accountId: number) {
+  try {
+    const profiles = await db.select().from(businessProfiles)
+      .where(eq(businessProfiles.socialAccountId, accountId));
+    
+    if (profiles.length === 0) return undefined;
+    
+    const profile = profiles[0];
+    const products = await db.select().from(businessProducts)
+      .where(eq(businessProducts.businessProfileId, profile.id));
+    
+    return {
+      businessName: profile.businessName || undefined,
+      businessCategory: profile.businessCategory || undefined,
+      businessType: profile.businessType || undefined,
+      description: profile.description || undefined,
+      paymentMethods: profile.paymentMethods as string[] || undefined,
+      shippingInfo: profile.shippingInfo || undefined,
+      workingHours: profile.workingHours || undefined,
+      contactInfo: profile.contactInfo || undefined,
+      customPrompt: profile.customPrompt || undefined,
+      products: products.map(p => ({
+        name: p.name,
+        type: p.type || undefined,
+        description: p.description || undefined,
+        price: p.price || undefined,
+        features: p.features as string[] || undefined,
+      })),
+    };
+  } catch (error) {
+    console.error("Error loading business context:", error);
+    return undefined;
+  }
+}
+
 async function triggerAutoReply(
   account: any,
   conversationId: number,
@@ -269,7 +304,10 @@ async function triggerAutoReply(
       content: m.content || ""
     }));
 
-    const aiReply = await generateAIReply(incomingMessage, formattedMsgs, account.userId, "professional", conversationId);
+    const businessContext = await getBusinessContext(account.id);
+    const tone = account.defaultTone || "sales";
+    
+    const aiReply = await generateAIReply(incomingMessage, formattedMsgs, account.userId, tone, conversationId, businessContext);
     
     const accessToken = account.pageAccessToken || account.accessToken;
     const apiUrl = platform === "instagram" 
@@ -318,7 +356,10 @@ async function triggerWhatsAppAutoReply(
       content: m.content || ""
     }));
 
-    const aiReply = await generateAIReply(incomingMessage, formattedMsgs, account.userId, "professional", conversationId);
+    const businessContext = await getBusinessContext(account.id);
+    const tone = account.defaultTone || "sales";
+    
+    const aiReply = await generateAIReply(incomingMessage, formattedMsgs, account.userId, tone, conversationId, businessContext);
     
     const phoneNumberId = account.platformAccountId;
     const accessToken = account.accessToken;
