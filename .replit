@@ -37,3 +37,9 @@ externalPort = 80
 [deployment]
 deploymentTarget = "autoscale"
 run = ["npm", "start"]
+
+[userenv]
+
+[userenv.shared]
+facebook_login_app_id = "1435527248276524"
+FACEBOOK_LOGIN_APP_SECRET = "3785e1016821a4383edc2189bfe4191b"
