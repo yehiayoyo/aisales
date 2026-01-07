@@ -16,23 +16,23 @@ export function registerSocialRoutes(app: Express): void {
     }
   });
 
+  // Facebook Login - uses FACEBOOK_LOGIN_APP_ID for authentication
   app.get("/api/social/connect/facebook", isAuthenticated, async (req: any, res: Response) => {
-    const fbAppId = process.env.FACEBOOK_APP_ID;
+    // Use dedicated login app, fallback to main app
+    const fbAppId = process.env.FACEBOOK_LOGIN_APP_ID || process.env.FACEBOOK_APP_ID;
     const domain = process.env.REPLIT_DEV_DOMAIN || req.hostname;
     const redirectUri = `https://${domain}/api/social/callback/facebook`;
-    // Basic permissions - page access may still work for app developers via /me/accounts
     const scope = "public_profile,email";
     
-    console.log("Facebook OAuth - Starting connection");
+    console.log("Facebook OAuth - Starting connection (Login App)");
     console.log("Facebook OAuth - Redirect URI:", redirectUri);
     
     if (!fbAppId) {
-      return res.status(500).json({ error: "Facebook App not configured. Please add FACEBOOK_APP_ID secret." });
+      return res.status(500).json({ error: "Facebook App not configured. Please add FACEBOOK_LOGIN_APP_ID or FACEBOOK_APP_ID secret." });
     }
     
     const authUrl = `https://www.facebook.com/v18.0/dialog/oauth?client_id=${fbAppId}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=${scope}&response_type=code&state=${req.user.claims.sub}`;
     
-    // Return JSON with auth URL so frontend can open in new window (Facebook blocks iframes)
     res.json({ authUrl });
   });
 
@@ -56,8 +56,9 @@ export function registerSocialRoutes(app: Express): void {
     }
     
     try {
-      const fbAppId = process.env.FACEBOOK_APP_ID;
-      const fbAppSecret = process.env.FACEBOOK_APP_SECRET;
+      // Use dedicated login app, fallback to main app
+      const fbAppId = process.env.FACEBOOK_LOGIN_APP_ID || process.env.FACEBOOK_APP_ID;
+      const fbAppSecret = process.env.FACEBOOK_LOGIN_APP_SECRET || process.env.FACEBOOK_APP_SECRET;
       const domain = process.env.REPLIT_DEV_DOMAIN || req.hostname;
       const redirectUri = `https://${domain}/api/social/callback/facebook`;
       
@@ -125,6 +126,95 @@ export function registerSocialRoutes(app: Express): void {
     }
   });
 
+  // Start OAuth flow for Facebook Pages using the Pages App (separate from login)
+  app.get("/api/social/connect/facebook-pages", isAuthenticated, async (req: any, res: Response) => {
+    // Use dedicated pages app (FACEBOOK_APP_ID for pages management)
+    const fbAppId = process.env.FACEBOOK_APP_ID;
+    const domain = process.env.REPLIT_DEV_DOMAIN || req.hostname;
+    const redirectUri = `https://${domain}/api/social/callback/facebook-pages`;
+    // Request pages permissions
+    const scope = "pages_show_list,pages_read_engagement,pages_manage_posts,pages_manage_metadata";
+    
+    console.log("Facebook Pages OAuth - Starting connection (Pages App)");
+    console.log("Facebook Pages OAuth - Using App ID:", fbAppId);
+    console.log("Facebook Pages OAuth - Redirect URI:", redirectUri);
+    
+    if (!fbAppId) {
+      return res.status(500).json({ error: "Facebook Pages App not configured. Please add FACEBOOK_APP_ID secret." });
+    }
+    
+    const authUrl = `https://www.facebook.com/v18.0/dialog/oauth?client_id=${fbAppId}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=${scope}&response_type=code&state=${req.user.claims.sub}`;
+    
+    res.json({ authUrl });
+  });
+
+  // Callback for Facebook Pages OAuth
+  app.get("/api/social/callback/facebook-pages", async (req: any, res: Response) => {
+    console.log("Facebook Pages OAuth - Callback received");
+    
+    const { code, error: oauthError, error_description, state } = req.query;
+    const userId = state as string;
+    
+    if (!userId) {
+      return res.redirect("/app?error=invalid_state");
+    }
+    
+    if (oauthError || !code) {
+      console.error("Facebook Pages OAuth denied:", oauthError, error_description);
+      return res.redirect(`/app?error=oauth_denied&reason=${encodeURIComponent(error_description || oauthError || 'unknown')}`);
+    }
+    
+    try {
+      // Use Pages App credentials
+      const fbAppId = process.env.FACEBOOK_APP_ID;
+      const fbAppSecret = process.env.FACEBOOK_APP_SECRET;
+      const domain = process.env.REPLIT_DEV_DOMAIN || req.hostname;
+      const redirectUri = `https://${domain}/api/social/callback/facebook-pages`;
+      
+      // Exchange code for token
+      const tokenResponse = await fetch(
+        `https://graph.facebook.com/v18.0/oauth/access_token?client_id=${fbAppId}&redirect_uri=${encodeURIComponent(redirectUri)}&client_secret=${fbAppSecret}&code=${code}`
+      );
+      const tokenData = await tokenResponse.json() as { access_token?: string; error?: any };
+      
+      if (!tokenData.access_token) {
+        console.error("Facebook Pages token error:", tokenData);
+        return res.redirect("/app?error=token_failed");
+      }
+      
+      // Save or update Pages token for this user
+      const existing = await db.select().from(socialAccounts).where(
+        and(
+          eq(socialAccounts.userId, userId),
+          eq(socialAccounts.platform, "facebook"),
+          eq(socialAccounts.accountType, "PagesToken")
+        )
+      );
+      
+      if (existing.length === 0) {
+        await db.insert(socialAccounts).values({
+          userId: userId,
+          platform: "facebook",
+          platformAccountId: `pages_token_${userId}`,
+          accountName: "Facebook Pages Access",
+          accountType: "PagesToken",
+          accessToken: tokenData.access_token,
+          aiAutoReplyEnabled: false,
+          autoPostingEnabled: false,
+        });
+      } else {
+        await db.update(socialAccounts)
+          .set({ accessToken: tokenData.access_token, updatedAt: new Date() })
+          .where(eq(socialAccounts.id, existing[0].id));
+      }
+      
+      res.redirect("/app?success=pages_connected");
+    } catch (error) {
+      console.error("Facebook Pages OAuth error:", error);
+      res.redirect("/app?error=oauth_error");
+    }
+  });
+
   // Fetch Facebook Pages for the connected profile (tokens kept server-side for security)
   app.get("/api/social/facebook/pages", isAuthenticated, async (req: any, res: Response) => {
     try {
@@ -142,9 +232,13 @@ export function registerSocialRoutes(app: Express): void {
         return res.status(404).json({ error: "No Facebook account connected. Please connect your Facebook first." });
       }
       
-      // Find the profile account (not a page)
-      const profileAccount = accounts.find(a => a.accountType === "Profile") || accounts[0];
-      const accessToken = profileAccount.accessToken;
+      // First check for PagesToken (from second app), then fall back to Profile token
+      const pagesTokenAccount = accounts.find(a => a.accountType === "PagesToken");
+      const profileAccount = accounts.find(a => a.accountType === "Profile");
+      
+      // Use PagesToken if available (from Pages App), otherwise use Profile token
+      const tokenAccount = pagesTokenAccount || profileAccount || accounts[0];
+      const accessToken = tokenAccount.accessToken;
       
       if (!accessToken) {
         return res.status(400).json({ error: "No access token available. Please reconnect your Facebook." });
@@ -183,7 +277,8 @@ export function registerSocialRoutes(app: Express): void {
       res.json({ 
         pages: pagesWithStatus,
         profileConnected: true,
-        profileName: profileAccount.accountName
+        profileName: profileAccount?.accountName || tokenAccount.accountName,
+        hasPagesToken: !!pagesTokenAccount
       });
     } catch (error) {
       console.error("Error fetching Facebook pages:", error);
@@ -201,7 +296,7 @@ export function registerSocialRoutes(app: Express): void {
         return res.status(400).json({ error: "Missing page ID" });
       }
       
-      // Get the user's profile to retrieve the access token
+      // Get the user's accounts to retrieve the access token
       const accounts = await db.select().from(socialAccounts).where(
         and(
           eq(socialAccounts.userId, userId),
@@ -209,14 +304,18 @@ export function registerSocialRoutes(app: Express): void {
         )
       );
       
+      // Use PagesToken first (from Pages App), then fall back to Profile token
+      const pagesTokenAccount = accounts.find(a => a.accountType === "PagesToken");
       const profileAccount = accounts.find(a => a.accountType === "Profile");
-      if (!profileAccount || !profileAccount.accessToken) {
-        return res.status(400).json({ error: "Facebook profile not connected. Please reconnect." });
+      const tokenAccount = pagesTokenAccount || profileAccount;
+      
+      if (!tokenAccount || !tokenAccount.accessToken) {
+        return res.status(400).json({ error: "Facebook not connected. Please authorize Pages access first." });
       }
       
       // Fetch pages with access tokens from Facebook (server-side only)
       const pagesResponse = await fetch(
-        `https://graph.facebook.com/v18.0/me/accounts?access_token=${profileAccount.accessToken}&fields=id,name,category,access_token,picture{url}`
+        `https://graph.facebook.com/v18.0/me/accounts?access_token=${tokenAccount.accessToken}&fields=id,name,category,access_token,picture{url}`
       );
       const pagesData = await pagesResponse.json() as { 
         data?: Array<{ id: string; name: string; category: string; access_token: string; picture?: { data?: { url?: string } } }>;
