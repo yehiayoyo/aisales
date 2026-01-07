@@ -9,6 +9,8 @@ import { generateAIReply } from "../services/aiService.js";
 const { socialAccounts, conversations, messages, businessProfiles, businessProducts } = schema;
 
 const VERIFY_TOKEN = process.env.META_WEBHOOK_VERIFY_TOKEN || "mt_hub_verify_token";
+// Use MSG app credentials for the Smart Reply webhook (separate from main Facebook app)
+const MSG_APP_SECRET = process.env.MSG_FACEBOOK_APP_SECRET || process.env.FACEBOOK_APP_SECRET;
 
 export const webhookRouter = Router();
 
@@ -41,7 +43,7 @@ webhookRouter.get("/meta", (req: Request, res: Response) => {
 webhookRouter.post("/meta", async (req: any, res: Response) => {
   const signature = req.headers["x-hub-signature-256"] as string;
   
-  if (process.env.FACEBOOK_APP_SECRET && signature) {
+  if (MSG_APP_SECRET && signature) {
     const rawBody = req.rawBody as Buffer;
     if (!rawBody) {
       console.error("Missing raw body for signature verification");
@@ -49,7 +51,7 @@ webhookRouter.post("/meta", async (req: any, res: Response) => {
     }
     
     const expectedSig = "sha256=" + crypto
-      .createHmac("sha256", process.env.FACEBOOK_APP_SECRET)
+      .createHmac("sha256", MSG_APP_SECRET)
       .update(rawBody)
       .digest("hex");
     
