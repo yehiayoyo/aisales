@@ -948,8 +948,12 @@
 
     function renderSmartReplyAccounts(accounts) {
       const container = document.getElementById('smartReplyAccountsList');
-      // Filter to only show Facebook Pages (accounts with pageAccessToken)
-      const pageAccounts = accounts.filter(acc => acc.platform === 'facebook' && acc.accountType === 'Page');
+      // Filter to show Facebook Pages (accounts with pageAccessToken, excluding Profile and PagesToken)
+      const pageAccounts = accounts.filter(acc => 
+        acc.platform === 'facebook' && 
+        acc.accountType !== 'Profile' && 
+        acc.accountType !== 'PagesToken'
+      );
       
       if (pageAccounts.length === 0) {
         container.innerHTML = `
