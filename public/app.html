@@ -1203,6 +1203,11 @@
                   </div>
                 </div>
                 <div class="post-actions">
+                  ${post.status === 'pending' ? `
+                  <button class="btn btn-sm btn-primary" onclick="publishNow(${post.id})" title="Publish Now" style="margin-right:8px;">
+                    Publish Now
+                  </button>
+                  ` : ''}
                   <button class="post-action-btn delete" onclick="deletePost(${post.id})" title="Delete">
                     <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
@@ -1228,6 +1233,22 @@
         }
       } catch (e) {
         showNotification('Error deleting post', 'error');
+      }
+    }
+
+    async function publishNow(postId) {
+      if (!confirm('Publish this post to Facebook now?')) return;
+      try {
+        const res = await fetch(`/api/scheduled-posts/${postId}/publish`, { method: 'POST' });
+        if (res.ok) {
+          loadScheduledPosts();
+          showNotification('Post published to Facebook!', 'success');
+        } else {
+          const err = await res.json();
+          showNotification(err.error || 'Failed to publish', 'error');
+        }
+      } catch (e) {
+        showNotification('Error publishing post', 'error');
       }
     }
 

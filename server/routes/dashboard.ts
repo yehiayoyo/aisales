@@ -3,6 +3,7 @@ import { isAuthenticated } from "../replit_integrations/auth/index.js";
 import { db } from "../db.js";
 import { socialAccounts, conversations, messages, autoReplyRules, scheduledPosts } from "../../shared/schema.js";
 import { eq, count, desc, and, gte } from "drizzle-orm";
+import { publishToFacebook } from "../services/postingService.js";
 
 export function registerDashboardRoutes(app: Express): void {
   app.get("/api/dashboard/stats", isAuthenticated, async (req: any, res: Response) => {
@@ -155,6 +156,63 @@ export function registerDashboardRoutes(app: Express): void {
     } catch (error) {
       console.error("Create post error:", error);
       res.status(500).json({ error: "Failed to schedule post" });
+    }
+  });
+
+  app.post("/api/scheduled-posts/:id/publish", isAuthenticated, async (req: any, res: Response) => {
+    try {
+      const userId = req.user.claims.sub;
+      const postId = parseInt(req.params.id);
+      
+      const posts = await db.select({
+        post: scheduledPosts,
+        account: socialAccounts
+      })
+      .from(scheduledPosts)
+      .innerJoin(socialAccounts, eq(scheduledPosts.socialAccountId, socialAccounts.id))
+      .where(
+        and(
+          eq(scheduledPosts.id, postId),
+          eq(scheduledPosts.userId, userId)
+        )
+      );
+      
+      if (posts.length === 0) {
+        return res.status(404).json({ error: "Post not found" });
+      }
+      
+      const { post, account } = posts[0];
+      
+      if (post.status === 'published') {
+        return res.status(400).json({ error: "Post already published" });
+      }
+      
+      if (account.platform !== 'facebook' || !account.pageAccessToken) {
+        return res.status(400).json({ error: "Cannot publish - missing page access token" });
+      }
+      
+      const result = await publishToFacebook(
+        account.platformAccountId,
+        account.pageAccessToken,
+        post.content
+      );
+      
+      if (result.success) {
+        await db.update(scheduledPosts)
+          .set({ 
+            status: 'published',
+            publishedAt: new Date(),
+            updatedAt: new Date()
+          })
+          .where(eq(scheduledPosts.id, postId));
+        
+        res.json({ success: true, facebookPostId: result.postId });
+      } else {
+        res.status(400).json({ error: result.error || "Failed to publish to Facebook" });
+      }
+    } catch (error) {
+      console.error("Publish error:", error);
+      res.status(500).json({ error: "Failed to publish post" });
     }
   });
 }

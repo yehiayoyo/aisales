@@ -14,6 +14,7 @@ import { registerDashboardRoutes } from "./routes/dashboard.js";
 import { webhookRouter } from "./routes/webhooks.js";
 import { registerUGCRoutes } from "./routes/ugc.js";
 import { registerAIChatRoutes } from "./routes/aiChat.js";
+import { startPostScheduler } from "./services/postingService.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -64,6 +65,7 @@ async function startServer() {
 
   app.listen(PORT, "0.0.0.0", () => {
     console.log(`MT Hub running on http://0.0.0.0:${PORT}`);
+    startPostScheduler();
   });
 }
 
